@@ -3,10 +3,10 @@ import { EditorView, keymap, highlightActiveLine, lineNumbers } from '@codemirro
 import { EditorState } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap } from '@codemirror/commands'
-import { bracketMatching, indentOnInput, foldGutter, syntaxHighlighting, HighlightStyle } from '@codemirror/language'
+import { bracketMatching, indentOnInput, foldGutter } from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
-import { tags } from '@lezer/highlight'
 import fountainLanguage from '../modes/fountainMode.js'
+import '../index.css'
 
 const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain screenplay here..." }) => {
   const editorRef = useRef(null)
@@ -15,7 +15,6 @@ const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain s
   useEffect(() => {
     if (!editorRef.current) return
 
-    // Create extensions array manually to avoid conflicts
     const extensions = [
       lineNumbers(),
       highlightActiveLine(),

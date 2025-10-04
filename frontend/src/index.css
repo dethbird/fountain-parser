@@ -15,6 +15,85 @@
   box-sizing: border-box;
 }
 
+/* Fountain Syntax Highlighting for CodeMirror 6 */
+.cm-header {
+  font-weight: bold;
+  color: #4CAF50;
+  text-transform: uppercase;
+}
+
+.cm-variable {
+  font-weight: bold;
+  color: #2196F3;
+  text-transform: uppercase;
+}
+
+.cm-string {
+  color: inherit;
+  margin-left: 20px;
+}
+
+.cm-comment {
+  color: #795548;
+  background-color: rgba(121, 85, 72, 0.1);
+  font-style: italic;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.cm-meta {
+  color: #9E9E9E;
+  font-style: italic;
+}
+
+.cm-keyword {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+.cm-emphasis {
+  color: #E91E63;
+  font-style: italic;
+}
+
+.cm-processing {
+  color: #607D8B;
+  font-style: italic;
+  background-color: rgba(96, 125, 139, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.cm-operator {
+  color: #FF5722;
+  font-weight: bold;
+  text-align: center;
+  border-top: 2px solid #FF5722;
+  border-bottom: 2px solid #FF5722;
+  padding: 4px 0;
+}
+
+.cm-def {
+  font-weight: bold;
+  color: #3F51B5;
+  text-transform: uppercase;
+}
+
+.cm-atom {
+  color: #8BC34A;
+  font-weight: bold;
+}
+
+.cm-number {
+  color: #00BCD4;
+  font-family: monospace;
+}
+
+.cm-link {
+  color: #E91E63;
+  text-decoration: underline;
+}
+
 /* Responsive text areas */
 .textarea {
   min-height: 200px;
