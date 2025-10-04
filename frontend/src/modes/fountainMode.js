@@ -155,7 +155,7 @@ const fountainLanguage = StreamLanguage.define({
     // synopsis
     if (stream.match(/^= /)) {
       stream.skipToEnd()
-      return 'processing'
+      return 'string'
     }
     
     // page-break

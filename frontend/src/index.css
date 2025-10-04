@@ -30,6 +30,15 @@
   padding-left: 40px;
 }
 
+/* Synopsis =like this */
+.cm-string {
+  color: #90A4AE !important;
+  font-style: italic;
+  background-color: rgba(144, 164, 174, 0.15) !important;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
 /* Action Lines (default text, no special class) */
 .cm-line {
   color: #F5F5F5 !important;
