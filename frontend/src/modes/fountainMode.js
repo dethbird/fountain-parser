@@ -32,6 +32,16 @@ const fountainLanguage = StreamLanguage.define({
     }
 
     // transitions - check before everything else
+    if (stream.match(/^FADE IN:/)) {
+      stream.skipToEnd()
+      return 'keyword'
+    }
+    
+    if (stream.match(/^FADE OUT\./)) {
+      stream.skipToEnd()
+      return 'keyword'
+    }
+    
     if (stream.match(BLOCK_REGEX.TRANSITION)) {
       stream.skipToEnd()
       return 'keyword'
@@ -40,6 +50,13 @@ const fountainLanguage = StreamLanguage.define({
     if (stream.match(BLOCK_REGEX.TRANSITION_POWER_USER)) {
       stream.skipToEnd()
       return 'keyword'
+    }
+
+    // scene heading - check before character matching
+    if (stream.match(BLOCK_REGEX.SCENE)) {
+      state.section = true
+      stream.skipToEnd()
+      return 'header'
     }
 
     // Check for new character lines BEFORE checking character_extended state
@@ -129,13 +146,6 @@ const fountainLanguage = StreamLanguage.define({
       stream.skipTo(':')
       stream.next()
       return 'def'
-    }
-    
-    // scene heading
-    if (stream.match(BLOCK_REGEX.SCENE)) {
-      state.section = true
-      stream.skipToEnd()
-      return 'header'
     }
     
     // section
