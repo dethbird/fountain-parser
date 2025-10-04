@@ -24,10 +24,15 @@
   text-transform: uppercase;
 }
 
-/* Dialogue/Action */
-.cm-string {
+/* Dialogue (after character names) */
+.cm-variable-2 {
   color: #E0E0E0 !important;
   padding-left: 40px;
+}
+
+/* Action Lines (default text, no special class) */
+.cm-line {
+  color: #F5F5F5 !important;
 }
 
 /* Parentheticals in dialogue */
@@ -36,10 +41,11 @@
   font-style: italic;
 }
 
-/* Dual dialogue marker */
+/* Dual dialogue marker (character names with ^) */
 .cm-strong {
   color: #FFB74D !important;
   font-weight: bold;
+  text-transform: uppercase;
 }
 
 /* Scene Headings */

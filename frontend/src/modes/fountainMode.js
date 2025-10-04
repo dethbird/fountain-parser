@@ -24,13 +24,67 @@ const fountainLanguage = StreamLanguage.define({
       if (match) {
         stream.match(']]')
         state.note = false
-        return 'fountain-note'
+        return 'comment'
       } else {
         stream.skipToEnd()
-        return 'fountain-note'
+        return 'comment'
       }
     }
 
+    // transitions - check before everything else
+    if (stream.match(BLOCK_REGEX.TRANSITION)) {
+      stream.skipToEnd()
+      return 'keyword'
+    }
+    
+    if (stream.match(BLOCK_REGEX.TRANSITION_POWER_USER)) {
+      stream.skipToEnd()
+      return 'keyword'
+    }
+
+    // Check for new character lines BEFORE checking character_extended state
+    // character / dialogue
+    if (match = stream.match(/^([A-Z][A-Z0-9'\-. ]+([A-Z0-9'\-. ])+)/)) {
+      state.character_extended = false // Reset state for new character
+      stream.eatSpace()
+      nextChar = stream.peek()
+      if (nextChar == '^') {
+        stream.next() // consume the ^
+        state.character_extended = true
+        return 'variable' // dual dialogue characters styled same as regular characters
+      } else if (nextChar == '(') {
+        state.character_extended = true
+        return 'variable'
+      } else if (nextChar && nextChar !== '(' && nextChar !== '^') {
+        stream.skipToEnd()
+        return null
+      }
+      state.character_extended = true
+      stream.skipToEnd()
+      return 'variable'
+    }
+    
+    if (match = stream.match(/^([@][A-Za-z]+)/)) {
+      state.character_extended = false // Reset state for new character
+      stream.eatSpace()
+      nextChar = stream.peek()
+      if (nextChar == '^') {
+        stream.next() // consume the ^
+        state.character_extended = true
+        return 'variable' // dual dialogue characters styled same as regular characters
+      } else if (nextChar == '(') {
+        state.character_extended = true
+        return 'variable'
+      } else if (nextChar && nextChar !== '(' && nextChar !== '^') {
+        stream.skipToEnd()
+        return null
+      }
+      state.character_extended = true
+      stream.skipToEnd()
+      return 'variable'
+    }
+
+    // Now check character_extended state for dialogue/parentheticals
     if (state.character_extended) {
       nextChar = stream.peek()
       if (nextChar == '(') {
@@ -43,14 +97,10 @@ const fountainLanguage = StreamLanguage.define({
           stream.skipToEnd()
           return null
         }
-      } else if (nextChar == '^') {
-        stream.next()
-        stream.skipToEnd()
-        return 'strong'
       }
 
       stream.skipToEnd()
-      return 'string'
+      return 'variable-2'  // Use variable-2 for dialogue to distinguish from action
     }
 
     // section subelements
@@ -72,17 +122,6 @@ const fountainLanguage = StreamLanguage.define({
         state.section_level = false
         return null
       }
-    }
-    
-    // transitions - check before everything else
-    if (stream.match(BLOCK_REGEX.TRANSITION)) {
-      stream.skipToEnd()
-      return 'keyword'
-    }
-    
-    if (stream.match(BLOCK_REGEX.TRANSITION_POWER_USER)) {
-      stream.skipToEnd()
-      return 'keyword'
     }
     
     // title
@@ -107,37 +146,6 @@ const fountainLanguage = StreamLanguage.define({
       return `atom`
     }
     
-    // character / dialogue
-    if (match = stream.match(/^([A-Z][A-Z0-9'\-. ]+([A-Z0-9'\-. ])+)/)) {
-      stream.eatSpace()
-      nextChar = stream.peek()
-      if (nextChar && nextChar !== '(' && nextChar !== '^') {
-        stream.skipToEnd()
-        return null
-      } else if (nextChar == '(' || nextChar == '^') {
-        state.character_extended = true
-        return 'variable'
-      }
-      state.character_extended = true
-      stream.skipToEnd()
-      return 'variable'
-    }
-    
-    if (match = stream.match(/^([@][A-Za-z]+)/)) {
-      stream.eatSpace()
-      nextChar = stream.peek()
-      if (nextChar && nextChar !== '(' && nextChar !== '^') {
-        stream.skipToEnd()
-        return null
-      } else if (nextChar == '(' || nextChar == '^') {
-        state.character_extended = true
-        return 'variable'
-      }
-      state.character_extended = true
-      stream.skipToEnd()
-      return 'variable'
-    }
-
     // lyrics
     if (stream.match(/^~ /)) {
       stream.skipToEnd()
@@ -167,7 +175,7 @@ const fountainLanguage = StreamLanguage.define({
     }
 
     stream.skipToEnd()
-    return 'string'
+    return null  // Action lines get no special token (default styling)
   },
 
   blankLine(state) {
