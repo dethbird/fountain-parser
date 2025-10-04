@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
+import { usePreviewWorker } from './hooks/usePreviewWorker'
 
 function App() {
-  const [code, setCode] = useState(`FADE IN:
+  const defaultScript = `FADE IN:
 
 EXT. COFFEE SHOP - DAY
 
@@ -15,10 +16,14 @@ I think I've got it!
 
 She closes the laptop with satisfaction.
 
-FADE OUT.`)
+FADE OUT.`
+
+  const [code, setCode] = useState(defaultScript)
+  const { blocks, processText } = usePreviewWorker(defaultScript)
 
   const handleCodeChange = (newCode) => {
     setCode(newCode)
+    processText(newCode)
   }
 
   return (
@@ -43,9 +48,9 @@ FADE OUT.`)
             <div className="box preview-box">
               <h3 className="title is-6">Live Preview</h3>
               <div className="preview-content">
-                {code.split('\n').map((line, index) => (
-                  <div key={index} className="preview-line">
-                    {line || '\u00A0'}
+                {blocks.map((block) => (
+                  <div key={block.id} className="preview-line">
+                    {block.text || '\u00A0'}
                   </div>
                 ))}
               </div>
