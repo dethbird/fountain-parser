@@ -1,0 +1,210 @@
+/**
+ * Fountain Mode CSS Styles for CodeMirror 6
+ * Styling for fountain screenplay syntax highlighting
+ */
+
+/* Scene Headings */
+.cm-fountain-heading {
+  font-weight: bold;
+  color: #4CAF50;
+  text-transform: uppercase;
+}
+
+/* Character Names */
+.cm-fountain-character {
+  font-weight: bold;
+  color: #2196F3;
+  text-transform: uppercase;
+}
+
+/* Character Parentheticals */
+.cm-fountain-parenthetical {
+  color: #9E9E9E;
+  font-style: italic;
+}
+
+/* Dual Dialogue Indicator */
+.cm-fountain-dual {
+  color: #FF9800;
+  font-weight: bold;
+}
+
+/* Dialogue */
+.cm-fountain-dialogue {
+  color: inherit;
+  margin-left: 20px;
+}
+
+/* Notes */
+.cm-fountain-note {
+  color: #795548;
+  background-color: rgba(121, 85, 72, 0.1);
+  font-style: italic;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Action Lines */
+.cm-fountain-action {
+  color: inherit;
+}
+
+/* Transitions */
+.cm-fountain-transition {
+  font-weight: bold;
+  color: #9C27B0;
+  text-align: right;
+}
+
+/* Lyrics */
+.cm-fountain-lyrics {
+  color: #E91E63;
+  font-style: italic;
+}
+
+/* Synopsis */
+.cm-fountain-synopsis {
+  color: #607D8B;
+  font-style: italic;
+  background-color: rgba(96, 125, 139, 0.1);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Page Breaks */
+.cm-fountain-page-break {
+  color: #FF5722;
+  font-weight: bold;
+  text-align: center;
+  border-top: 2px solid #FF5722;
+  border-bottom: 2px solid #FF5722;
+  padding: 4px 0;
+}
+
+/* Title Page Elements */
+.cm-fountain-title {
+  font-weight: bold;
+  color: #3F51B5;
+  text-transform: uppercase;
+}
+
+/* Section Headings */
+.cm-fountain-section-1 {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #F44336;
+  text-transform: uppercase;
+}
+
+.cm-fountain-section-2 {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #FF9800;
+}
+
+.cm-fountain-section-3 {
+  font-weight: bold;
+  color: #FFC107;
+}
+
+.cm-fountain-section-4 {
+  font-weight: bold;
+  color: #FFEB3B;
+}
+
+/* Section Sub-elements */
+.cm-fountain-milestone {
+  color: #8BC34A;
+  font-weight: bold;
+}
+
+.cm-fountain-duration {
+  color: #00BCD4;
+  font-family: monospace;
+}
+
+.cm-fountain-image {
+  color: #E91E63;
+  text-decoration: underline;
+}
+
+.cm-fountain-audio {
+  color: #9C27B0;
+  text-decoration: underline;
+}
+
+/* Dark theme adjustments */
+.cm-theme-dark .cm-fountain-heading {
+  color: #81C784;
+}
+
+.cm-theme-dark .cm-fountain-character {
+  color: #64B5F6;
+}
+
+.cm-theme-dark .cm-fountain-parenthetical {
+  color: #BDBDBD;
+}
+
+.cm-theme-dark .cm-fountain-dual {
+  color: #FFB74D;
+}
+
+.cm-theme-dark .cm-fountain-note {
+  color: #A1887F;
+  background-color: rgba(161, 136, 127, 0.15);
+}
+
+.cm-theme-dark .cm-fountain-transition {
+  color: #CE93D8;
+}
+
+.cm-theme-dark .cm-fountain-lyrics {
+  color: #F48FB1;
+}
+
+.cm-theme-dark .cm-fountain-synopsis {
+  color: #90A4AE;
+  background-color: rgba(144, 164, 174, 0.15);
+}
+
+.cm-theme-dark .cm-fountain-page-break {
+  color: #FF8A65;
+  border-color: #FF8A65;
+}
+
+.cm-theme-dark .cm-fountain-title {
+  color: #7986CB;
+}
+
+.cm-theme-dark .cm-fountain-section-1 {
+  color: #EF5350;
+}
+
+.cm-theme-dark .cm-fountain-section-2 {
+  color: #FFB74D;
+}
+
+.cm-theme-dark .cm-fountain-section-3 {
+  color: #FFD54F;
+}
+
+.cm-theme-dark .cm-fountain-section-4 {
+  color: #FFF176;
+}
+
+.cm-theme-dark .cm-fountain-milestone {
+  color: #AED581;
+}
+
+.cm-theme-dark .cm-fountain-duration {
+  color: #4DD0E1;
+}
+
+.cm-theme-dark .cm-fountain-image {
+  color: #F48FB1;
+}
+
+.cm-theme-dark .cm-fountain-audio {
+  color: #CE93D8;
+}
