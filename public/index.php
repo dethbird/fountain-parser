@@ -2,6 +2,8 @@
 declare(strict_types=1);
 
 use Slim\Factory\AppFactory;
+use Slim\Views\Twig;
+use Slim\Views\TwigMiddleware;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -13,6 +15,14 @@ if (file_exists($envFile)) {
 }
 
 $app = AppFactory::create();
+
+// Configure Twig
+$twig = Twig::create(__DIR__ . '/../templates', [
+    'cache' => false, // Set to a cache directory in production
+]);
+
+// Add Twig-View Middleware
+$app->add(TwigMiddleware::create($app, $twig));
 
 // Base path if deployed in a subdirectory
 $basePath = $_ENV['APP_BASE_PATH'] ?? '';

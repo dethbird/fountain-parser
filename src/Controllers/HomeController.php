@@ -5,20 +5,17 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Views\Twig;
 
 class HomeController
 {
     public function index(Request $request, Response $response, array $args): Response
     {
-        $data = [
-            'message' => 'Welcome to Fountain Parser API',
-            'version' => '1.0.0',
-            'endpoints' => [
-                'health' => '/api/health'
-            ]
-        ];
+        $view = Twig::fromRequest($request);
         
-        $response->getBody()->write(json_encode($data, JSON_PRETTY_PRINT));
-        return $response->withHeader('Content-Type', 'application/json');
+        return $view->render($response, 'index.html.twig', [
+            'title' => 'Fountain Parser - Home',
+            'version' => '1.0.0'
+        ]);
     }
 }
