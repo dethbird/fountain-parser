@@ -1,0 +1,15 @@
+# Node
+node_modules/
+dist/
+.env*
+
+# PHP
+vendor/
+storage/
+*.log
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
