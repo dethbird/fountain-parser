@@ -3,13 +3,15 @@ import { render, screen } from '@testing-library/react'
 import App from '../App'
 
 describe('App', () => {
-  it('renders hello world message', () => {
+  it('renders editor heading', () => {
     render(<App />)
-    expect(screen.getByText(/Hello World - React App Loaded!/i)).toBeInTheDocument()
+    expect(screen.getByText(/Fountain Editor/i)).toBeInTheDocument()
   })
 
-  it('displays fountain processor component', () => {
+  it('renders preview heading', () => {
     render(<App />)
-    expect(screen.getByText(/Fountain Text Processor/i)).toBeInTheDocument()
+    expect(screen.getByText(/Live Preview/i)).toBeInTheDocument()
   })
+
+  // Keep tests focused on stable UI headings rather than sample content
 })

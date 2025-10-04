@@ -70,7 +70,12 @@
   text-decoration: underline !important;
   color: #CE93D8 !important;
   text-transform: uppercase;
-  text-align: right;
+  /* Keep transitions flush-left */
+  text-align: left !important;
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
 }
 
 /* Notes [[like this]] */
