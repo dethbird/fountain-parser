@@ -23,8 +23,7 @@
     "franc": "^6.1.0",
     "retext": "^9.0.0",
     "retext-pos": "^5.0.0",
-    "retext-keywords": "^8.0.0",
-    "nlp-compromise": "^14.12.0"
+    "retext-keywords": "^8.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
@@ -37,7 +36,10 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "@types/natural": "^5.1.4"
+    "@types/natural": "^5.1.4",
+    "@testing-library/react": "^14.2.1",
+    "@testing-library/jest-dom": "^6.4.2",
+    "jsdom": "^24.0.0"
   },
   "engines": {
     "node": ">=18.0.0"
