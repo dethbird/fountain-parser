@@ -38,7 +38,7 @@ export const BLOCK_REGEX = {
   SCENE_NUMBER: /( *#(.+)# *)/,
   
   // Transitions
-  TRANSITION: /^((?:FADE (?:TO BLACK|OUT)|CUT TO BLACK)\.|.+ TO\:)/i,
+  TRANSITION: /^((?:FADE (?:IN|TO BLACK|OUT)|CUT TO BLACK)\:?\.?|.+ TO\:)/i,
   TRANSITION_POWER_USER: /^(?:> )(.+)/i,
   
   // Metadata and structure

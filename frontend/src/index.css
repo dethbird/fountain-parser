@@ -56,6 +56,12 @@
   font-style: italic;
 }
 
+.cm-strong {
+  font-weight: bold;
+  color: #9C27B0;
+  text-transform: uppercase;
+}
+
 .cm-processing {
   color: #607D8B;
   font-style: italic;

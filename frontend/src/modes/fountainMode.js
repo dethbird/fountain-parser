@@ -96,6 +96,17 @@ const fountainLanguage = StreamLanguage.define({
       return 'header'
     }
     
+    // transitions - check before character names
+    if (stream.match(BLOCK_REGEX.TRANSITION)) {
+      stream.skipToEnd()
+      return 'strong'
+    }
+    
+    if (stream.match(BLOCK_REGEX.TRANSITION_POWER_USER)) {
+      stream.skipToEnd()
+      return 'strong'
+    }
+    
     // character / dialogue
     if (match = stream.match(/^([A-Z][A-Z0-9'\-. ]+([A-Z0-9'\-. ])+)/)) {
       stream.eatSpace()
