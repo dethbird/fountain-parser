@@ -1,8 +1,25 @@
 import React, { useState } from 'react'
 import './App.css'
+import CodeMirrorEditor from './components/CodeMirrorEditor'
 
 function App() {
-  const [code, setCode] = useState('FADE IN:\n\nEXT. COFFEE SHOP - DAY\n\nJANE sits at a small table, typing on her laptop.\n\nJANE\n(looking up from screen)\nI think I\'ve got it!')
+  const [code, setCode] = useState(`FADE IN:
+
+EXT. COFFEE SHOP - DAY
+
+JANE sits at a small table, typing on her laptop.
+
+JANE
+(looking up from screen)
+I think I've got it!
+
+She closes the laptop with satisfaction.
+
+FADE OUT.`)
+
+  const handleCodeChange = (newCode) => {
+    setCode(newCode)
+  }
 
   return (
     <div className="fountain-app">
@@ -13,12 +30,10 @@ function App() {
           <div className="column is-half-desktop">
             <div className="box editor-box">
               <h3 className="title is-6">Fountain Editor</h3>
-              <textarea
-                className="textarea editor-textarea"
-                placeholder="Type your fountain screenplay here..."
+              <CodeMirrorEditor
                 value={code}
-                onChange={(e) => setCode(e.target.value)}
-                rows="20"
+                onChange={handleCodeChange}
+                placeholder="Type your fountain screenplay here..."
               />
             </div>
           </div>

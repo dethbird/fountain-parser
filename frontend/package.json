@@ -23,7 +23,13 @@
     "franc": "^6.1.0",
     "retext": "^9.0.0",
     "retext-pos": "^5.0.0",
-    "retext-keywords": "^8.0.0"
+    "retext-keywords": "^8.0.0",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.26.3",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@codemirror/commands": "^6.3.3",
+    "@codemirror/language": "^6.10.1",
+    "@codemirror/search": "^6.5.6"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
