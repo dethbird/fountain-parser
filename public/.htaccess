@@ -1,17 +1,6 @@
-\
-# Front controller pattern for Slim
 <IfModule mod_rewrite.c>
-  Options -MultiViews
-  RewriteEngine On
-
-  # Never rewrite built assets
-  RewriteRule ^assets/ - [L]
-
-  # Serve existing files/dirs as-is
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
-  RewriteRule ^ - [L]
-
-  # Everything else goes to Slim
-  RewriteRule ^ index.php [QSA,L]
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.php [QSA,L]
 </IfModule>
