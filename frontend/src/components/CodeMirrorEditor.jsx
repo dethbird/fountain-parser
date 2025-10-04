@@ -5,6 +5,7 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap } from '@codemirror/commands'
 import { bracketMatching, indentOnInput, foldGutter } from '@codemirror/language'
 import { searchKeymap } from '@codemirror/search'
+import { javascript } from '@codemirror/lang-javascript'
 
 const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain screenplay here..." }) => {
   const editorRef = useRef(null)
@@ -20,6 +21,7 @@ const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain s
       foldGutter(),
       bracketMatching(),
       indentOnInput(),
+      javascript(),
       keymap.of([...defaultKeymap, ...searchKeymap]),
       oneDark,
       EditorView.updateListener.of((update) => {
