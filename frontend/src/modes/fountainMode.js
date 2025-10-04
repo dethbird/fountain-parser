@@ -164,14 +164,18 @@ const fountainLanguage = StreamLanguage.define({
       return 'operator'
     }
     
-    // check for notes
-    if (stream.match(/\[\[/g)) {
-      match = stream.skipTo(']]')
-      if (!match) {
-        stream.backUp(2)
+    // check for notes - handle complete note in one token
+    if (stream.match(/\[\[/)) {
+      // consume everything until ]] or end of line
+      while (!stream.eol()) {
+        if (stream.match(/\]\]/)) {
+          return 'comment' // complete note found
+        }
+        stream.next()
       }
+      // reached end of line without closing ]], continue note on next line
       state.note = true
-      return null
+      return 'comment'
     }
 
     stream.skipToEnd()
