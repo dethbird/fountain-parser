@@ -50,8 +50,8 @@
                     <div id="root">
                         <!-- React app will mount here -->
                         <div class="notification is-info">
-                            <i class="fas fa-rocket"></i>
-                            Ready for React application
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Loading React application...
                         </div>
                     </div>
                 </div>
@@ -70,13 +70,46 @@
 {% endblock %}
 
 {% block scripts %}
-    <!-- You can add React/JavaScript bundle here when ready -->
-    <script>
-        // Placeholder for React app initialization
-        console.log('Fountain Parser ready for React app');
+    <!-- Load React App Bundle -->
+    <!-- In development, you'll run `npm run build` in the frontend directory first -->
+    <!-- The manifest.json will contain the actual filenames with hashes -->
+    <script type="module">
+        // Check if built assets exist
+        const checkAssets = async () => {
+            try {
+                // Try to load the built React app
+                // You'll need to update these paths after building
+                const response = await fetch('/assets/manifest.json');
+                if (response.ok) {
+                    const manifest = await response.json();
+                    // Load the main entry point
+                    const script = document.createElement('script');
+                    script.type = 'module';
+                    script.src = '/assets/' + manifest['src/main.jsx'].file;
+                    document.head.appendChild(script);
+                } else {
+                    throw new Error('No built assets found');
+                }
+            } catch (error) {
+                console.warn('React app not built yet. Run `npm run build` in frontend directory.');
+                // Show development message
+                document.getElementById('root').innerHTML = `
+                    <div class="notification is-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        React app not built yet. 
+                        <br><br>
+                        <strong>To build the React app:</strong>
+                        <br>1. <code>cd frontend</code>
+                        <br>2. <code>npm install</code>
+                        <br>3. <code>npm run build</code>
+                        <br><br>
+                        <strong>For development:</strong>
+                        <br>Run <code>npm run dev</code> in the frontend directory
+                    </div>
+                `;
+            }
+        };
         
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Bulma and Fountain Parser loaded successfully');
-        });
+        checkAssets();
     </script>
 {% endblock %}

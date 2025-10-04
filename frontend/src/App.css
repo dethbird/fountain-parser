@@ -1,0 +1,46 @@
+/* App-specific styles */
+.fountain-app {
+  padding: 0;
+}
+
+.fountain-app .notification {
+  margin-bottom: 1.5rem;
+}
+
+.text-processor {
+  margin-top: 2rem;
+}
+
+.processor-results {
+  background-color: var(--bulma-scheme-main-ter, #1a1a1a);
+  border: 1px solid var(--bulma-border, #363636);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.processing-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.stat-card {
+  background-color: var(--bulma-scheme-main-bis, #121212);
+  padding: 1rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--bulma-primary, #3e8ed0);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--bulma-text-weak, #b5b5b5);
+  margin-top: 0.25rem;
+}
