@@ -1,0 +1,14 @@
+\
+# Front controller pattern for Slim
+<IfModule mod_rewrite.c>
+  Options -MultiViews
+  RewriteEngine On
+
+  # Serve existing files directly
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Otherwise route to index.php
+  RewriteRule ^ index.php [QSA,L]
+</IfModule>
