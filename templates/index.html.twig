@@ -3,10 +3,70 @@
 {% block title %}Fountain Parser - Home{% endblock %}
 
 {% block content %}
-    <h1>Fountain Parser</h1>
-    <div id="root">
-        <!-- React app will mount here -->
-    </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-1">
+                    <i class="fas fa-fountain-pen"></i>
+                    Fountain Parser
+                </h1>
+                <h2 class="subtitle is-4">
+                    Parse and process fountain screenplay format
+                </h2>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <!-- Navigation/Info Card -->
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">
+                                <i class="fas fa-info-circle"></i>
+                                &nbsp;API Information
+                            </p>
+                        </header>
+                        <div class="card-content">
+                            <div class="content">
+                                <p>Available endpoints:</p>
+                                <ul>
+                                    <li><strong>Health Check:</strong> <code>/api/health</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- React App Root -->
+            <div class="main-content">
+                <div class="box">
+                    <h3 class="title is-4">Application</h3>
+                    <div id="root">
+                        <!-- React app will mount here -->
+                        <div class="notification is-info">
+                            <i class="fas fa-rocket"></i>
+                            Ready for React application
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Fountain Parser</strong> - A screenplay parsing application.
+            </p>
+        </div>
+    </footer>
 {% endblock %}
 
 {% block scripts %}
@@ -14,5 +74,9 @@
     <script>
         // Placeholder for React app initialization
         console.log('Fountain Parser ready for React app');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Bulma and Fountain Parser loaded successfully');
+        });
     </script>
 {% endblock %}

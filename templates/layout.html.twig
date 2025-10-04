@@ -4,38 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Fountain Parser{% endblock %}</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     {% block stylesheets %}
     <style>
+        /* Bulma Dark Mode Implementation */
+        :root {
+            --bulma-scheme-main: #0a0a0a;
+            --bulma-scheme-main-bis: #121212;
+            --bulma-scheme-main-ter: #1a1a1a;
+            --bulma-background: #0a0a0a;
+            --bulma-border: #363636;
+            --bulma-text: #f5f5f5;
+            --bulma-text-weak: #b5b5b5;
+            --bulma-text-strong: #ffffff;
+        }
+        
+        /* Apply dark theme */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
+            background-color: var(--bulma-scheme-main) !important;
+            color: var(--bulma-text) !important;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        .section {
+            background-color: var(--bulma-scheme-main) !important;
         }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #007acc;
-            padding-bottom: 10px;
+        
+        .card {
+            background-color: var(--bulma-scheme-main-ter) !important;
+            color: var(--bulma-text) !important;
+        }
+        
+        .card-header {
+            background-color: var(--bulma-scheme-main-bis) !important;
+            border-bottom: 1px solid var(--bulma-border) !important;
+        }
+        
+        .card-header-title {
+            color: var(--bulma-text) !important;
+        }
+        
+        .box {
+            background-color: var(--bulma-scheme-main-ter) !important;
+            color: var(--bulma-text) !important;
+        }
+        
+        .footer {
+            background-color: var(--bulma-scheme-main-bis) !important;
+            color: var(--bulma-text) !important;
+        }
+        
+        .title {
+            color: var(--bulma-text-strong) !important;
+        }
+        
+        .subtitle {
+            color: var(--bulma-text-weak) !important;
+        }
+        
+        /* Custom styles */
+        .hero-body {
+            padding: 3rem 1.5rem;
         }
         #root {
-            margin-top: 20px;
+            margin-top: 2rem;
             min-height: 400px;
+        }
+        .main-content {
+            padding: 2rem 0;
         }
     </style>
     {% endblock %}
 </head>
 <body>
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
+    {% block content %}{% endblock %}
     
     {% block scripts %}{% endblock %}
 </body>
