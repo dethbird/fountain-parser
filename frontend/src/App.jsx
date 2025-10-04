@@ -4,9 +4,9 @@ import './App.css'
 function App() {
   return (
     <div className="fountain-app">
-      <div className="notification is-success is-light">
+      <div className="notification is-success">
         <h4 className="title is-5">
-          <i className="fas fa-react"></i>
+          <i className="fab fa-react"></i>
           Hello World - React App Loaded!
         </h4>
         <p>
