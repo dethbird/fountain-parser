@@ -87,6 +87,12 @@ function processText(text) {
       type = 'synopsis'
       className = 'synopsis'
     }
+    // Page break
+    else if (/^={3,}$/.test(trimmed)) {
+      state.character_extended = false
+      type = 'page_break'
+      className = 'page-break'
+    }
     // Default: action
     else {
       state.character_extended = false

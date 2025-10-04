@@ -16,7 +16,37 @@ I think I've got it!
 
 She closes the laptop with satisfaction.
 
-FADE OUT.`
+FADE OUT.
+
+===
+
+# Act
+New Act
+
+## Scene
+New Scene
+
+### Sequence
+New sequence
+
+#### panel
+a panel
+
+#### panel 2
+another panel
+
+~ some lyrics
+
+[[ i am a note ]]
+
+DAVE^
+JANE^
+DONNY^
+bees!
+
+- a milestone
+
+= a synopsis`
 
   const [code, setCode] = useState(defaultScript)
   const { blocks, processText } = usePreviewWorker(defaultScript)

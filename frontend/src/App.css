@@ -94,6 +94,16 @@
   margin-bottom: 1.5em;
 }
 
+.preview-line.page-break {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  padding: 0.5em 0;
+}
+
 .preview-line.blank-line {
   height: 1.5em;
 }
