@@ -49,7 +49,11 @@ FADE OUT.`
               <h3 className="title is-6">Live Preview</h3>
               <div className="preview-content">
                 {blocks.map((block) => (
-                  <div key={block.id} className="preview-line">
+                  <div 
+                    key={block.id} 
+                    className={`preview-line ${block.className || ''}`}
+                    data-type={block.type}
+                  >
                     {block.text || '\u00A0'}
                   </div>
                 ))}
