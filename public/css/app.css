@@ -1,0 +1,67 @@
+/* Bulma Dark Mode Implementation */
+:root {
+    --bulma-scheme-main: #0a0a0a;
+    --bulma-scheme-main-bis: #121212;
+    --bulma-scheme-main-ter: #1a1a1a;
+    --bulma-background: #0a0a0a;
+    --bulma-border: #363636;
+    --bulma-text: #f5f5f5;
+    --bulma-text-weak: #b5b5b5;
+    --bulma-text-strong: #ffffff;
+}
+
+/* Apply dark theme */
+body {
+    background-color: var(--bulma-scheme-main) !important;
+    color: var(--bulma-text) !important;
+}
+
+.section {
+    background-color: var(--bulma-scheme-main) !important;
+}
+
+.card {
+    background-color: var(--bulma-scheme-main-ter) !important;
+    color: var(--bulma-text) !important;
+}
+
+.card-header {
+    background-color: var(--bulma-scheme-main-bis) !important;
+    border-bottom: 1px solid var(--bulma-border) !important;
+}
+
+.card-header-title {
+    color: var(--bulma-text) !important;
+}
+
+.box {
+    background-color: var(--bulma-scheme-main-ter) !important;
+    color: var(--bulma-text) !important;
+}
+
+.footer {
+    background-color: var(--bulma-scheme-main-bis) !important;
+    color: var(--bulma-text) !important;
+}
+
+.title {
+    color: var(--bulma-text-strong) !important;
+}
+
+.subtitle {
+    color: var(--bulma-text-weak) !important;
+}
+
+/* Custom styles */
+.hero-body {
+    padding: 3rem 1.5rem;
+}
+
+#root {
+    margin-top: 2rem;
+    min-height: 400px;
+}
+
+.main-content {
+    padding: 2rem 0;
+}
