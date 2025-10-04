@@ -71,37 +71,64 @@
 
 {% block scripts %}
     <!-- Load React App Bundle -->
-    <!-- In development, you'll run `npm run build` in the frontend directory first -->
-    <!-- The manifest.json will contain the actual filenames with hashes -->
     <script type="module">
         // Check if built assets exist
         const checkAssets = async () => {
             try {
-                // Try to load the built React app
-                // You'll need to update these paths after building
-                const response = await fetch('/assets/manifest.json');
+                // Try to load the built React app from the correct manifest location
+                const response = await fetch('/assets/.vite/manifest.json');
                 if (response.ok) {
                     const manifest = await response.json();
+                    console.log('Manifest loaded:', manifest);
+                    
                     // Load the main entry point
-                    const script = document.createElement('script');
-                    script.type = 'module';
-                    script.src = '/assets/' + manifest['src/main.jsx'].file;
-                    document.head.appendChild(script);
+                    const mainEntry = manifest['src/main.jsx'];
+                    if (mainEntry && mainEntry.file) {
+                        console.log('Loading main JS file:', mainEntry.file);
+                        
+                        const script = document.createElement('script');
+                        script.type = 'module';
+                        script.src = '/assets/' + mainEntry.file;
+                        script.onload = () => console.log('React script loaded successfully');
+                        script.onerror = (e) => {
+                            console.error('Failed to load React script:', e);
+                            throw new Error('Script loading failed');
+                        };
+                        document.head.appendChild(script);
+                        
+                        // Load CSS if it exists
+                        if (mainEntry.css && mainEntry.css.length > 0) {
+                            mainEntry.css.forEach(cssFile => {
+                                console.log('Loading CSS file:', cssFile);
+                                const link = document.createElement('link');
+                                link.rel = 'stylesheet';
+                                link.href = '/assets/' + cssFile;
+                                link.onload = () => console.log('CSS loaded:', cssFile);
+                                link.onerror = (e) => console.error('Failed to load CSS:', cssFile, e);
+                                document.head.appendChild(link);
+                            });
+                        }
+                    } else {
+                        throw new Error('No main entry found in manifest');
+                    }
                 } else {
-                    throw new Error('No built assets found');
+                    throw new Error(`Manifest not found: ${response.status} ${response.statusText}`);
                 }
             } catch (error) {
-                console.warn('React app not built yet. Run `npm run build` in frontend directory.');
+                console.error('React app loading failed:', error);
                 // Show development message
                 document.getElementById('root').innerHTML = `
-                    <div class="notification is-warning">
+                    <div class="notification is-danger">
                         <i class="fas fa-exclamation-triangle"></i>
-                        React app not built yet. 
+                        <strong>React app failed to load</strong>
                         <br><br>
-                        <strong>To build the React app:</strong>
-                        <br>1. <code>cd frontend</code>
-                        <br>2. <code>npm install</code>
-                        <br>3. <code>npm run build</code>
+                        <strong>Error:</strong> ${error.message}
+                        <br><br>
+                        <strong>Troubleshooting:</strong>
+                        <br>1. Check browser console for detailed errors
+                        <br>2. Verify files exist in <code>/assets/</code> directory
+                        <br>3. Try rebuilding: <code>cd frontend && npm run build</code>
+                        <br>4. Check Apache MIME types for .js files
                         <br><br>
                         <strong>For development:</strong>
                         <br>Run <code>npm run dev</code> in the frontend directory

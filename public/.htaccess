@@ -4,11 +4,14 @@
   Options -MultiViews
   RewriteEngine On
 
-  # Serve existing files directly
+  # Never rewrite built assets
+  RewriteRule ^assets/ - [L]
+
+  # Serve existing files/dirs as-is
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Otherwise route to index.php
+  # Everything else goes to Slim
   RewriteRule ^ index.php [QSA,L]
 </IfModule>

@@ -17,13 +17,7 @@
   },
   "dependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "natural": "^6.0.4",
-    "compromise": "^14.12.0",
-    "franc": "^6.1.0",
-    "retext": "^9.0.0",
-    "retext-pos": "^5.0.0",
-    "retext-keywords": "^8.0.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

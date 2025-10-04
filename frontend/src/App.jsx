@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import FountainProcessor from './components/FountainProcessor'
 import './App.css'
 
 function App() {
@@ -24,8 +23,7 @@ function App() {
           Hello World - React App Loaded!
         </h4>
         <p>
-          Welcome to the Fountain Parser React application. This app includes lexicological 
-          processing capabilities for analyzing screenplay text.
+          Welcome to the Fountain Parser React application. This is a simple Hello World app.
         </p>
         {apiHealth && (
           <div className="mt-3">
@@ -38,7 +36,14 @@ function App() {
         )}
       </div>
 
-      <FountainProcessor />
+      <div className="box">
+        <h3 className="title is-4">Simple React Component</h3>
+        <p>This is a basic React component to test that everything is working correctly.</p>
+        <button className="button is-primary" onClick={() => alert('Hello from React!')}>
+          <i className="fas fa-hand-wave"></i>
+          Click Me!
+        </button>
+      </div>
     </div>
   )
 }

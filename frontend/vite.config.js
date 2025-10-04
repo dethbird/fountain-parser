@@ -7,13 +7,13 @@ export default defineConfig({
   build: {
     outDir: '../public/assets',
     emptyOutDir: true,
+    manifest: true,
     rollupOptions: {
+      input: 'src/main.jsx',
       output: {
         entryFileNames: 'app-[hash].js',
         chunkFileNames: 'chunk-[hash].js',
-        assetFileNames: 'asset-[hash].[ext]',
-        // Generate manifest for PHP to reference
-        manifest: true
+        assetFileNames: 'asset-[hash].[ext]'
       }
     }
   },
