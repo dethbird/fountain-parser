@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { EditorView, keymap, highlightActiveLine, lineNumbers } from '@codemirror/view'
+import { EditorView, keymap, highlightActiveLine, lineNumbers, Decoration, ViewPlugin } from '@codemirror/view'
 import { EditorState } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { defaultKeymap } from '@codemirror/commands'
@@ -8,7 +8,60 @@ import { searchKeymap } from '@codemirror/search'
 import fountainLanguage from '../modes/fountainMode.js'
 import '../index.css'
 
-const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain screenplay here..." }) => {
+// ViewPlugin: viewport-aware decorator that enforces .cm-* classes on lines
+const lineDecorator = ViewPlugin.fromClass(
+  class {
+    constructor(view) {
+      this.view = view
+      this.decorations = this.buildDecorations(view)
+    }
+
+    update(update) {
+      if (update.docChanged || update.viewportChanged) {
+        this.decorations = this.buildDecorations(update.view)
+      }
+    }
+
+    buildDecorations(view) {
+      const widgets = []
+      const { from, to } = view.viewport
+      const doc = view.state.doc
+
+      let line = doc.lineAt(from)
+      while (line.from <= to) {
+        const text = line.text.trim()
+        if (text) {
+          const upper = text.toUpperCase()
+
+          if (/^(?:FADE\s+(?:IN|OUT)|CUT TO BLACK)[:\.]?$/.test(upper) || /.+\sTO:$/.test(upper)) {
+            widgets.push(Decoration.line({ class: 'cm-keyword' }).range(line.from))
+            widgets.push(Decoration.mark({ class: 'cm-keyword' }).range(line.from, line.to))
+          } else if (/^(?:INT|EXT|I\/E)\.|^\./i.test(text)) {
+            widgets.push(Decoration.line({ class: 'cm-header' }).range(line.from))
+            widgets.push(Decoration.mark({ class: 'cm-header' }).range(line.from, line.to))
+          } else if (/^#{1,4}\s/.test(text)) {
+            widgets.push(Decoration.line({ class: 'cm-atom' }).range(line.from))
+            widgets.push(Decoration.mark({ class: 'cm-atom' }).range(line.from, line.to))
+          } else if (/^=\s/.test(text)) {
+            widgets.push(Decoration.line({ class: 'cm-synopsis' }).range(line.from))
+            widgets.push(Decoration.mark({ class: 'cm-synopsis' }).range(line.from, line.to))
+          } else if (/^@?[A-Z0-9 '\-\.]+(?:\^)?$/.test(text) && text === text.toUpperCase()) {
+            widgets.push(Decoration.line({ class: 'cm-variable' }).range(line.from))
+            widgets.push(Decoration.mark({ class: 'cm-variable' }).range(line.from, line.to))
+          }
+        }
+
+        if (line.to >= doc.length) break
+        line = doc.lineAt(line.to + 1)
+      }
+
+      return Decoration.set(widgets)
+    }
+  },
+  { decorations: v => v.decorations }
+)
+
+const CodeMirrorEditor = ({ value = '', onChange = () => {}, placeholder = 'Type your fountain screenplay here...' }) => {
   const editorRef = useRef(null)
   const viewRef = useRef(null)
 
@@ -22,49 +75,23 @@ const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain s
       bracketMatching(),
       indentOnInput(),
       fountainLanguage,
+      lineDecorator,
       keymap.of([...defaultKeymap, ...searchKeymap]),
       oneDark,
       EditorView.updateListener.of((update) => {
-        if (update.docChanged) {
-          const newValue = update.state.doc.toString()
-          onChange(newValue)
-        }
+        if (update.docChanged) onChange(update.state.doc.toString())
       }),
       EditorView.theme({
-        '&': {
-          height: '500px',
-          fontSize: '14px',
-        },
-        '.cm-content': {
-          padding: '12px',
-          minHeight: '500px',
-        },
-        '.cm-focused': {
-          outline: 'none',
-        },
-        '.cm-editor': {
-          borderRadius: '6px',
-        },
-        '.cm-scroller': {
-          fontFamily: '"Fira Code", "Courier New", monospace',
-        }
-      })
+        '&': { height: '500px', fontSize: '14px' },
+        '.cm-content': { padding: '12px', minHeight: '500px' },
+        '.cm-scroller': { fontFamily: "'Fira Code', 'Courier New', monospace" },
+      }),
     ]
 
-    const state = EditorState.create({
-      doc: value || '',
-      extensions: extensions
-    })
-
-    // Create the editor view
-    const view = new EditorView({
-      state,
-      parent: editorRef.current
-    })
-
+    const state = EditorState.create({ doc: value, extensions })
+    const view = new EditorView({ state, parent: editorRef.current })
     viewRef.current = view
 
-    // Cleanup function
     return () => {
       if (viewRef.current) {
         viewRef.current.destroy()
@@ -73,21 +100,14 @@ const CodeMirrorEditor = ({ value, onChange, placeholder = "Type your fountain s
     }
   }, [])
 
-  // Update editor content when value prop changes
   useEffect(() => {
-    if (viewRef.current && value !== viewRef.current.state.doc.toString()) {
-      const transaction = viewRef.current.state.update({
-        changes: {
-          from: 0,
-          to: viewRef.current.state.doc.length,
-          insert: value || ''
-        }
-      })
-      viewRef.current.dispatch(transaction)
-    }
+    const view = viewRef.current
+    if (!view) return
+    const current = view.state.doc.toString()
+    if (value !== current) view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: value } })
   }, [value])
 
-  return <div ref={editorRef} className="codemirror-wrapper" />
+  return <div ref={editorRef} className="codemirror-wrapper" data-placeholder={placeholder} />
 }
 
 export default CodeMirrorEditor

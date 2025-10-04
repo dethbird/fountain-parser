@@ -19,7 +19,7 @@
 
 /* Character Names */
 .cm-variable {
-  font-weight: bold;
+  font-weight: bold !important;
   color: #64B5F6 !important;
   text-transform: uppercase;
 }
@@ -59,7 +59,7 @@
 
 /* Scene Headings */
 .cm-header {
-  font-weight: bold;
+  font-weight: bold !important;
   color: #81C784 !important;
   text-transform: uppercase;
 }
@@ -97,6 +97,15 @@
   border-radius: 3px;
 }
 
+/* Synopsis lines */
+.cm-synopsis {
+  color: #90A4AE !important;
+  font-style: italic;
+  background-color: rgba(144, 164, 174, 0.15) !important;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
 /* Page Breaks === */
 .cm-operator {
   color: #FF8A65 !important;
@@ -117,7 +126,7 @@
 /* Section Headings */
 .cm-atom {
   color: #EF5350 !important;
-  font-weight: bold;
+  font-weight: bold !important;
   text-transform: uppercase;
 }
 

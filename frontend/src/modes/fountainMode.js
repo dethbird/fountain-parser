@@ -116,8 +116,8 @@ const fountainLanguage = StreamLanguage.define({
         }
       }
 
-      stream.skipToEnd()
-      return 'variable-2'  // Use variable-2 for dialogue to distinguish from action
+  stream.skipToEnd()
+  return 'string'  // dialogue uses 'string' token
     }
 
     // section subelements
