@@ -139,6 +139,24 @@
   margin: 0.5em 0;
 }
 
+/* Title Page Elements */
+.preview-line.title-page-title {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 2em 0 1em 0;
+  color: #1976d2;
+  letter-spacing: 0.1em;
+}
+
+.preview-line.title-page-element {
+  text-align: center;
+  margin: 0.5em 0;
+  font-weight: 500;
+  color: #424242;
+}
+
 .preview-line.blank-line {
   height: 1.5em;
 }

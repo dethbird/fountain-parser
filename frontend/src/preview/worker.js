@@ -99,6 +99,21 @@ function processText(text) {
       type = 'milestone'
       className = 'milestone'
     }
+    // Title page elements
+    else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
+      state.character_extended = false
+      const match = trimmed.match(/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i)
+      if (match) {
+        const key = match[1].toLowerCase()
+        if (key === 'title') {
+          type = 'title'
+          className = 'title-page-title'
+        } else {
+          type = 'title_page'
+          className = 'title-page-element'
+        }
+      }
+    }
     // Section markers (# ## ### ####)
     else if (/^#{1,4}\s/.test(trimmed)) {
       state.character_extended = false
@@ -121,7 +136,7 @@ function processText(text) {
     
     blocks.push({
       id: `line-${i}`,
-      text: line,
+      text: type === 'title' ? line.replace(/^title:\s*/i, '') : line,
       index: i,
       type,
       className,
