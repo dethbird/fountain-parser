@@ -1,11 +1,4 @@
 /* App-specific styles */
-.title-image {
-  height: 2.5rem;
-  width: auto;
-  vertical-align: middle;
-  margin-left: 0.5rem;
-}
-
 .fountain-app {
   padding: 0;
   height: 100vh;
@@ -36,6 +29,10 @@
 .fountain-app.header-hidden .editor-box .title,
 .fountain-app.header-hidden .preview-box .title {
   display: none;
+}
+
+.fountain-app.header-hidden .mobile-view-toggle {
+  display: none !important;
 }
 
 .fountain-app.header-hidden .preview-content {
@@ -108,6 +105,19 @@
 .preview-line {
   margin-bottom: 0;
   min-height: 1.5em;
+  transition: background-color 0.2s ease;
+  border-radius: 2px;
+  padding: 0 4px;
+}
+
+.preview-line:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.preview-line.current-line {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-left: 3px solid #61dafb;
+  padding-left: 8px;
 }
 
 /* Screenplay formatting */

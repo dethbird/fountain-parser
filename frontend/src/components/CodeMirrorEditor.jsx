@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { EditorView, keymap, highlightActiveLine, lineNumbers, Decoration, ViewPlugin } from '@codemirror/view'
 import { EditorState } from '@codemirror/state'
 import { oneDark } from '@codemirror/theme-one-dark'
@@ -70,9 +70,27 @@ const lineDecorator = ViewPlugin.fromClass(
   { decorations: v => v.decorations }
 )
 
-const CodeMirrorEditor = ({ value = '', onChange = () => {}, placeholder = 'Type your fountain screenplay here...' }) => {
+const CodeMirrorEditor = forwardRef(({ value = '', onChange = () => {}, onCursorChange = () => {}, placeholder = 'Type your fountain screenplay here...' }, ref) => {
   const editorRef = useRef(null)
   const viewRef = useRef(null)
+
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    scrollToLine: (lineNumber) => {
+      const view = viewRef.current
+      if (view) {
+        const line = view.state.doc.line(Math.max(1, Math.min(lineNumber + 1, view.state.doc.lines)))
+        view.dispatch({
+          selection: { anchor: line.from, head: line.from },
+          effects: EditorView.scrollIntoView(line.from, { y: 'center' })
+        })
+      }
+    },
+    focus: () => {
+      const view = viewRef.current
+      if (view) view.focus()
+    }
+  }), [])
 
   useEffect(() => {
     if (!editorRef.current) return
@@ -85,11 +103,72 @@ const CodeMirrorEditor = ({ value = '', onChange = () => {}, placeholder = 'Type
       indentOnInput(),
       fountainLanguage,
       lineDecorator,
-      keymap.of([...defaultKeymap, ...searchKeymap]),
+      EditorView.domEventHandlers({
+        mouseup: (event, view) => {
+          // Small delay to ensure cursor position is updated
+          setTimeout(() => {
+            const pos = view.state.selection.main.head
+            const line = view.state.doc.lineAt(pos)
+            onCursorChange(line.number - 1)
+          }, 10)
+        }
+      }),
       oneDark,
       EditorView.updateListener.of((update) => {
-        if (update.docChanged) onChange(update.state.doc.toString())
+        if (update.docChanged) {
+          onChange(update.state.doc.toString())
+        }
       }),
+      keymap.of([
+        {
+          key: 'ArrowUp',
+          run: (view) => {
+            const result = defaultKeymap.find(k => k.key === 'ArrowUp')?.run(view)
+            setTimeout(() => {
+              const pos = view.state.selection.main.head
+              const line = view.state.doc.lineAt(pos)
+              onCursorChange(line.number - 1)
+            }, 0)
+            return result
+          }
+        },
+        {
+          key: 'ArrowDown',
+          run: (view) => {
+            const result = defaultKeymap.find(k => k.key === 'ArrowDown')?.run(view)
+            setTimeout(() => {
+              const pos = view.state.selection.main.head
+              const line = view.state.doc.lineAt(pos)
+              onCursorChange(line.number - 1)
+            }, 0)
+            return result
+          }
+        },
+        {
+          key: 'PageUp',
+          run: (view) => {
+            const result = defaultKeymap.find(k => k.key === 'PageUp')?.run(view)
+            setTimeout(() => {
+              const pos = view.state.selection.main.head
+              const line = view.state.doc.lineAt(pos)
+              onCursorChange(line.number - 1)
+            }, 0)
+            return result
+          }
+        },
+        {
+          key: 'PageDown',
+          run: (view) => {
+            const result = defaultKeymap.find(k => k.key === 'PageDown')?.run(view)
+            setTimeout(() => {
+              const pos = view.state.selection.main.head
+              const line = view.state.doc.lineAt(pos)
+              onCursorChange(line.number - 1)
+            }, 0)
+            return result
+          }
+        }
+      ]),
       EditorView.theme({
         '&': { 
           fontSize: '14px',
@@ -130,6 +209,8 @@ const CodeMirrorEditor = ({ value = '', onChange = () => {}, placeholder = 'Type
   }, [value])
 
   return <div ref={editorRef} className="codemirror-wrapper" data-placeholder={placeholder} />
-}
+})
+
+CodeMirrorEditor.displayName = 'CodeMirrorEditor'
 
 export default CodeMirrorEditor

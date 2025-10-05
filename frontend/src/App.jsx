@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
@@ -11,7 +11,16 @@ function App() {
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
   const [isHeaderCompressed, setIsHeaderCompressed] = useState(false)
+  const [currentLine, setCurrentLine] = useState(0)
+  const previewRef = useRef(null)
+  const editorRef = useRef(null)
+  const blocksRef = useRef([])
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
+
+  // Keep blocks ref in sync
+  useEffect(() => {
+    blocksRef.current = blocks
+  }, [blocks])
 
   // Load default script on component mount
   useEffect(() => {
@@ -23,6 +32,38 @@ function App() {
     setCode(newCode)
     processText(newCode)
   }
+
+  // Handle cursor position changes from CodeMirror
+  const handleCursorChange = useCallback((lineNumber) => {
+    const currentBlocks = blocksRef.current
+    setCurrentLine(lineNumber)
+    
+    // Find the corresponding preview block and scroll to it
+    if (previewRef.current && currentBlocks.length > 0) {
+      // Find the block that corresponds to this line or the closest one before it
+      let targetBlock = null
+      for (let i = currentBlocks.length - 1; i >= 0; i--) {
+        if (currentBlocks[i].index <= lineNumber) {
+          targetBlock = currentBlocks[i]
+          break
+        }
+      }
+      
+      if (targetBlock) {
+        const blockElement = previewRef.current.querySelector(`[data-line-id="${targetBlock.id}"]`)
+        if (blockElement) {
+          blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+      }
+    }
+  }, []) // Remove blocks dependency since we're using ref
+
+  // Handle clicks on preview blocks to scroll editor
+  const handlePreviewClick = useCallback((lineIndex) => {
+    if (editorRef.current && editorRef.current.scrollToLine) {
+      editorRef.current.scrollToLine(lineIndex)
+    }
+  }, [])
 
   // Handle escape key for modals
   useEffect(() => {
@@ -109,8 +150,10 @@ function App() {
             <div className="box editor-box">
               <h3 className="title is-6">Editor</h3>
               <CodeMirrorEditor
+                ref={editorRef}
                 value={code}
                 onChange={handleCodeChange}
+                onCursorChange={handleCursorChange}
                 placeholder="Type your fountain screenplay here..."
               />
             </div>
@@ -120,7 +163,7 @@ function App() {
           <div className={`column is-half-desktop ${viewMode === 'edit' ? 'mobile-hidden' : ''}`}>
             <div className="box preview-box">
               <h3 className="title is-6">Live Preview</h3>
-              <div className="preview-content">
+              <div className="preview-content" ref={previewRef}>
                 {blocks.length === 0 ? (
                   <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
                     Loading preview...
@@ -129,8 +172,12 @@ function App() {
                   blocks.map((block) => (
                     <div 
                       key={block.id} 
-                      className={`preview-line ${block.className || ''}`}
+                      className={`preview-line ${block.className || ''} ${block.index === currentLine ? 'current-line' : ''}`}
                       data-type={block.type}
+                      data-line-id={block.id}
+                      data-line-index={block.index}
+                      onClick={() => handlePreviewClick(block.index)}
+                      style={{ cursor: 'pointer' }}
                     >
                       {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' || block.type === 'page_number' ? (
                         <div dangerouslySetInnerHTML={{ __html: block.text }} />
