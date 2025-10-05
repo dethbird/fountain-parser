@@ -229,10 +229,6 @@ function processText(text) {
     })
   }
   
-  // Log character information
-  console.log('Characters found:', characters)
-  console.log('Character line counts:', characterLineCounts)
-  
   return blocks
 }
 

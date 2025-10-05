@@ -534,9 +534,6 @@ function processText(text) {
     Array.from(characterLineCounts.entries()).sort((a, b) => a[0].localeCompare(b[0]))
   )
   
-  console.log('Characters found:', sortedCharacters)
-  console.log('Character line counts:', sortedLineCounts)
-  
   return {
     blocks,
     characters: sortedCharacters,
