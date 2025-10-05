@@ -228,6 +228,18 @@ function processTextFallback(text) {
     })
   }
   
+  // Add final page number if script doesn't end with a page break
+  if (blocks.length > 0 && blocks[blocks.length - 1].type !== 'page_break') {
+    blocks.push({
+      id: `final-page-number`,
+      text: `<div class="page-number">${currentPage}</div>`,
+      index: lines.length,
+      type: 'page_number',
+      className: 'page-number',
+      speaker: null
+    })
+  }
+  
   return blocks
 }
 
@@ -501,6 +513,18 @@ function processText(text) {
       type,
       className,
       speaker
+    })
+  }
+  
+  // Add final page number if script doesn't end with a page break
+  if (blocks.length > 0 && blocks[blocks.length - 1].type !== 'page_break') {
+    blocks.push({
+      id: \`final-page-number\`,
+      text: \`<div class="page-number">\${currentPage}</div>\`,
+      index: lines.length,
+      type: 'page_number',
+      className: 'page-number',
+      speaker: null
     })
   }
   

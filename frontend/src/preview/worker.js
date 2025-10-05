@@ -217,6 +217,18 @@ function processText(text) {
     })
   }
   
+  // Add final page number if script doesn't end with a page break
+  if (blocks.length > 0 && blocks[blocks.length - 1].type !== 'page_break') {
+    blocks.push({
+      id: `final-page-number`,
+      text: `<div class="page-number">${currentPage}</div>`,
+      index: lines.length,
+      type: 'page_number',
+      className: 'page-number',
+      speaker: null
+    })
+  }
+  
   // Log character information
   console.log('Characters found:', characters)
   console.log('Character line counts:', characterLineCounts)
