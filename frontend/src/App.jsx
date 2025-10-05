@@ -68,7 +68,7 @@ function App() {
           {/* Preview - Right Side */}
           <div className="column is-half-desktop">
             <div className="box preview-box">
-              <h3 className="title is-6">Live Preview {blocks.length > 0 && `(${blocks.length} blocks)`}</h3>
+              <h3 className="title is-6">Live Preview</h3>
               <div className="preview-content">
                 {blocks.length === 0 ? (
                   <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>

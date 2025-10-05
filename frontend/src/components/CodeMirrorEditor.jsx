@@ -89,9 +89,22 @@ const CodeMirrorEditor = ({ value = '', onChange = () => {}, placeholder = 'Type
         if (update.docChanged) onChange(update.state.doc.toString())
       }),
       EditorView.theme({
-        '&': { height: '500px', fontSize: '14px' },
-        '.cm-content': { padding: '12px', minHeight: '500px' },
-        '.cm-scroller': { fontFamily: "'Fira Code', 'Courier New', monospace" },
+        '&': { 
+          fontSize: '14px',
+          minHeight: '400px',  // Start with a reasonable minimum height
+          maxHeight: '80vh'    // Don't let it grow too large on screen
+        },
+        '.cm-content': { 
+          padding: '12px',
+          minHeight: '400px'   // Match the minimum height
+        },
+        '.cm-scroller': { 
+          fontFamily: "'Fira Code', 'Courier New', monospace",
+          height: 'auto !important'  // Allow auto-sizing
+        },
+        '.cm-editor': {
+          height: 'auto !important'  // Allow auto-sizing
+        }
       }),
     ]
 

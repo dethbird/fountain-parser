@@ -34,10 +34,13 @@
 .codemirror-wrapper {
   border-radius: 6px;
   overflow: hidden;
+  min-height: 400px;
+  height: auto;
 }
 
 .codemirror-wrapper .cm-editor {
   border: 1px solid var(--bulma-border, #363636);
+  height: auto !important;
 }
 
 .codemirror-wrapper .cm-editor.cm-focused {
@@ -273,7 +276,14 @@
     flex-direction: column;
   }
   
-  .codemirror-wrapper,
+  .codemirror-wrapper {
+    /* Allow auto-sizing based on content */
+    height: auto;
+    min-height: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  
   .preview-content {
     flex: 1;
   }
