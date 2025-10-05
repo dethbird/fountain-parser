@@ -87,6 +87,7 @@
 .preview-line.transition {
   text-align: right;
   font-weight: bold;
+  text-decoration: underline;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
 }
