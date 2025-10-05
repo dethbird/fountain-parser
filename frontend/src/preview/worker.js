@@ -99,6 +99,24 @@ function processText(text) {
       type = 'milestone'
       className = 'milestone'
     }
+    // Duration (MM:SS or H:MM:SS format)
+    else if (/^\d{1,2}:\d{2}$/.test(trimmed)) {
+      state.character_extended = false
+      type = 'duration'
+      className = 'duration'
+    }
+    // Image [i]url
+    else if (/^\[i\]https?:\/\/.+/i.test(trimmed)) {
+      state.character_extended = false
+      type = 'image'
+      className = 'image'
+    }
+    // Audio [a]url
+    else if (/^\[a\]https?:\/\/.+/i.test(trimmed)) {
+      state.character_extended = false
+      type = 'audio'
+      className = 'audio'
+    }
     // Title page elements
     else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
       state.character_extended = false
@@ -134,9 +152,24 @@ function processText(text) {
       className = 'action'
     }
     
+    let displayText = line
+    
+    // Special processing for different types
+    if (type === 'title') {
+      displayText = line.replace(/^title:\s*/i, '')
+    } else if (type === 'image') {
+      // Extract URL and create img tag
+      const url = line.replace(/^\[i\]/i, '')
+      displayText = `<img src="${url}" alt="Storyboard image" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin: 0.5em 0;" />`
+    } else if (type === 'audio') {
+      // Extract URL and create audio tag
+      const url = line.replace(/^\[a\]/i, '')
+      displayText = `<audio controls style="width: 100%; margin: 0.5em 0;"><source src="${url}" type="audio/mpeg">Your browser does not support the audio element.</audio>`
+    }
+    
     blocks.push({
       id: `line-${i}`,
-      text: type === 'title' ? line.replace(/^title:\s*/i, '') : line,
+      text: displayText,
       index: i,
       type,
       className,

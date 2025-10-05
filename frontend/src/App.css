@@ -157,6 +157,28 @@
   color: #424242;
 }
 
+/* Duration, Image, and Audio elements */
+.preview-line.duration {
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  color: #00bcd4;
+  background-color: rgba(0, 188, 212, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  display: inline-block;
+  margin: 0.25em 0;
+  font-size: 0.9em;
+}
+
+.preview-line.image {
+  margin: 0.5em 0;
+  text-align: center;
+}
+
+.preview-line.audio {
+  margin: 0.5em 0;
+}
+
 .preview-line.blank-line {
   height: 1.5em;
 }

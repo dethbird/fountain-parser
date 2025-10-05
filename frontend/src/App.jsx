@@ -50,6 +50,11 @@ New sequence
 #### panel
 a panel
 
+#### Panel: Close-up of Jane
+00:15
+[i]https://via.placeholder.com/400x300/4CAF50/FFFFFF?text=Panel+1
+[a]https://www.soundjay.com/misc/sounds/bell-ringing-05.wav
+
 #### panel 2
 another panel
 
@@ -74,6 +79,11 @@ bees!
     processText(newCode)
   }
 
+  // Debug: log blocks to console
+  useEffect(() => {
+    console.log('App: blocks updated', blocks.length, blocks)
+  }, [blocks])
+
   return (
     <div className="fountain-app">
       {/* Editor Layout */}
@@ -94,17 +104,27 @@ bees!
           {/* Preview - Right Side */}
           <div className="column is-half-desktop">
             <div className="box preview-box">
-              <h3 className="title is-6">Live Preview</h3>
+              <h3 className="title is-6">Live Preview {blocks.length > 0 && `(${blocks.length} blocks)`}</h3>
               <div className="preview-content">
-                {blocks.map((block) => (
-                  <div 
-                    key={block.id} 
-                    className={`preview-line ${block.className || ''}`}
-                    data-type={block.type}
-                  >
-                    {block.text || '\u00A0'}
+                {blocks.length === 0 ? (
+                  <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
+                    Loading preview...
                   </div>
-                ))}
+                ) : (
+                  blocks.map((block) => (
+                    <div 
+                      key={block.id} 
+                      className={`preview-line ${block.className || ''}`}
+                      data-type={block.type}
+                    >
+                      {block.type === 'image' || block.type === 'audio' ? (
+                        <div dangerouslySetInnerHTML={{ __html: block.text }} />
+                      ) : (
+                        block.text || '\u00A0'
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
