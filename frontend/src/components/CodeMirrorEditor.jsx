@@ -52,7 +52,9 @@ const lineDecorator = ViewPlugin.fromClass(
           } else if (/^\d{1,2}:\d{2}$/.test(text)) {
             widgets.push(Decoration.line({ class: 'cm-number' }).range(line.from))
             widgets.push(Decoration.mark({ class: 'cm-number' }).range(line.from, line.to))
-          } else if (/^@?[A-Z0-9 '\-\.]+(?:\^)?$/.test(text) && text === text.toUpperCase()) {
+          // Character names - ALL CAPS or starting with @
+          } else if ((/^[A-Z][A-Z0-9 '\-\.]*(?:\^)?$/.test(text) && text === text.toUpperCase()) ||
+                     /^@.+$/.test(text)) {
             widgets.push(Decoration.line({ class: 'cm-variable' }).range(line.from))
             widgets.push(Decoration.mark({ class: 'cm-variable' }).range(line.from, line.to))
           }

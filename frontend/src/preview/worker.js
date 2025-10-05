@@ -65,14 +65,15 @@ function processText(text) {
       type = 'transition'
       className = 'transition'
     }
-    // Character lines - must be ALL CAPS and short (including dual dialogue with ^)
-    else if (/^[A-Z][A-Z\s]*(\^)?$/.test(trimmed) && 
+    // Character lines - must be ALL CAPS and short (including dual dialogue with ^) OR start with @
+    else if (((/^[A-Z][A-Z0-9#'\s]*(\^)?$/.test(trimmed) && 
              trimmed.replace('^', '').length < 50 && 
              trimmed.length > 1 &&
              !trimmed.includes('.') &&
              !trimmed.includes(',') &&
              !trimmed.includes('!') &&
-             !trimmed.includes('?')) {
+             !trimmed.includes('?')) ||
+             /^@.+$/.test(trimmed))) {
       state.character_extended = true
       type = 'character'
       className = 'character'

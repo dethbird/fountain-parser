@@ -65,7 +65,7 @@ function processTextFallback(text) {
              !trimmed.includes(',') &&
              !trimmed.includes('!') &&
              !trimmed.includes('?')) ||
-             /^@[A-Za-z0-9'\-. ][A-Za-z0-9'\-.]*(?:\^)?$/.test(trimmed))) {
+             /^@.+$/.test(trimmed))) {
       state.character_extended = true
       if (trimmed.includes('^')) {
         type = 'dual_character'
@@ -310,7 +310,7 @@ function processText(text) {
              !trimmed.includes(',') &&
              !trimmed.includes('!') &&
              !trimmed.includes('?')) ||
-             /^@[A-Za-z0-9'\\-. ][A-Za-z0-9'\\-.]*(?:\\^)?$/.test(trimmed))) {
+             /^@.+$/.test(trimmed))) {
       state.character_extended = true
       if (trimmed.includes('^')) {
         type = 'dual_character'
