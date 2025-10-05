@@ -21,7 +21,6 @@
 .cm-variable {
   font-weight: bold !important;
   color: #64B5F6 !important;
-  text-transform: uppercase;
 }
 
 /* Dialogue (after character names) */
@@ -54,14 +53,12 @@
 .cm-strong {
   color: #FFB74D !important;
   font-weight: bold;
-  text-transform: uppercase;
 }
 
 /* Scene Headings */
 .cm-header {
   font-weight: bold !important;
   color: #81C784 !important;
-  text-transform: uppercase;
 }
 
 /* Transitions */
@@ -69,7 +66,6 @@
   font-weight: bold !important;
   text-decoration: underline !important;
   color: #CE93D8 !important;
-  text-transform: uppercase;
   /* Keep transitions flush-left */
   text-align: left !important;
   display: block !important;
@@ -125,14 +121,12 @@
 .cm-def {
   font-weight: bold;
   color: #7986CB !important;
-  text-transform: uppercase;
 }
 
 /* Section Headings */
 .cm-atom {
   color: #EF5350 !important;
   font-weight: bold !important;
-  text-transform: uppercase;
 }
 
 /* Duration timestamps */

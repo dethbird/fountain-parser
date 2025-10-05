@@ -22,6 +22,8 @@ contact:
 notes: This is a sample script
 copyright: (c) 2025 John Doe
 
+===
+
 FADE IN:
 
 EXT. COFFEE SHOP - DAY
@@ -52,7 +54,7 @@ a panel
 
 #### Panel: Close-up of Jane
 00:15
-[i]https://via.placeholder.com/400x300/4CAF50/FFFFFF?text=Panel+1
+[i]https://dethbird.com/wp-content/uploads/2025/08/dethbird88_woman_in_an_ice_cream_paarlor_with_a_tiger._She_is_l_e09e158f-a9cc-4462-a172-bbaed73b9fe2.png
 [a]https://www.soundjay.com/misc/sounds/bell-ringing-05.wav
 
 #### panel 2

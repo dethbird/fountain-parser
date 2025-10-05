@@ -55,7 +55,6 @@
 /* Screenplay formatting */
 .preview-line.scene-heading {
   font-weight: bold;
-  text-transform: uppercase;
   margin-top: 1.5em;
   margin-bottom: 0.5em;
 }
@@ -63,7 +62,6 @@
 .preview-line.character {
   text-align: center;
   font-weight: bold;
-  text-transform: uppercase;
   margin-top: 1.5em;
   margin-bottom: 0;
 }
@@ -89,7 +87,6 @@
 .preview-line.transition {
   text-align: right;
   font-weight: bold;
-  text-transform: uppercase;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
 }
@@ -144,7 +141,6 @@
   font-size: 2em;
   font-weight: bold;
   text-align: center;
-  text-transform: uppercase;
   margin: 2em 0 1em 0;
   color: #1976d2;
   letter-spacing: 0.1em;
@@ -187,7 +183,6 @@
 .preview-line.section-1 {
   font-size: 1.3em;
   font-weight: bold;
-  text-transform: uppercase;
   margin-top: 2em;
   margin-bottom: 1em;
   color: #d32f2f;

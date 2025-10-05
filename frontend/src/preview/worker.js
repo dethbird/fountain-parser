@@ -1,4 +1,4 @@
-    // Simple worker that processes text into preview blocks
+// Simple worker that processes text into preview blocks
 let currentText = ''
 
 function processText(text) {

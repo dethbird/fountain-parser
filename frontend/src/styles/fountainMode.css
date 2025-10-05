@@ -7,14 +7,12 @@
 .cm-fountain-heading {
   font-weight: bold;
   color: #4CAF50;
-  text-transform: uppercase;
 }
 
 /* Character Names */
 .cm-fountain-character {
   font-weight: bold;
   color: #2196F3;
-  text-transform: uppercase;
 }
 
 /* Character Parentheticals */
@@ -85,7 +83,6 @@
 .cm-fountain-title {
   font-weight: bold;
   color: #3F51B5;
-  text-transform: uppercase;
 }
 
 /* Section Headings */
@@ -93,7 +90,6 @@
   font-size: 1.2em;
   font-weight: bold;
   color: #F44336;
-  text-transform: uppercase;
 }
 
 .cm-fountain-section-2 {
