@@ -14,7 +14,7 @@ function processTextFallback(text) {
     const line = lines[i]
     const trimmed = line.trim()
     
-    // Blank line resets character_extended state
+    // Blank line - resets character_extended state
     if (!trimmed) {
       state.character_extended = false
       blocks.push({
@@ -51,7 +51,7 @@ function processTextFallback(text) {
       className = 'scene-heading'
     }
     // Transitions
-    else if (/^(FADE IN:|FADE OUT\.|CUT TO:|DISSOLVE TO:|SMASH CUT TO:)/.test(trimmed) || 
+    else if (/^(FADE IN:|FADE OUT\.|FADE TO BLACK\.|CUT TO:|CUT TO BLACK\.|DISSOLVE TO:|SMASH CUT TO:)/.test(trimmed) || 
              /TO:$/.test(trimmed)) {
       state.character_extended = false
       type = 'transition'
@@ -181,6 +181,12 @@ function processTextFallback(text) {
     } else if (type === 'page_break') {
       // Render page break as hr element
       displayText = '<hr />'
+    } else if (type === 'transition') {
+      // Remove '> ' prefix for power user transitions
+      displayText = line.replace(/^> /, '')
+    } else if (type === 'character' || type === 'dual_character') {
+      // Remove '@' prefix for power user characters
+      displayText = line.replace(/^@/, '')
     }
     
     blocks.push({
@@ -268,7 +274,7 @@ function processText(text) {
       className = 'scene-heading'
     }
     // Transitions
-    else if (/^(FADE IN:|FADE OUT\\.|CUT TO:|DISSOLVE TO:|SMASH CUT TO:)/.test(trimmed) || 
+    else if (/^(FADE IN:|FADE OUT\\.|FADE TO BLACK\\.|CUT TO:|CUT TO BLACK\\.|DISSOLVE TO:|SMASH CUT TO:)/.test(trimmed) || 
              /TO:$/.test(trimmed)) {
       state.character_extended = false
       type = 'transition'
@@ -398,6 +404,12 @@ function processText(text) {
     } else if (type === 'page_break') {
       // Render page break as hr element
       displayText = '<hr />'
+    } else if (type === 'transition') {
+      // Remove '> ' prefix for power user transitions
+      displayText = line.replace(/^> /, '')
+    } else if (type === 'character' || type === 'dual_character') {
+      // Remove '@' prefix for power user characters
+      displayText = line.replace(/^@/, '')
     }
     
     blocks.push({

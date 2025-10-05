@@ -76,6 +76,7 @@
 .preview-line.character {
   text-align: center;
   font-weight: bold;
+  text-transform: uppercase;
   margin-top: 1.5em;
   margin-bottom: 0;
 }
@@ -83,6 +84,7 @@
 .preview-line.dual-character {
   text-align: center;
   font-weight: bold;
+  text-transform: uppercase;
   margin-top: 0.5em;
   margin-bottom: 0;
 }
@@ -130,13 +132,11 @@
 }
 
 .preview-line.note {
-  color: #8d6e63;
-  background-color: rgba(141, 110, 99, 0.1);
+  color: #388e3c;
   font-style: italic;
-  padding: 4px 8px;
-  border-radius: 4px;
-  border-left: 3px solid #8d6e63;
-  margin: 0.5em 0;
+  margin-left: 1.5in;
+  margin-right: 1.5in;
+  margin-bottom: 0;
 }
 
 .preview-line.milestone {
