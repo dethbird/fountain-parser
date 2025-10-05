@@ -60,6 +60,9 @@ function App() {
         disabled={characters.length === 0}
       >
         <i className="fas fa-user"></i>
+        {characters.length > 0 && (
+          <span className="character-count-badge">{characters.length}</span>
+        )}
       </button>
 
       {/* Mobile View Toggle */}
