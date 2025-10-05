@@ -114,61 +114,19 @@ const CodeMirrorEditor = forwardRef(({ value = '', onChange = () => {}, onCursor
         }
       }),
       oneDark,
+      keymap.of([...defaultKeymap, ...searchKeymap]),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) {
           onChange(update.state.doc.toString())
         }
-      }),
-      keymap.of([
-        {
-          key: 'ArrowUp',
-          run: (view) => {
-            const result = defaultKeymap.find(k => k.key === 'ArrowUp')?.run(view)
-            setTimeout(() => {
-              const pos = view.state.selection.main.head
-              const line = view.state.doc.lineAt(pos)
-              onCursorChange(line.number - 1)
-            }, 0)
-            return result
-          }
-        },
-        {
-          key: 'ArrowDown',
-          run: (view) => {
-            const result = defaultKeymap.find(k => k.key === 'ArrowDown')?.run(view)
-            setTimeout(() => {
-              const pos = view.state.selection.main.head
-              const line = view.state.doc.lineAt(pos)
-              onCursorChange(line.number - 1)
-            }, 0)
-            return result
-          }
-        },
-        {
-          key: 'PageUp',
-          run: (view) => {
-            const result = defaultKeymap.find(k => k.key === 'PageUp')?.run(view)
-            setTimeout(() => {
-              const pos = view.state.selection.main.head
-              const line = view.state.doc.lineAt(pos)
-              onCursorChange(line.number - 1)
-            }, 0)
-            return result
-          }
-        },
-        {
-          key: 'PageDown',
-          run: (view) => {
-            const result = defaultKeymap.find(k => k.key === 'PageDown')?.run(view)
-            setTimeout(() => {
-              const pos = view.state.selection.main.head
-              const line = view.state.doc.lineAt(pos)
-              onCursorChange(line.number - 1)
-            }, 0)
-            return result
-          }
+        
+        // Track cursor position changes from navigation (not text changes)
+        if (update.selectionSet && !update.docChanged) {
+          const pos = update.state.selection.main.head
+          const line = update.state.doc.lineAt(pos)
+          onCursorChange(line.number - 1)
         }
-      ]),
+      }),
       EditorView.theme({
         '&': { 
           fontSize: '14px',
