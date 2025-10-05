@@ -4,9 +4,11 @@ import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
 
+// Main App component
 function App() {
   const [code, setCode] = useState('')
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
+  const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
   const { blocks, processText } = usePreviewWorker('')
 
   // Load default script on component mount
@@ -50,11 +52,35 @@ function App() {
         ?
       </button>
 
+      {/* Mobile View Toggle */}
+      <div className="mobile-view-toggle">
+        <div className="tabs is-centered">
+          <ul>
+            <li className={viewMode === 'edit' ? 'is-active' : ''}>
+              <a onClick={() => setViewMode('edit')}>
+                <span className="icon is-small">
+                  <i className="fas fa-edit" aria-hidden="true"></i>
+                </span>
+                <span>Edit</span>
+              </a>
+            </li>
+            <li className={viewMode === 'preview' ? 'is-active' : ''}>
+              <a onClick={() => setViewMode('preview')}>
+                <span className="icon is-small">
+                  <i className="fas fa-eye" aria-hidden="true"></i>
+                </span>
+                <span>Preview</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       {/* Editor Layout */}
       <div className="editor-layout">
         <div className="columns is-gapless">
           {/* Code Editor - Left Side */}
-          <div className="column is-half-desktop">
+          <div className={`column is-half-desktop ${viewMode === 'preview' ? 'mobile-hidden' : ''}`}>
             <div className="box editor-box">
               <h3 className="title is-6">Fountain Editor</h3>
               <CodeMirrorEditor
@@ -66,7 +92,7 @@ function App() {
           </div>
 
           {/* Preview - Right Side */}
-          <div className="column is-half-desktop">
+          <div className={`column is-half-desktop ${viewMode === 'edit' ? 'mobile-hidden' : ''}`}>
             <div className="box preview-box">
               <h3 className="title is-6">Live Preview</h3>
               <div className="preview-content">
