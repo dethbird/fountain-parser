@@ -5,11 +5,17 @@ function processText(text) {
   const lines = text.split('\n')
   const blocks = []
   
+  // Character collection
+  const characters = new Set()
+  const characterLineCounts = new Map()
+  
   // State machine like fountainMode
   let state = {
     character_extended: false,
     note: false
   }
+  
+  let currentSpeaker = null
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
@@ -18,6 +24,7 @@ function processText(text) {
     // Blank line resets character_extended state
     if (!trimmed) {
       state.character_extended = false
+      currentSpeaker = null
       blocks.push({
         id: `line-${i}`,
         text: line,
@@ -70,6 +77,16 @@ function processText(text) {
       type = 'character'
       className = 'character'
       speaker = trimmed
+      
+      // Normalize character name: remove @ and ^ and convert to uppercase
+      const normalizedCharacter = trimmed.replace(/[@^]/g, '').trim().toUpperCase()
+      characters.add(normalizedCharacter)
+      currentSpeaker = normalizedCharacter
+      
+      // Initialize line count if not exists
+      if (!characterLineCounts.has(normalizedCharacter)) {
+        characterLineCounts.set(normalizedCharacter, 0)
+      }
     }
     // If we're in character_extended state, check for dialogue/parentheticals
     else if (state.character_extended) {
@@ -79,6 +96,11 @@ function processText(text) {
       } else {
         type = 'dialogue'
         className = 'dialogue'
+        
+        // Count dialogue lines for current speaker
+        if (currentSpeaker && characterLineCounts.has(currentSpeaker)) {
+          characterLineCounts.set(currentSpeaker, characterLineCounts.get(currentSpeaker) + 1)
+        }
       }
     }
     // Synopsis
@@ -176,6 +198,10 @@ function processText(text) {
       speaker
     })
   }
+  
+  // Log character information
+  console.log('Characters found:', characters)
+  console.log('Character line counts:', characterLineCounts)
   
   return blocks
 }
