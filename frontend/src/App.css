@@ -104,6 +104,41 @@
   padding: 0.5em 0;
 }
 
+.preview-line.lyrics {
+  font-style: italic;
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  color: #7b1fa2;
+}
+
+.preview-line.note {
+  color: #8d6e63;
+  background-color: rgba(141, 110, 99, 0.1);
+  font-style: italic;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #8d6e63;
+  margin: 0.5em 0;
+}
+
+.preview-line.milestone {
+  color: #388e3c;
+  font-weight: bold;
+  margin: 0.5em 0;
+  padding-left: 1em;
+}
+
+.preview-line.synopsis {
+  color: #607d8b;
+  background-color: rgba(96, 125, 139, 0.1);
+  font-style: italic;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border-left: 3px solid #607d8b;
+  margin: 0.5em 0;
+}
+
 .preview-line.blank-line {
   height: 1.5em;
 }

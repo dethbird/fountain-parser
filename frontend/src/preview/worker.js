@@ -87,6 +87,18 @@ function processText(text) {
       type = 'synopsis'
       className = 'synopsis'
     }
+    // Lyrics
+    else if (/^~ /.test(trimmed)) {
+      state.character_extended = false
+      type = 'lyrics'
+      className = 'lyrics'
+    }
+    // Milestone
+    else if (/^- /.test(trimmed)) {
+      state.character_extended = false
+      type = 'milestone'
+      className = 'milestone'
+    }
     // Section markers (# ## ### ####)
     else if (/^#{1,4}\s/.test(trimmed)) {
       state.character_extended = false
