@@ -12,9 +12,34 @@ function App() {
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
   const [isHeaderCompressed, setIsHeaderCompressed] = useState(false)
   const [currentLine, setCurrentLine] = useState(0)
+  const [hasSavedScript, setHasSavedScript] = useState(false)
+  const [lastSavedDate, setLastSavedDate] = useState(null)
   const previewRef = useRef(null)
   const editorRef = useRef(null)
   const blocksRef = useRef([])
+
+  // Load script content on component mount - prioritize localStorage over default
+  useEffect(() => {
+    const savedData = localStorage.getItem('fountain-script')
+    let scriptToLoad = defaultScriptContent // fallback to default
+    
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData)
+        scriptToLoad = parsed.content
+        setHasSavedScript(true)
+        setLastSavedDate(new Date(parsed.savedAt))
+      } catch (error) {
+        console.error('Error parsing saved script:', error)
+        localStorage.removeItem('fountain-script')
+        // Will use default script as fallback
+      }
+    }
+    
+    setCode(scriptToLoad)
+    processText(scriptToLoad)
+  }, []) // Remove processText dependency to prevent infinite loop
+
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
 
   // Keep blocks ref in sync
@@ -22,15 +47,69 @@ function App() {
     blocksRef.current = blocks
   }, [blocks])
 
-  // Load default script on component mount
-  useEffect(() => {
-    setCode(defaultScriptContent)
-    processText(defaultScriptContent)
-  }, []) // Remove processText dependency to prevent infinite loop
-
   const handleCodeChange = (newCode) => {
     setCode(newCode)
     processText(newCode)
+  }
+
+  // localStorage operations
+  const saveScript = () => {
+    if (code.trim()) {
+      const scriptData = {
+        content: code,
+        savedAt: new Date().toISOString()
+      }
+      localStorage.setItem('fountain-script', JSON.stringify(scriptData))
+      setHasSavedScript(true)
+      setLastSavedDate(new Date())
+    }
+  }
+
+  const loadScript = () => {
+    const savedData = localStorage.getItem('fountain-script')
+    if (savedData) {
+      try {
+        const parsed = JSON.parse(savedData)
+        setCode(parsed.content)
+        processText(parsed.content)
+        setLastSavedDate(new Date(parsed.savedAt))
+      } catch (error) {
+        console.error('Error loading saved script:', error)
+      }
+    }
+  }
+
+  const clearSaved = () => {
+    localStorage.removeItem('fountain-script')
+    setHasSavedScript(false)
+    setLastSavedDate(null)
+    // Restore default script
+    setCode(defaultScriptContent)
+    processText(defaultScriptContent)
+  }
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+    } catch (error) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = code
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+    }
+  }
+
+  const pasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText()
+      setCode(text)
+      processText(text)
+    } catch (error) {
+      console.error('Error pasting from clipboard:', error)
+    }
   }
 
   // Handle cursor position changes from CodeMirror
@@ -96,6 +175,65 @@ function App() {
 
   return (
     <div className={`fountain-app ${isHeaderCompressed ? 'header-hidden' : ''}`}>
+      {/* Persistence Toolbar */}
+      <div className="persistence-toolbar">
+        <div className="toolbar-group">
+          <button 
+            className={`toolbar-btn ${!code.trim() ? 'disabled' : ''}`}
+            onClick={saveScript}
+            disabled={!code.trim()}
+            title="Save current script to browser storage"
+          >
+            <i className="fas fa-save"></i>
+            Save
+          </button>
+          
+          <button 
+            className={`toolbar-btn ${!hasSavedScript ? 'disabled' : ''}`}
+            onClick={loadScript}
+            disabled={!hasSavedScript}
+            title={lastSavedDate ? `Load saved script (${lastSavedDate.toLocaleDateString()} ${lastSavedDate.toLocaleTimeString()})` : 'Load saved script'}
+          >
+            <i className="fas fa-folder-open"></i>
+            Load
+          </button>
+          
+          <button 
+            className="toolbar-btn"
+            onClick={copyToClipboard}
+            title="Copy editor contents to clipboard"
+          >
+            <i className="fas fa-copy"></i>
+            Copy
+          </button>
+          
+          <button 
+            className="toolbar-btn"
+            onClick={pasteFromClipboard}
+            title="Paste from clipboard to editor"
+          >
+            <i className="fas fa-paste"></i>
+            Paste
+          </button>
+          
+          <button 
+            className={`toolbar-btn danger ${!hasSavedScript ? 'disabled' : ''}`}
+            onClick={clearSaved}
+            disabled={!hasSavedScript}
+            title="Clear saved script from storage"
+          >
+            <i className="fas fa-trash"></i>
+            Clear Saved
+          </button>
+        </div>
+        
+        {lastSavedDate && (
+          <div className="last-saved">
+            Last saved: {lastSavedDate.toLocaleDateString()} at {lastSavedDate.toLocaleTimeString()}
+          </div>
+        )}
+      </div>
+
       {/* Help Button */}
       <button 
         className="help-button"
