@@ -1,0 +1,329 @@
+title: The Great Fountain Script
+credit: Written by
+author: John Doe
+authors: John Doe and Jane Smith
+source: Based on the novel by Famous Writer
+draft date: October 4, 2025
+date: 10/04/2025
+contact:
+    John Doe
+    555-123-4567
+    john@example.com
+    
+    Literary Agent
+    Agency Name
+    agent@agency.com
+notes: This is a sample script
+copyright: (c) 2025 John Doe
+
+===
+
+FADE IN:
+
+EXT. COFFEE SHOP - DAY
+
+Morning traffic hums. The patio is crowded with laptop people and latte foam art influencers.
+
+JANE sits at a small table, typing on her laptop. A half-empty cappuccino stares back, cooling with existential dread.
+
+JANE
+(looking up from screen)
+I think I've got it!
+
+She closes the laptop with satisfaction and breathes, as if exhaling an entire week.
+
+= Jane finishes draft zero; new goal: share it
+
+A BARISTA rattles cups inside. A passing BUSKER strums the same three chords, but with heart.
+
+JANE
+(to herself)
+No more caveats. Time to ship.
+
+CUT TO:
+
+INT. COFFEE SHOP - CONTINUOUS
+
+Inside is a mild chaos symphony: grinder, milk steamer, printer whining from the back.
+
+BOB, 30s, tech casual, leans on the counter pretending the pastry case is interesting.
+
+BOB
+Hey—did the ending finally behave?
+
+JANE
+I wrangled it into submission.
+
+(beat)
+
+JANE
+Not pretty, but readable.
+
+BOB
+Readability's ninety percent of pretty.
+
+FADE OUT.
+
+===
+
+# Act
+The Act of Consequences
+
+## Scene
+A New Scene With Complications
+
+### Sequence
+The Sequence Where Plans Shift
+
+#### panel
+a panel
+
+#### Panel: Close-up of Jane
+00:15
+[i]https://dethbird.com/wp-content/uploads/2025/08/dethbird88_woman_in_an_ice_cream_paarlor_with_a_tiger._She_is_l_e09e158f-a9cc-4462-a172-bbaed73b9fe2.png
+[a]https://www.soundjay.com/misc/sounds/bell-ringing-05.wav
+
+- Bell rings when idea lands
+- Jane reframes the problem
+- Bob commits to help
+
+= Sequence beat: they decide to demo tonight
+
+#### panel 2
+another panel with too much coffee and not enough sleep
+
+DAVE
+(begins singing:)
+~ we debug by moonlight, refactor at dawn
+
+[[ i am a note ]]
+
+[[ 
+i am 
+also a note 
+!!!
+]]
+
+INT. JANE'S APARTMENT - EVENING
+
+A whiteboard groans under diagrams. Sticky notes form a fractal of optimism.
+
+JANE
+We'll keep the parser incremental. No full rescans.
+
+BOB
+(gesturing at the board)
+And the preview goes worker-side. Deltas, not dumps.
+
+JANE
+Exactly.
+
+@Mentor
+(from speakerphone)
+Ship something imperfect. Perfect is a direction, not a state.
+
+> MATCH CUT TO:
+
+.MONTAGE – CODING AND COFFEE
+
+— Keys clack.  
+— Tests blink green, then red, then righteous green again.  
+— A PROGRESS BAR hesitates, then slides home.
+
+===
+
+INT. HALLWAY OUTSIDE JANE'S DOOR - NIGHT
+
+DAVE^
+(whisper-shouting)
+I brought snacks and feature creep!
+
+JANE^
+(whisper-shouting back)
+Only if the snacks pass code review!
+
+DONNY^
+(off)
+bees!
+
+JANE
+(confused)
+Why bees?
+
+DONNY
+I thought we were yelling nouns.
+
+Laughter. The tension snaps.
+
+= Comic relief; team cohesion increases
+
+>INTERMISSION<
+
+EXT. ROOFTOP - NIGHT
+
+City lights blink like patient cursors. The air tastes like rain and new commits.
+
+JANE
+We need a title page that actually looks like a title page.
+
+BOB
+And margins that would make old-school script readers nod with dignified approval.
+
+JANE
+(considering)
+Courier Prime, 12pt. One-inch all around, inch-and-a-half left where it matters.
+
+BOB
+Heads turn when pagination doesn't.
+
+CUT TO:
+
+INT. COFFEE SHOP - LATER
+
+The launch screen glows on a modest laptop. JANE hovers the cursor over a big, friendly button.
+
+JANE
+(to everyone)
+Moment of truth.
+
+BOB
+Ship it.
+
+JANE clicks.
+
+The app compiles, deploys, and returns with a humble little toast: "It worked."
+
+= Milestone: first user-visible success
+
+JANE
+(relieved)
+Okay. Bugs tomorrow.
+
+BOB
+Bugs are just misunderstood features.
+
+DAVE
+(sincerely)
+We're proud of you.
+
+===
+
+# Act
+The Act of Consequences (Reprise)
+
+## Scene
+Feedback and Fallout
+
+### Sequence
+Users Arrive
+
+EXT. COFFEE SHOP - MORNING
+
+Regulars scroll through their phones. Someone discovers the app, squints, then grins.
+
+USER #1
+(softly, to self)
+This feels fast.
+
+USER #2
+overhears, nodding with quiet internet approval
+
+INT. COFFEE SHOP - CONTINUOUS
+
+A NOTIFICATION pings—just shy of obnoxious. JANE reads.
+
+JANE
+(reading)
+"Love the live preview. Could you add inline notes to the PDF?"
+
+BOB
+We tabled PDF. For now.
+
+JANE
+(typing a reply)
+Roadmap: yes. Priority: after stability.
+
+BOB
+(aside)
+We're maintaining a boundary. That's growth.
+
+= They choose focus; future them says thanks
+
+[[ Note for later:
+Revisit pagination widows/orphans; test five-page dialogues.
+Consider keep-with-next for scene headers.
+]]
+
+INT. WHITEBOARD NOOK - LATER
+
+@QA
+(cheerful)
+Found a weird edge case: dot-slug headings inside notes become haunted.
+
+JANE
+(jots it down)
+Haunted slugs go to the backlog.
+
+CUT TO BLACK.
+
+FADE IN:
+
+EXT. PARK - AFTERNOON
+
+Wind through leaves. The world continues, blissfully unaware of issue trackers.
+
+JANE
+I forgot what sunlight felt like.
+
+BOB
+Sunlight: a free, high-availability mood service.
+
+JANE
+(smiles)
+Let's ship a tiny thing every day.
+
+BOB
+Agile via nice weather.
+
+FADE OUT.
+
+===
+
+# Appendix
+Assorted Scratch and Sections
+
+## Themes
+Growth through deliberate constraint.
+
+### Open Questions
+What is "done" when words keep moving?
+
+#### Panel: Demo Checklist
+00:45
+[i]https://example.com/mock/demo-board.png
+[a]https://example.com/audio/subtle-whoosh.mp3
+- Intro under 90 seconds
+- Show typing → preview
+- Kill the spinner ASAP
+= Demo flow: cold open → payoff
+
+> SMASH TO:
+
+INT. COFFEE SHOP - NIGHT
+
+The team watches metrics. A few people in distant rooms clap without being asked.
+
+JANE
+We can sleep now.
+
+BOB
+Tomorrow we build the PDF thing. Maybe.
+
+DAVE
+Or never. Kidding. Kind of.
+
+FADE TO BLACK.
+
+===
+
+CUT TO BLACK.

@@ -66,8 +66,13 @@ function processTextFallback(text) {
              !trimmed.includes('!') &&
              !trimmed.includes('?')) {
       state.character_extended = true
-      type = 'character'
-      className = 'character'
+      if (trimmed.includes('^')) {
+        type = 'dual_character'
+        className = 'dual-character'
+      } else {
+        type = 'character'
+        className = 'character'
+      }
       speaker = trimmed
     }
     // If we're in character_extended state, check for dialogue/parentheticals
@@ -277,8 +282,13 @@ function processText(text) {
              !trimmed.includes('!') &&
              !trimmed.includes('?')) {
       state.character_extended = true
-      type = 'character'
-      className = 'character'
+      if (trimmed.includes('^')) {
+        type = 'dual_character'
+        className = 'dual-character'
+      } else {
+        type = 'character'
+        className = 'character'
+      }
       speaker = trimmed
     }
     // If we're in character_extended state, check for dialogue/parentheticals
