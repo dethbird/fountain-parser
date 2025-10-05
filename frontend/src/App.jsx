@@ -119,7 +119,7 @@ bees!
                       className={`preview-line ${block.className || ''}`}
                       data-type={block.type}
                     >
-                      {block.type === 'image' || block.type === 'audio' ? (
+                      {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' ? (
                         <div dangerouslySetInnerHTML={{ __html: block.text }} />
                       ) : (
                         block.text || '\u00A0'

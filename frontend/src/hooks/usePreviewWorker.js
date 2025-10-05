@@ -156,6 +156,14 @@ function processTextFallback(text) {
     // Special processing for different types
     if (type === 'title') {
       displayText = line.replace(/^title:\s*/i, '')
+    } else if (type === 'title_page') {
+      // Bold the key part for non-title elements
+      const match = line.match(/^([^:]+):\s*(.*)/)
+      if (match) {
+        const key = match[1]
+        const value = match[2]
+        displayText = `<strong>${key}:</strong> ${value}`
+      }
     } else if (type === 'image') {
       // Extract URL and create img tag
       const url = line.replace(/^\[i\]/i, '')
@@ -356,6 +364,14 @@ function processText(text) {
     // Special processing for different types
     if (type === 'title') {
       displayText = line.replace(/^title:\\s*/, '')
+    } else if (type === 'title_page') {
+      // Bold the key part for non-title elements
+      const match = line.match(/^([^:]+):\\s*(.*)/)
+      if (match) {
+        const key = match[1]
+        const value = match[2]
+        displayText = \`<strong>\${key}:</strong> \${value}\`
+      }
     } else if (type === 'image') {
       // Extract URL and create img tag
       const url = line.replace(/^\\[i\\]/, '')
