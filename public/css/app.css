@@ -10,6 +10,30 @@
     --bulma-text-strong: #ffffff;
 }
 
+/* Title image responsive styling */
+.title-image {
+    height: 3.5rem;
+    width: auto;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+    transition: height 0.3s ease;
+}
+
+/* Responsive adjustments for title image */
+@media screen and (max-width: 768px) {
+    .title-image {
+        height: 2.5rem;
+        margin-left: 0.25rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .title-image {
+        height: 2rem;
+        margin-left: 0.25rem;
+    }
+}
+
 /* Apply dark theme */
 body {
     background-color: var(--bulma-scheme-main) !important;

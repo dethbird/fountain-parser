@@ -1,4 +1,11 @@
 /* App-specific styles */
+.title-image {
+  height: 2.5rem;
+  width: auto;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+}
+
 .fountain-app {
   padding: 0;
   height: 100vh;
