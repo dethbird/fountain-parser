@@ -4,7 +4,25 @@ import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 
 function App() {
-  const defaultScript = `FADE IN:
+  const defaultScript = `title: The Great Fountain Script
+credit: Written by
+author: John Doe
+authors: John Doe and Jane Smith
+source: Based on the novel by Famous Writer
+draft date: October 4, 2025
+date: 10/04/2025
+contact:
+    John Doe
+    555-123-4567
+    john@example.com
+    
+    Literary Agent
+    Agency Name
+    agent@agency.com
+notes: This is a sample script
+copyright: (c) 2025 John Doe
+
+FADE IN:
 
 EXT. COFFEE SHOP - DAY
 
