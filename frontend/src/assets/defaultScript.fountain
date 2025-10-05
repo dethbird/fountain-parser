@@ -46,9 +46,9 @@ INT. COFFEE SHOP - CONTINUOUS
 
 Inside is a mild chaos symphony: grinder, milk steamer, printer whining from the back.
 
-BOB, 30s, tech casual, leans on the counter pretending the pastry case is interesting.
+BOB O'SHAUNNESSY, 30s, tech casual, leans on the counter pretending the pastry case is interesting.
 
-BOB
+BOB O'SHAUNNESSY
 Hey—did the ending finally behave?
 
 JANE
@@ -59,7 +59,7 @@ I wrangled it into submission.
 JANE
 Not pretty, but readable.
 
-BOB
+BOB O'SHAUNNESSY
 Readability's ninety percent of pretty.
 
 FADE OUT.
@@ -77,10 +77,11 @@ The Sequence Where Plans Shift
 
 #### panel
 a panel
+[i]https://picsum.photos/720/405?random=3
 
 #### Panel: Close-up of Jane
 00:15
-[i]https://dethbird.com/wp-content/uploads/2025/08/dethbird88_woman_in_an_ice_cream_paarlor_with_a_tiger._She_is_l_e09e158f-a9cc-4462-a172-bbaed73b9fe2.png
+[i]https://picsum.photos/640/360?random=1
 [a]https://www.soundjay.com/misc/sounds/bell-ringing-05.wav
 
 - Bell rings when idea lands
@@ -91,6 +92,7 @@ a panel
 
 #### panel 2
 another panel with too much coffee and not enough sleep
+[i]https://picsum.photos/960/540?random=4
 
 DAVE
 (begins singing:)
@@ -111,7 +113,7 @@ A whiteboard groans under diagrams. Sticky notes form a fractal of optimism.
 JANE
 We'll keep the parser incremental. No full rescans.
 
-BOB
+BOB O'SHAUNNESSY
 (gesturing at the board)
 And the preview goes worker-side. Deltas, not dumps.
 
@@ -166,14 +168,14 @@ City lights blink like patient cursors. The air tastes like rain and new commits
 JANE
 We need a title page that actually looks like a title page.
 
-BOB
+BOB O'SHAUNNESSY
 And margins that would make old-school script readers nod with dignified approval.
 
 JANE
 (considering)
 Courier Prime, 12pt. One-inch all around, inch-and-a-half left where it matters.
 
-BOB
+BOB O'SHAUNNESSY
 Heads turn when pagination doesn't.
 
 CUT TO:
@@ -186,7 +188,7 @@ JANE
 (to everyone)
 Moment of truth.
 
-BOB
+BOB O'SHAUNNESSY
 Ship it.
 
 JANE clicks.
@@ -199,7 +201,7 @@ JANE
 (relieved)
 Okay. Bugs tomorrow.
 
-BOB
+BOB O'SHAUNNESSY
 Bugs are just misunderstood features.
 
 DAVE
@@ -236,14 +238,14 @@ JANE
 (reading)
 "Love the live preview. Could you add inline notes to the PDF?"
 
-BOB
+BOB O'SHAUNNESSY
 We tabled PDF. For now.
 
 JANE
 (typing a reply)
 Roadmap: yes. Priority: after stability.
 
-BOB
+BOB O'SHAUNNESSY
 (aside)
 We're maintaining a boundary. That's growth.
 
@@ -275,14 +277,14 @@ Wind through leaves. The world continues, blissfully unaware of issue trackers.
 JANE
 I forgot what sunlight felt like.
 
-BOB
+BOB O'SHAUNNESSY
 Sunlight: a free, high-availability mood service.
 
 JANE
 (smiles)
 Let's ship a tiny thing every day.
 
-BOB
+BOB O'SHAUNNESSY
 Agile via nice weather.
 
 FADE OUT.
@@ -300,7 +302,7 @@ What is "done" when words keep moving?
 
 #### Panel: Demo Checklist
 00:45
-[i]https://example.com/mock/demo-board.png
+[i]https://picsum.photos/800/450?random=2
 [a]https://example.com/audio/subtle-whoosh.mp3
 - Intro under 90 seconds
 - Show typing → preview
@@ -316,7 +318,7 @@ The team watches metrics. A few people in distant rooms clap without being asked
 JANE
 We can sleep now.
 
-BOB
+BOB O'SHAUNNESSY
 Tomorrow we build the PDF thing. Maybe.
 
 DAVE
