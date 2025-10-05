@@ -108,6 +108,39 @@
   height: 1.5em;
 }
 
+/* Section markers */
+.preview-line.section-1 {
+  font-size: 1.3em;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  color: #d32f2f;
+}
+
+.preview-line.section-2 {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 1.5em;
+  margin-bottom: 0.8em;
+  color: #f57c00;
+}
+
+.preview-line.section-3 {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+  color: #388e3c;
+}
+
+.preview-line.section-4 {
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  color: #1976d2;
+}
+
 /* Responsive behavior */
 @media screen and (max-width: 1023px) {
   .columns {

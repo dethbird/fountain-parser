@@ -87,6 +87,13 @@ function processText(text) {
       type = 'synopsis'
       className = 'synopsis'
     }
+    // Section markers (# ## ### ####)
+    else if (/^#{1,4}\s/.test(trimmed)) {
+      state.character_extended = false
+      const level = trimmed.match(/^(#{1,4})/)[1].length
+      type = 'section'
+      className = `section-${level}`
+    }
     // Page break
     else if (/^={3,}$/.test(trimmed)) {
       state.character_extended = false
