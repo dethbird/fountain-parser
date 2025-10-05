@@ -12,6 +12,18 @@
   margin-top: 1rem;
 }
 
+/* Force 2-column layout on larger screens (like dev environment) */
+@media screen and (min-width: 1024px) {
+  .editor-layout .columns {
+    display: flex !important;
+  }
+  
+  .editor-layout .column {
+    flex: 1 !important;
+    max-width: 50% !important;
+  }
+}
+
 .editor-box,
 .preview-box {
   height: 100%;
