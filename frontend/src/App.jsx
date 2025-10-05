@@ -169,13 +169,17 @@ function App() {
                 <h3>Dual Dialogue</h3>
                 <div className="help-example">
                   <code>
-                    ALICE<br/>
-                    I can't believe it!<br/><br/>
-                    BOB ^<br/>
-                    (at the same time)<br/>
-                    This is amazing!
+                    ALICE^<br/>
+                    BOB^<br/>
+                    CHARLIE^<br/>
+                    I can't believe it!<br/>
+                    <br/>
+                    CHARLIE ^<br/>
+                    DAVE ^<br/>
+                    (disgusted)<br/>
+                    Eew. no it's nooot!<br/><br/>
                   </code>
-                  <p>Add ^ after character name for dual dialogue (spoken simultaneously).</p>
+                  <p>For dual dialogue, all character names with ^ must be stacked consecutively at the top, then their dialogue follows in order. This creates side-by-side dialogue spoken simultaneously.</p>
                 </div>
               </div>
 
