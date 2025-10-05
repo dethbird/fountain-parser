@@ -172,6 +172,9 @@ function processTextFallback(text) {
       // Extract URL and create audio tag
       const url = line.replace(/^\[a\]/i, '')
       displayText = `<audio controls style="width: 100%; margin: 0.5em 0;"><source src="${url}" type="audio/mpeg">Your browser does not support the audio element.</audio>`
+    } else if (type === 'page_break') {
+      // Render page break as hr element
+      displayText = '<hr />'
     }
     
     blocks.push({
@@ -380,6 +383,9 @@ function processText(text) {
       // Extract URL and create audio tag
       const url = line.replace(/^\\[a\\]/, '')
       displayText = \`<audio controls style="width: 100%; margin: 0.5em 0;"><source src="\${url}" type="audio/mpeg">Your browser does not support the audio element.</audio>\`
+    } else if (type === 'page_break') {
+      // Render page break as hr element
+      displayText = '<hr />'
     }
     
     blocks.push({
