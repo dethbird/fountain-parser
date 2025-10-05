@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     setCode(defaultScriptContent)
     processText(defaultScriptContent)
-  }, [processText])
+  }, []) // Remove processText dependency to prevent infinite loop
 
   const handleCodeChange = (newCode) => {
     setCode(newCode)
