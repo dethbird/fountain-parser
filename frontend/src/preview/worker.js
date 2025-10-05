@@ -177,8 +177,6 @@ function processText(text) {
     })
   }
   
-  console.log('Final blocks:', blocks.map(b => `${b.index}: "${b.text.trim()}" -> ${b.type}`))
-  
   return blocks
 }
 

@@ -22,11 +22,6 @@ function App() {
     processText(newCode)
   }
 
-  // Debug: log blocks to console
-  useEffect(() => {
-    console.log('App: blocks updated', blocks.length, blocks)
-  }, [blocks])
-
   // Handle escape key for modal
   useEffect(() => {
     const handleEscape = (event) => {
