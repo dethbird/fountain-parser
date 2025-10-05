@@ -31,10 +31,6 @@
   display: none;
 }
 
-.fountain-app.header-hidden .mobile-view-toggle {
-  display: none !important;
-}
-
 .fountain-app.header-hidden .preview-content {
   padding-top: 0.5rem;
 }
