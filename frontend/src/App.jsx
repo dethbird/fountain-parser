@@ -107,7 +107,7 @@ function App() {
           {/* Code Editor - Left Side */}
           <div className={`column is-half-desktop ${viewMode === 'preview' ? 'mobile-hidden' : ''}`}>
             <div className="box editor-box">
-              <h3 className="title is-6">Fountain Editor</h3>
+              <h3 className="title is-6">Fountain Writer</h3>
               <CodeMirrorEditor
                 value={code}
                 onChange={handleCodeChange}
