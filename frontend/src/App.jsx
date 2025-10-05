@@ -225,6 +225,32 @@ function App() {
             <i className="fas fa-trash"></i>
             Clear Saved
           </button>
+          
+          <div className="toolbar-divider"></div>
+          
+          {/* Help Button */}
+          <button 
+            className="toolbar-btn help-btn"
+            onClick={() => setIsHelpModalOpen(true)}
+            title="Fountain Format Help"
+          >
+            <i className="fas fa-question"></i>
+            Help
+          </button>
+
+          {/* Character List Button */}
+          <button 
+            className={`toolbar-btn character-btn ${characters.length === 0 ? 'disabled' : ''}`}
+            onClick={() => characters.length > 0 && setIsCharacterModalOpen(true)}
+            title={characters.length > 0 ? 'Character List' : 'No characters found'}
+            disabled={characters.length === 0}
+          >
+            <i className="fas fa-user"></i>
+            Characters
+            {characters.length > 0 && (
+              <span className="character-count-badge">{characters.length}</span>
+            )}
+          </button>
         </div>
         
         {lastSavedDate && (
@@ -233,28 +259,6 @@ function App() {
           </div>
         )}
       </div>
-
-      {/* Help Button */}
-      <button 
-        className="help-button"
-        onClick={() => setIsHelpModalOpen(true)}
-        title="Fountain Format Help"
-      >
-        ?
-      </button>
-
-      {/* Character List Button */}
-      <button 
-        className={`character-button ${characters.length === 0 ? 'disabled' : ''}`}
-        onClick={() => characters.length > 0 && setIsCharacterModalOpen(true)}
-        title={characters.length > 0 ? 'Character List' : 'No characters found'}
-        disabled={characters.length === 0}
-      >
-        <i className="fas fa-user"></i>
-        {characters.length > 0 && (
-          <span className="character-count-badge">{characters.length}</span>
-        )}
-      </button>
 
       {/* Mobile View Toggle */}
       <div className="mobile-view-toggle">

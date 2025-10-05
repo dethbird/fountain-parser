@@ -58,6 +58,45 @@
   border-color: #c82333;
 }
 
+.toolbar-divider {
+  width: 1px;
+  height: 2rem;
+  background-color: #4a4a4a;
+  margin: 0 0.5rem;
+}
+
+.toolbar-btn.help-btn {
+  background-color: #17a2b8;
+  border-color: #138496;
+}
+
+.toolbar-btn.help-btn:hover:not(.disabled) {
+  background-color: #138496;
+  border-color: #117a8b;
+}
+
+.toolbar-btn.character-btn {
+  background-color: #28a745;
+  border-color: #1e7e34;
+  position: relative;
+}
+
+.toolbar-btn.character-btn:hover:not(.disabled) {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.character-count-badge {
+  background-color: #dc3545;
+  color: white;
+  border-radius: 10px;
+  padding: 0.1rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-left: 0.3rem;
+  line-height: 1;
+}
+
 .last-saved {
   font-size: 0.75rem;
   color: #999;
@@ -561,83 +600,6 @@
     height: calc(100vh - 80px); /* Account for header space */
     min-height: 500px;
   }
-}
-
-/* Help Button */
-.help-button {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #3e8ed0;
-  color: white;
-  border: none;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
-}
-
-.help-button:hover {
-  background: #2366a2;
-}
-
-/* Character Button */
-.character-button {
-  position: fixed;
-  top: 20px;
-  right: 56px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #3e8ed0;
-  color: white;
-  border: none;
-  font-size: 13px;
-  cursor: pointer;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, opacity 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.character-button:hover:not(.disabled) {
-  background: #2366a2;
-}
-
-.character-button.disabled {
-  background: #6c757d;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.character-button.disabled:hover {
-  background: #6c757d;
-}
-
-/* Character Count Badge */
-.character-count-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #dc3545;
-  color: white;
-  border-radius: 50%;
-  width: 16px;
-  height: 16px;
-  font-size: 10px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #1a1a1a;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Modal Styles */
