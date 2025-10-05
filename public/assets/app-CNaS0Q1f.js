@@ -263,13 +263,13 @@ self.onmessage = function(e) {
 }
 `,a=new Blob([o],{type:"application/javascript"}),u=URL.createObjectURL(a),h=new Worker(u);return h.onerror=c=>{console.error("Worker error, falling back to main thread processing:",c),s(!1)},h.onmessage=c=>{const{type:f,blocks:d}=c.data;f==="result"&&n(d||[])},r.current=h,t&&h.postMessage({type:"process",text:t}),()=>{h.terminate(),URL.revokeObjectURL(u)}}catch(o){console.error("Failed to create worker, using fallback:",o),s(!1)}},[i]),je.useEffect(()=>{if(!i&&t){const o=Ja(t);n(o)}},[i,t]),{blocks:e,processText:o=>{if(i&&r.current)r.current.postMessage({type:"process",text:o});else{const a=Ja(o);n(a)}}}}const Hp=`title: The Great Fountain Script\r
 credit: Written by\r
-author: John Doe\r
-authors: John Doe and Jane Smith\r
+author: John Dope\r
+authors: John Dope and Jane Smith\r
 source: Based on the novel by Famous Writer\r
 draft date: October 4, 2025\r
 date: 10/04/2025\r
 contact:\r
-    John Doe\r
+    John Dope\r
     555-123-4567\r
     john@example.com\r
     \r
@@ -277,7 +277,7 @@ contact:\r
     Agency Name\r
     agent@agency.com\r
 notes: This is a sample script\r
-copyright: (c) 2025 John Doe\r
+copyright: (c) 2025 John Dope\r
 \r
 ===\r
 \r
