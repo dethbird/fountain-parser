@@ -104,7 +104,7 @@ function processTextFallback(text) {
       type = 'milestone'
       className = 'milestone'
     }
-    // Duration (MM:SS or H:MM:SS format)
+    // Duration (mm:ss format, for #### panels only)
     else if (/^\d{1,2}:\d{2}$/.test(trimmed)) {
       state.character_extended = false
       type = 'duration'
@@ -340,7 +340,7 @@ function processText(text) {
       type = 'milestone'
       className = 'milestone'
     }
-    // Duration (MM:SS or H:MM:SS format)
+    // Duration (mm:ss format, for #### panels only)
     else if (/^\\d{1,2}:\\d{2}$/.test(trimmed)) {
       state.character_extended = false
       type = 'duration'

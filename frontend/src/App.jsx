@@ -113,12 +113,25 @@ function App() {
                 <h3>Title Page</h3>
                 <div className="help-example">
                   <code>
-                    Title: THE GREAT ADVENTURE<br/>
+                    Title: THE GREAT FOUNTAIN SCRIPT<br/>
                     Credit: Written by<br/>
                     Author: John Dope<br/>
-                    Draft Date: 10/4/2025<br/>
-                    Contact: john@example.com
+                    Authors: John Dope and Jane Smith<br/>
+                    Source: Based on the novel by Famous Writer<br/>
+                    Draft Date: October 4, 2025<br/>
+                    Date: 10/04/2025<br/>
+                    Contact:<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;John Dope<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;555-123-4567<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;john@example.com<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Literary Agent<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;Agency Name<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;agent@agency.com<br/>
+                    Notes: This is a sample script<br/>
+                    Copyright: (c) 2025 John Dope
                   </code>
+                  <p>Title page elements appear at the top of your script. All are optional. Use "Author" for single writer, "Authors" for multiple. Contact can be multi-line with indentation. End title page with === (page break).</p>
                 </div>
               </div>
 
@@ -202,6 +215,25 @@ function App() {
               </div>
 
               <div className="help-section">
+                <h3>Act/Scene/Sequence/Panel Hierarchy</h3>
+                <div className="help-example">
+                  <code>
+                    # Act I<br/>
+                    ## Scene 1: The Beginning<br/>
+                    ### Sequence A: Setup<br/>
+                    #### Panel 1<br/>
+                    02:30<br/>
+                    [i]https://example.com/storyboard1.jpg<br/>
+                    [a]https://example.com/dialogue.mp3<br/><br/>
+                    #### Panel 2<br/>
+                    01:15<br/>
+                    [i]https://example.com/storyboard2.jpg
+                  </code>
+                  <p>Use # for Acts, ## for Scenes, ### for Sequences, #### for Panels. This hierarchy is designed for storyboarding workflows. Durations (mm:ss format) are only used with #### Panels. Images and audio are typically used at the #### Panel level for detailed storyboard frames and audio references.</p>
+                </div>
+              </div>
+
+              <div className="help-section">
                 <h3>Notes & Comments</h3>
                 <div className="help-example">
                   <code>
@@ -216,18 +248,14 @@ function App() {
                 <h3>Special Elements</h3>
                 <div className="help-example">
                   <code>
-                    # Act I<br/>
-                    ## Chapter 1<br/>
-                    ### Scene A<br/><br/>
                     = Synopsis: Brief scene description<br/><br/>
                     ===<br/>
                     (Page Break)<br/><br/>
                     ~Lyrics:<br/>
-                    "Happy birthday to you"<br/><br/>
-                    [i]https://example.com/image.jpg<br/>
-                    [a]https://example.com/audio.mp3
+                    ~"Happy birthday to you"<br/>
+                    ~"Happy birthday to you"
                   </code>
-                  <p>Use # for sections, = for synopsis, === for page breaks, ~ for lyrics, [i] for images, [a] for audio.</p>
+                  <p>Use = for synopsis notes, === for page breaks, ~ for lyrics. Each lyric line must begin with ~.</p>
                 </div>
               </div>
             </div>
