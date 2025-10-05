@@ -10,6 +10,7 @@ function App() {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
+  const [isHeaderCompressed, setIsHeaderCompressed] = useState(false)
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
 
   // Load default script on component mount
@@ -41,8 +42,19 @@ function App() {
     }
   }, [isHelpModalOpen, isCharacterModalOpen])
 
+  // Handle scroll-based header hiding
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop
+      setIsHeaderCompressed(scrollY > 20)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <div className="fountain-app">
+    <div className={`fountain-app ${isHeaderCompressed ? 'header-hidden' : ''}`}>
       {/* Help Button */}
       <button 
         className="help-button"
