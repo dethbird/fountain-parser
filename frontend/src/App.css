@@ -177,9 +177,10 @@
 }
 
 /* CodeMirror Editor Styles */
+
 .codemirror-wrapper {
   border-radius: 6px;
-  overflow: hidden;
+  overflow-y: auto;
   min-height: 400px;
   height: auto;
   background-color: #1e1e1e;

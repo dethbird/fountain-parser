@@ -343,7 +343,7 @@ function App() {
         <div className="modal-overlay" onClick={() => setIsHelpModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Fountain Format Reference</h2>
+              <h2>Fountain.ext Format Reference</h2>
               <button 
                 className="modal-close"
                 onClick={() => setIsHelpModalOpen(false)}
