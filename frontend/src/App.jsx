@@ -6,6 +6,7 @@ import defaultScriptContent from './assets/defaultScript.fountain?raw'
 
 function App() {
   const [code, setCode] = useState('')
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const { blocks, processText } = usePreviewWorker('')
 
   // Load default script on component mount
@@ -24,8 +25,31 @@ function App() {
     console.log('App: blocks updated', blocks.length, blocks)
   }, [blocks])
 
+  // Handle escape key for modal
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && isHelpModalOpen) {
+        setIsHelpModalOpen(false)
+      }
+    }
+    
+    if (isHelpModalOpen) {
+      document.addEventListener('keydown', handleEscape)
+      return () => document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isHelpModalOpen])
+
   return (
     <div className="fountain-app">
+      {/* Help Button */}
+      <button 
+        className="help-button"
+        onClick={() => setIsHelpModalOpen(true)}
+        title="Fountain Format Help"
+      >
+        ?
+      </button>
+
       {/* Editor Layout */}
       <div className="editor-layout">
         <div className="columns is-gapless">
@@ -70,6 +94,146 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Help Modal */}
+      {isHelpModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsHelpModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Fountain Format Reference</h2>
+              <button 
+                className="modal-close"
+                onClick={() => setIsHelpModalOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="help-section">
+                <h3>Title Page</h3>
+                <div className="help-example">
+                  <code>
+                    Title: THE GREAT ADVENTURE<br/>
+                    Credit: Written by<br/>
+                    Author: John Dope<br/>
+                    Draft Date: 10/4/2025<br/>
+                    Contact: john@example.com
+                  </code>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Scene Headings</h3>
+                <div className="help-example">
+                  <code>
+                    EXT. PARKING LOT - DAY<br/>
+                    INT. COFFEE SHOP - NIGHT<br/>
+                    .MONTAGE - CODING AND COFFEE
+                  </code>
+                  <p>Scene headings start with INT./EXT./EST./I\/E or a period (.) for special scenes.</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Characters & Dialogue</h3>
+                <div className="help-example">
+                  <code>
+                    MENTOR<br/>
+                    Welcome to the team!<br/><br/>
+                    @MENTOR<br/>
+                    (power user syntax)<br/><br/>
+                    USER #1<br/>
+                    Thanks for having me.<br/><br/>
+                    BOB O'SHAUNNESSY<br/>
+                    (whispering)<br/>
+                    This is a parenthetical.
+                  </code>
+                  <p>Characters are ALL CAPS. Use @ for power user syntax. Parentheticals go under character names.</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Dual Dialogue</h3>
+                <div className="help-example">
+                  <code>
+                    ALICE<br/>
+                    I can't believe it!<br/><br/>
+                    BOB ^<br/>
+                    (at the same time)<br/>
+                    This is amazing!
+                  </code>
+                  <p>Add ^ after character name for dual dialogue (spoken simultaneously).</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Action Lines</h3>
+                <div className="help-example">
+                  <code>
+                    Bob walks into the room and looks around nervously.<br/><br/>
+                    The computer screen flickers to life.
+                  </code>
+                  <p>Action lines describe what happens on screen.</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Transitions</h3>
+                <div className="help-example">
+                  <code>
+                    FADE IN:<br/>
+                    CUT TO:<br/>
+                    FADE TO BLACK.<br/>
+                    &gt; CUT TO BLACK.
+                  </code>
+                  <p>Transitions control scene changes. Use &gt; for power user syntax.</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Centered Text</h3>
+                <div className="help-example">
+                  <code>
+                    &gt;INTERMISSION&lt;<br/>
+                    &gt;THE END&lt;
+                  </code>
+                  <p>Text wrapped in &gt; and &lt; appears centered (great for titles or breaks).</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Notes & Comments</h3>
+                <div className="help-example">
+                  <code>
+                    [[This is a note for the writer]]<br/><br/>
+                    Some action here [[with an inline note]] continues.
+                  </code>
+                  <p>Notes wrapped in [[ ]] are for writer reference and don't appear in final script.</p>
+                </div>
+              </div>
+
+              <div className="help-section">
+                <h3>Special Elements</h3>
+                <div className="help-example">
+                  <code>
+                    # Act I<br/>
+                    ## Chapter 1<br/>
+                    ### Scene A<br/><br/>
+                    = Synopsis: Brief scene description<br/><br/>
+                    ===<br/>
+                    (Page Break)<br/><br/>
+                    ~Lyrics:<br/>
+                    "Happy birthday to you"<br/><br/>
+                    [i]https://example.com/image.jpg<br/>
+                    [a]https://example.com/audio.mp3
+                  </code>
+                  <p>Use # for sections, = for synopsis, === for page breaks, ~ for lyrics, [i] for images, [a] for audio.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
