@@ -8,8 +8,9 @@ import defaultScriptContent from './assets/defaultScript.fountain?raw'
 function App() {
   const [code, setCode] = useState('')
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
+  const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
-  const { blocks, processText } = usePreviewWorker('')
+  const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
 
   // Load default script on component mount
   useEffect(() => {
@@ -22,19 +23,23 @@ function App() {
     processText(newCode)
   }
 
-  // Handle escape key for modal
+  // Handle escape key for modals
   useEffect(() => {
     const handleEscape = (event) => {
-      if (event.key === 'Escape' && isHelpModalOpen) {
-        setIsHelpModalOpen(false)
+      if (event.key === 'Escape') {
+        if (isHelpModalOpen) {
+          setIsHelpModalOpen(false)
+        } else if (isCharacterModalOpen) {
+          setIsCharacterModalOpen(false)
+        }
       }
     }
     
-    if (isHelpModalOpen) {
+    if (isHelpModalOpen || isCharacterModalOpen) {
       document.addEventListener('keydown', handleEscape)
       return () => document.removeEventListener('keydown', handleEscape)
     }
-  }, [isHelpModalOpen])
+  }, [isHelpModalOpen, isCharacterModalOpen])
 
   return (
     <div className="fountain-app">
@@ -45,6 +50,16 @@ function App() {
         title="Fountain Format Help"
       >
         ?
+      </button>
+
+      {/* Character List Button */}
+      <button 
+        className={`character-button ${characters.length === 0 ? 'disabled' : ''}`}
+        onClick={() => characters.length > 0 && setIsCharacterModalOpen(true)}
+        title={characters.length > 0 ? 'Character List' : 'No characters found'}
+        disabled={characters.length === 0}
+      >
+        <i className="fas fa-user"></i>
       </button>
 
       {/* Mobile View Toggle */}
@@ -283,6 +298,39 @@ function App() {
                   <p>Use = for synopsis notes, === for page breaks, ~ for lyrics. Each lyric line must begin with ~.</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Character List Modal */}
+      {isCharacterModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsCharacterModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Character List</h2>
+              <button 
+                className="modal-close"
+                onClick={() => setIsCharacterModalOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              {characters.length === 0 ? (
+                <p>No characters found in the script.</p>
+              ) : (
+                <div className="character-list">
+                  {characters.map((character) => (
+                    <div key={character} className="character-item">
+                      <div className="character-name">{character}</div>
+                      <div className="character-count">
+                        {characterLineCounts.get(character) || 0} dialogue lines
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

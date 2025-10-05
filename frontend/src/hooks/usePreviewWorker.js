@@ -217,6 +217,8 @@ function processTextFallback(text) {
 
 export function usePreviewWorker(initialText = '') {
   const [blocks, setBlocks] = useState([])
+  const [characters, setCharacters] = useState([])
+  const [characterLineCounts, setCharacterLineCounts] = useState(new Map())
   const workerRef = useRef(null)
   const [useWorker, setUseWorker] = useState(true)
 
@@ -479,18 +481,24 @@ function processText(text) {
   console.log('Characters found:', sortedCharacters)
   console.log('Character line counts:', sortedLineCounts)
   
-  return blocks
+  return {
+    blocks,
+    characters: sortedCharacters,
+    characterLineCounts: sortedLineCounts
+  }
 }
 
 self.onmessage = function(e) {
   const { type, text } = e.data
   
   if (type === 'process') {
-    const blocks = processText(text)
+    const result = processText(text)
     
     self.postMessage({
       type: 'result',
-      blocks
+      blocks: result.blocks,
+      characters: result.characters,
+      characterLineCounts: result.characterLineCounts
     })
   }
 }
@@ -507,9 +515,11 @@ self.onmessage = function(e) {
       }
       
       worker.onmessage = (e) => {
-        const { type, blocks } = e.data
+        const { type, blocks, characters, characterLineCounts } = e.data
         if (type === 'result') {
           setBlocks(blocks || [])
+          setCharacters(characters || [])
+          setCharacterLineCounts(characterLineCounts || new Map())
         }
       }
       
@@ -554,5 +564,5 @@ self.onmessage = function(e) {
     }
   }
 
-  return { blocks, processText }
+  return { blocks, characters, characterLineCounts, processText }
 }
