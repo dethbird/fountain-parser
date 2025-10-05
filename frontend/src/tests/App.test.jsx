@@ -5,7 +5,7 @@ import App from '../App'
 describe('App', () => {
   it('renders editor heading', () => {
     render(<App />)
-    expect(screen.getByText(/Fountain Writer/i)).toBeInTheDocument()
+    expect(screen.getByText(/Editor/i)).toBeInTheDocument()
   })
 
   it('renders preview heading', () => {
