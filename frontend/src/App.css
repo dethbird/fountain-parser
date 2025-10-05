@@ -141,24 +141,6 @@
   transition: margin-top 0.3s ease;
 }
 
-/* Header hiding when scrolling */
-.fountain-app.header-hidden .editor-layout {
-  margin-top: 0;
-}
-
-.fountain-app.header-hidden .editor-box .title,
-.fountain-app.header-hidden .preview-box .title {
-  display: none;
-}
-
-.fountain-app.header-hidden .mobile-view-toggle {
-  display: none !important;
-}
-
-.fountain-app.header-hidden .preview-content {
-  padding-top: 0.5rem;
-}
-
 /* Force 2-column layout on larger screens (like dev environment) */
 @media screen and (min-width: 1024px) {
   .editor-layout .columns {

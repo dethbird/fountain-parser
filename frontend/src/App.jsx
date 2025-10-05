@@ -10,7 +10,6 @@ function App() {
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
-  const [isHeaderCompressed, setIsHeaderCompressed] = useState(false)
   const [currentLine, setCurrentLine] = useState(0)
   const [hasSavedScript, setHasSavedScript] = useState(false)
   const [lastSavedDate, setLastSavedDate] = useState(null)
@@ -117,7 +116,7 @@ function App() {
     const currentBlocks = blocksRef.current
     setCurrentLine(lineNumber)
     
-    // Find the corresponding preview block and scroll to it
+    // Find the corresponding preview block and scroll to it within the preview container
     if (previewRef.current && currentBlocks.length > 0) {
       // Find the block that corresponds to this line or the closest one before it
       let targetBlock = null
@@ -131,7 +130,22 @@ function App() {
       if (targetBlock) {
         const blockElement = previewRef.current.querySelector(`[data-line-id="${targetBlock.id}"]`)
         if (blockElement) {
-          blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          // Get the preview container dimensions
+          const previewContainer = previewRef.current
+          const containerRect = previewContainer.getBoundingClientRect()
+          const elementRect = blockElement.getBoundingClientRect()
+          
+          // Calculate the scroll position to center the element in the preview container
+          const elementTop = elementRect.top - containerRect.top
+          const containerHeight = containerRect.height
+          const elementHeight = elementRect.height
+          const targetScrollTop = previewContainer.scrollTop + elementTop - (containerHeight / 2) + (elementHeight / 2)
+          
+          // Smooth scroll within the preview container only
+          previewContainer.scrollTo({
+            top: targetScrollTop,
+            behavior: 'smooth'
+          })
         }
       }
     }
@@ -162,19 +176,8 @@ function App() {
     }
   }, [isHelpModalOpen, isCharacterModalOpen])
 
-  // Handle scroll-based header hiding
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY || document.documentElement.scrollTop
-      setIsHeaderCompressed(scrollY > 20)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   return (
-    <div className={`fountain-app ${isHeaderCompressed ? 'header-hidden' : ''}`}>
+    <div className="fountain-app">
       {/* Persistence Toolbar */}
       <div className="persistence-toolbar">
         <div className="toolbar-group">
