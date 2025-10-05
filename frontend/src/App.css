@@ -399,6 +399,32 @@
   .preview-line.synopsis {
     padding: 4px 4px 4px 0.5em;
   }
+
+  /* Reduce container padding on mobile for more space */
+  .editor-box,
+  .preview-box {
+    padding: 0.5rem !important;
+  }
+
+  .editor-box .title,
+  .preview-box .title {
+    padding: 0.5rem !important;
+    margin: -0.5rem -0.5rem 0.5rem -0.5rem;
+  }
+
+  .preview-content {
+    padding: 1rem 0.5rem !important;
+  }
+
+  /* Remove container padding on mobile for maximum space */
+  .container.is-fluid {
+    padding: 0 !important;
+  }
+
+  /* Remove all box padding on mobile */
+  .box {
+    padding: 0 !important;
+  }
 }
 
 /* Desktop layout */
