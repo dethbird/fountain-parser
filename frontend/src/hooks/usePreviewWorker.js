@@ -150,6 +150,12 @@ function processTextFallback(text) {
       type = 'page_break'
       className = 'page-break'
     }
+    // Centered text >TEXT<
+    else if (/^>.+<$/.test(trimmed)) {
+      state.character_extended = false
+      type = 'centered'
+      className = 'centered'
+    }
     // Default: action
     else {
       state.character_extended = false
@@ -187,6 +193,13 @@ function processTextFallback(text) {
     } else if (type === 'character' || type === 'dual_character') {
       // Remove '@' prefix for power user characters
       displayText = line.replace(/^@/, '')
+    } else if (type === 'scene') {
+      // Remove leading period from scene headings like .MONTAGE
+      displayText = line.replace(/^\./, '')
+    } else if (type === 'centered') {
+      // Format centered text as "> TEXT <" with spaces
+      const text = line.replace(/^>|<$/g, '')
+      displayText = `> ${text} <`
     }
     
     blocks.push({
@@ -373,6 +386,12 @@ function processText(text) {
       type = 'page_break'
       className = 'page-break'
     }
+    // Centered text >TEXT<
+    else if (/^>.+<$/.test(trimmed)) {
+      state.character_extended = false
+      type = 'centered'
+      className = 'centered'
+    }
     // Default: action
     else {
       state.character_extended = false
@@ -410,6 +429,13 @@ function processText(text) {
     } else if (type === 'character' || type === 'dual_character') {
       // Remove '@' prefix for power user characters
       displayText = line.replace(/^@/, '')
+    } else if (type === 'scene') {
+      // Remove leading period from scene headings like .MONTAGE
+      displayText = line.replace(/^\\\./, '')
+    } else if (type === 'centered') {
+      // Format centered text as "> TEXT <" with spaces
+      const text = line.replace(/^>|<$/g, '')
+      displayText = \`> \${text} <\`
     }
     
     blocks.push({
