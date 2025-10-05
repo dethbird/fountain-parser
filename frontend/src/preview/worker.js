@@ -9,6 +9,9 @@ function processText(text) {
   const characters = new Set()
   const characterLineCounts = new Map()
   
+  // Page tracking
+  let currentPage = 1
+  
   // State machine like fountainMode
   let state = {
     character_extended: false,
@@ -165,6 +168,20 @@ function processText(text) {
     // Page break
     else if (/^={3,}$/.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
+      
+      // Add page number before the page break
+      blocks.push({
+        id: `page-number-${i}`,
+        text: `<div class="page-number">${currentPage}</div>`,
+        index: i,
+        type: 'page_number',
+        className: 'page-number',
+        speaker: null
+      })
+      
+      currentPage++
+      
       type = 'page_break'
       className = 'page-break'
     }

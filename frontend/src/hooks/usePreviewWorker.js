@@ -5,6 +5,9 @@ function processTextFallback(text) {
   const lines = text.split('\n')
   const blocks = []
   
+  // Page tracking
+  let currentPage = 1
+  
   let state = {
     character_extended: false,
     note: false
@@ -147,6 +150,19 @@ function processTextFallback(text) {
     // Page break
     else if (/^={3,}$/.test(trimmed)) {
       state.character_extended = false
+      
+      // Add page number before the page break
+      blocks.push({
+        id: `page-number-${i}`,
+        text: `<div class="page-number">${currentPage}</div>`,
+        index: i,
+        type: 'page_number',
+        className: 'page-number',
+        speaker: null
+      })
+      
+      currentPage++
+      
       type = 'page_break'
       className = 'page-break'
     }
@@ -245,6 +261,9 @@ function processText(text) {
   // Character collection
   const characters = new Set()
   const characterLineCounts = new Map()
+  
+  // Page tracking
+  let currentPage = 1
   
   // State machine like fountainMode
   let state = {
@@ -407,6 +426,19 @@ function processText(text) {
     // Page break
     else if (/^={3,}$/.test(trimmed)) {
       state.character_extended = false
+      
+      // Add page number before the page break
+      blocks.push({
+        id: \`page-number-\${i}\`,
+        text: \`<div class="page-number">\${currentPage}</div>\`,
+        index: i,
+        type: 'page_number',
+        className: 'page-number',
+        speaker: null
+      })
+      
+      currentPage++
+      
       type = 'page_break'
       className = 'page-break'
     }

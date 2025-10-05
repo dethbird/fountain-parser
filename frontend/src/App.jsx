@@ -120,7 +120,7 @@ function App() {
                       className={`preview-line ${block.className || ''}`}
                       data-type={block.type}
                     >
-                      {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' ? (
+                      {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' || block.type === 'page_number' ? (
                         <div dangerouslySetInnerHTML={{ __html: block.text }} />
                       ) : (
                         block.text || '\u00A0'
@@ -200,7 +200,7 @@ function App() {
                     (whispering)<br/>
                     This is a parenthetical.
                   </code>
-                  <p>Characters are ALL CAPS. Use @ for power user syntax. Parentheticals go under character names.</p>
+                  <p>Characters are ALL CAPS. Use @ for power user syntax or mixed-case names like "@John Doe". Names with @ in front will be counted as characters. Parentheticals go under character names.</p>
                 </div>
               </div>
 

@@ -149,9 +149,26 @@
 .preview-line.page-break {
   text-align: center;
   font-weight: bold;
-  margin-top: 2em;
-  margin-bottom: 2em;
-  padding: 0.5em 0;
+}
+
+.preview-line.page-number {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #666;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  padding-right: 1em;
+}
+
+.page-number {
+  text-align: right;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #666;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  padding-right: 1em;
 }
 
 .preview-line.lyrics {
