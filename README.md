@@ -24,7 +24,9 @@ Code highlighting for `fountain.ext` screenplay syntax with live print-formatted
 
 ![](./assets/img/screenshot-characters.png)
 
-### Fountain.ext language syntax help.
+### .fountain.ext language syntax help.
+
+`.fountain` is a good language but has no official parser. Additionally, there were elements I felt were missing like synopsis, milestones, act, scene, sequence markers, etc. Those have been defined in the extended `.fountain.ext`, a helper can be found in-app.
 
 ![](./assets/img/screenshot-fountain-help.png)
 
