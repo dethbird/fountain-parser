@@ -1,4 +1,4 @@
-import { tokenizeScript, lexizeScript } from '../tokenize'
+import { tokenizeScript, lexizeScript } from './tokenize'
 import { test, expect } from 'vitest'
 
 const sample = `FADE IN:
