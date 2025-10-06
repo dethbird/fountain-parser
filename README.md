@@ -12,6 +12,25 @@ An opinionated, fast screenwriting playground for **Fountain** with a minimal **
 
 > **MVP persistence:** this editor stores the current script in `localStorage` only. Use Copy/Paste/Export for backups.
 
+## Features
+
+### Editor with live preview.
+
+Code highlighting for `fountain.ext` screenplay syntax with live print-formatted preview.
+
+![](C:\Users\rishi\code\fountain-parser\assets\img\screenshot-editor.png)
+
+### Character detection with dialog count.
+
+![](C:\Users\rishi\code\fountain-parser\assets\img\screenshot-characters.png)
+
+### Fountain.ext language syntax help.
+
+![](C:\Users\rishi\code\fountain-parser\assets\img\screenshot-fountain-help.png)
+
+
+
+
 ---
 
 ## Table of Contents
