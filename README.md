@@ -14,7 +14,7 @@ An opinionated, fast screenwriting playground for **Fountain** with a minimal **
 
 ## Features
 
-### Editor with live preview.
+### .fountain language "code editor" with live print preview
 
 Code highlighting for `fountain.ext` screenplay syntax with live print-formatted preview.
 
@@ -22,11 +22,13 @@ Code highlighting for `fountain.ext` screenplay syntax with live print-formatted
 
 ### Character detection with dialog count.
 
+Characters are detected as you type, with their dialog count tallied
+
 ![](./assets/img/screenshot-characters.png)
 
 ### .fountain.ext language syntax help.
 
-`.fountain` is a good language but has no official parser. Additionally, there were elements I felt were missing like synopsis, milestones, act, scene, sequence markers, etc. Those have been defined in the extended `.fountain.ext`, a helper can be found in-app.
+Vanilla `.fountain` is great but intentionally minimal. A few pragmatic bits were added to create `.fountain.ext` (Fountain extended) like synopsis lines, milestones, act/scene/sequence markers, and storyboard-friendly panels with optional images/audio. The in-app helper shows the syntax. 
 
 ![](./assets/img/screenshot-fountain-help.png)
 
