@@ -129,6 +129,15 @@ function App() {
     }
   }
 
+  // Clear the editor contents and update preview
+  const clearEditor = () => {
+    setCode('')
+    processText('')
+    try {
+      if (editorRef.current && editorRef.current.focus) editorRef.current.focus()
+    } catch (e) {}
+  }
+
   // Handle cursor position changes from CodeMirror
   const handleCursorChange = useCallback((lineNumber) => {
     const currentBlocks = blocksRef.current
@@ -256,6 +265,16 @@ function App() {
           >
             <i className="fas fa-paste"></i>
             Paste
+          </button>
+          
+          <button
+            className={`toolbar-btn danger ${!code.trim() ? 'disabled' : ''}`}
+            onClick={clearEditor}
+            disabled={!code.trim()}
+            title="Clear editor contents"
+          >
+            <i className="fas fa-trash"></i>
+            Clear Editor
           </button>
           
           <button 
