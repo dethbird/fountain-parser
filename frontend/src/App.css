@@ -86,6 +86,9 @@
   border-color: #1e7e34;
 }
 
+/* Desktop suggestion banner for mobile users */
+/* desktop suggestion was replaced by a modal using existing modal styles */
+
 .character-count-badge {
   background-color: #dc3545;
   color: white;

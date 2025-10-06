@@ -6,6 +6,7 @@ import defaultScriptContent from './assets/defaultScript.fountain?raw'
 
 // Main App component
 function App() {
+  const [showDesktopSuggestion, setShowDesktopSuggestion] = useState(false)
   const [code, setCode] = useState('')
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
@@ -38,6 +39,23 @@ function App() {
     setCode(scriptToLoad)
     processText(scriptToLoad)
   }, []) // Remove processText dependency to prevent infinite loop
+
+  // Detect mobile-like clients and suggest enabling the browser "Desktop site" option
+  useEffect(() => {
+    try {
+      const dismissed = localStorage.getItem('desktopSuggestionDismissed') === '1'
+      if (dismissed) return
+      const ua = navigator.userAgent || ''
+      const isMobileUA = /Mobi|Android|iPhone|iPad|iPod|BB10|IEMobile|Opera Mini/i.test(ua)
+      const isTouch = window.matchMedia && window.matchMedia('(pointer:coarse)').matches
+      const smallScreen = (window.innerWidth || screen.width || 0) < 1024
+      if (isMobileUA || (isTouch && smallScreen)) {
+        setShowDesktopSuggestion(true)
+      }
+    } catch (e) {
+      // ignore detection errors
+    }
+  }, [])
 
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
 
@@ -178,6 +196,27 @@ function App() {
 
   return (
     <div className="fountain-app">
+      {showDesktopSuggestion && (
+        <div className="modal-overlay" onClick={() => { localStorage.setItem('desktopSuggestionDismissed','1'); setShowDesktopSuggestion(false); }}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Tip: enable Desktop site for a better layout</h2>
+              <button className="modal-close" onClick={() => { localStorage.setItem('desktopSuggestionDismissed','1'); setShowDesktopSuggestion(false); }}>
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>For the best editing experience on phones, enable your browser's "Desktop site" option from the browser menu. This prevents the toolbar from wrapping and provides the full desktop layout.</p>
+              <p style={{ marginTop: '1rem' }}><strong>How to:</strong> open your browser menu (⋮) and choose "Desktop site" or "Request desktop site".</p>
+            </div>
+            <div className="modal-header" style={{ borderTop: '1px solid #404040', justifyContent: 'flex-end' }}>
+              <button className="toolbar-btn" onClick={() => { localStorage.setItem('desktopSuggestionDismissed','1'); setShowDesktopSuggestion(false); }}>
+                Got it
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Persistence Toolbar */}
       <div className="persistence-toolbar">
         <div className="toolbar-group">
