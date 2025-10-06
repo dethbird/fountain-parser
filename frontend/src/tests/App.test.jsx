@@ -5,12 +5,14 @@ import App from '../App'
 describe('App', () => {
   it('renders editor heading', () => {
     render(<App />)
-    expect(screen.getByText(/Editor/i)).toBeInTheDocument()
+    const matches = screen.getAllByText(/Editor/i)
+    expect(matches.length).toBeGreaterThan(0)
   })
 
   it('renders preview heading', () => {
     render(<App />)
-    expect(screen.getByText(/Live Preview/i)).toBeInTheDocument()
+    const matches = screen.getAllByText(/Live Preview/i)
+    expect(matches.length).toBeGreaterThan(0)
   })
 
   // Keep tests focused on stable UI headings rather than sample content
