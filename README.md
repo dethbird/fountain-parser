@@ -18,15 +18,15 @@ An opinionated, fast screenwriting playground for **Fountain** with a minimal **
 
 Code highlighting for `fountain.ext` screenplay syntax with live print-formatted preview.
 
-![](C:\Users\rishi\code\fountain-parser\assets\img\screenshot-editor.png)
+![](./assets/img/screenshot-editor.png)
 
 ### Character detection with dialog count.
 
-![](C:\Users\rishi\code\fountain-parser\assets\img\screenshot-characters.png)
+![](./assets/img/screenshot-characters.png)
 
 ### Fountain.ext language syntax help.
 
-![](C:\Users\rishi\code\fountain-parser\assets\img\screenshot-fountain-help.png)
+![](./assets/img/screenshot-fountain-help.png)
 
 
 
