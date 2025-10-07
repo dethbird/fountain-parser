@@ -235,8 +235,8 @@
   }
 
   .preview-line.parenthetical {
-    margin-left: 1.6in;
-    margin-right: 1.6in;
+    text-align: center;
+    margin: 0.25em 0;
   }
 
   .codemirror-wrapper .cm-editor {
@@ -258,8 +258,8 @@
   }
 
   .preview-line.parenthetical {
-    margin-left: 1.4in;
-    margin-right: 1.4in;
+    text-align: center;
+    margin: 0.25em 0;
   }
 
   .codemirror-wrapper .cm-editor {
@@ -281,8 +281,8 @@
   }
 
   .preview-line.parenthetical {
-    margin-left: 1.25in;
-    margin-right: 1.25in;
+    text-align: center;
+    margin: 0.25em 0;
   }
 
   .codemirror-wrapper .cm-editor {
@@ -338,10 +338,9 @@
 }
 
 .preview-line.parenthetical {
-  margin-left: 2in;
-  margin-right: 2in;
+  text-align: center;
   font-style: italic;
-  margin-bottom: 0;
+  margin: 0.25em 0;
 }
 
 .preview-line.action {
@@ -579,8 +578,9 @@
   }
 
   .preview-line.parenthetical {
-    margin-left: 0.75in;
-    margin-right: 0.75in;
+    text-align: center;
+    font-style: italic;
+    margin: 0.25em 0;
   }
 
   .preview-line.lyrics {
