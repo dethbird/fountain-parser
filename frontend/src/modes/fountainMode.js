@@ -60,8 +60,8 @@ const fountainLanguage = StreamLanguage.define({
     }
 
     // Check for new character lines BEFORE checking character_extended state
-    // character / dialogue
-    if (match = stream.match(/^([A-Z][A-Z0-9'\-. ]+([A-Z0-9'\-. ])+)/)) {
+    // character / dialogue - use centralized BLOCK_REGEX to allow '.' in names
+    if (match = stream.match(BLOCK_REGEX.CHARACTER)) {
       state.character_extended = false // Reset state for new character
       stream.eatSpace()
       nextChar = stream.peek()
@@ -80,8 +80,8 @@ const fountainLanguage = StreamLanguage.define({
       stream.skipToEnd()
       return 'variable'
     }
-    
-    if (match = stream.match(/^([@][A-Za-z]+)/)) {
+
+    if (match = stream.match(BLOCK_REGEX.CHARACTER_POWER_USER)) {
       state.character_extended = false // Reset state for new character
       stream.eatSpace()
       nextChar = stream.peek()
@@ -103,6 +103,8 @@ const fountainLanguage = StreamLanguage.define({
 
     // Now check character_extended state for dialogue/parentheticals
     if (state.character_extended) {
+      // allow some leading indentation before dialogue/parenthetical
+      stream.eatSpace()
       nextChar = stream.peek()
       if (nextChar == '(') {
         match = stream.skipTo(')')
@@ -116,8 +118,8 @@ const fountainLanguage = StreamLanguage.define({
         }
       }
 
-  stream.skipToEnd()
-  return 'string'  // dialogue uses 'string' token
+      stream.skipToEnd()
+      return 'string'  // dialogue uses 'string' token
     }
 
     // section subelements

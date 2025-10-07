@@ -30,8 +30,10 @@ export const BLOCK_REGEX = {
   PAGE_BREAK: /^\={3,}$/,
   
   // Character names and dialogue
-  CHARACTER: /^([A-Z][A-Z0-9'\-. ]+)(\([A-Za-z0-9'\-. ]+\))?(?:\ )?(\^)?/,
-  CHARACTER_POWER_USER: /^(?:\@)([A-Za-z0-9'\-. ][A-Za-z0-9'\-.]+)(?:\ )?(\([A-Za-z0-9'\-. ]+\))?(?:\ )?(\^)?/,
+  // Allow periods (e.g., MR. MILLER), apostrophes, hyphens and spaces inside names
+  // Match a character-name line: NAME [ (parenthetical) ] [ ^ ] and nothing else on the line
+  CHARACTER: /^([A-Z][A-Z0-9\.\'\-\s]+)(?:\s*(\([A-Za-z0-9\.\'\-\s]+\))?\s*(\^)?\s*)$/,
+  CHARACTER_POWER_USER: /^(?:@)([A-Za-z0-9\.\'\-\s]+)(?:\s*(\([A-Za-z0-9\.\'\-\s]+\))?\s*(\^)?\s*)$/,
   
   // Scene elements
   SCENE: /^((?:\*{0,3}_?)?(?:(?:int|ext|est|i\/e)[. ]).+)|^(?:\.(?!\.+))(.+)/i,

@@ -60,15 +60,12 @@ function processTextFallback(text) {
       type = 'transition'
       className = 'transition'
     }
-    // Character lines - must be ALL CAPS and short (including dual dialogue with ^) OR start with @
-    else if (((/^[A-Z][A-Z0-9#'\s]*(\^)?$/.test(trimmed) && 
-             trimmed.replace('^', '').length < 50 && 
-             trimmed.length > 1 &&
-             !trimmed.includes('.') &&
-             !trimmed.includes(',') &&
-             !trimmed.includes('!') &&
-             !trimmed.includes('?')) ||
-             /^@.+$/.test(trimmed))) {
+  // Character lines - must be ALL CAPS and short (including dual dialogue with ^) OR start with @
+  // Allow periods and hyphens in names (e.g., MR. MILLER, DR-JONES)
+  else if (((/^[A-Z][A-Z0-9#\.\'\-\s]*(\^)?$/.test(trimmed) && 
+       trimmed.replace('^', '').length < 50 && 
+       trimmed.length > 1) ||
+       /^@.+$/.test(trimmed))) {
       state.character_extended = true
       if (trimmed.includes('^')) {
         type = 'dual_character'
@@ -334,14 +331,10 @@ function processText(text) {
       className = 'transition'
     }
     // Character lines - must be ALL CAPS and short (including dual dialogue with ^) OR start with @
-    else if (((/^[A-Z][A-Z0-9#'\\s]*(\\^)?$/.test(trimmed) && 
-             trimmed.replace('^', '').length < 50 && 
-             trimmed.length > 1 &&
-             !trimmed.includes('.') &&
-             !trimmed.includes(',') &&
-             !trimmed.includes('!') &&
-             !trimmed.includes('?')) ||
-             /^@.+$/.test(trimmed))) {
+  else if (((/^[A-Z][A-Z0-9#\.\\'\\-\\s]*(\\^)?$/.test(trimmed) && 
+       trimmed.replace('^', '').length < 50 && 
+       trimmed.length > 1) ||
+       /^@.+$/.test(trimmed))) {
       state.character_extended = true
       if (trimmed.includes('^')) {
         type = 'dual_character'
