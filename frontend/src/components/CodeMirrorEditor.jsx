@@ -101,6 +101,7 @@ const CodeMirrorEditor = forwardRef(({ value = '', onChange = () => {}, onCursor
       foldGutter(),
       bracketMatching(),
       indentOnInput(),
+      EditorView.lineWrapping,
       fountainLanguage,
       lineDecorator,
       EditorView.domEventHandlers({
