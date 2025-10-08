@@ -289,13 +289,14 @@ function App() {
           
           <div className="toolbar-divider"></div>
           
-          {/* Help Button */}
+          {/* Help Button (writing help) */}
           <button 
             className="toolbar-btn help-btn"
             onClick={() => setIsHelpModalOpen(true)}
-            title="Fountain Format Help"
+            title="Writing help (Fountain syntax & tips)"
+            aria-label="Open writing help"
           >
-            <i className="fas fa-question"></i>
+            <i className="fas fa-pen" aria-hidden="true"></i>
             Help
           </button>
 
