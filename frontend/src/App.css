@@ -144,6 +144,32 @@
   transition: margin-top 0.3s ease;
 }
 
+/* Fullscreen toggle button: positioned at top-right of the editor layout when
+   the editor and preview are side-by-side. Hidden on small screens. */
+.fullscreen-btn {
+  position: absolute;
+  right: 1rem;
+  top: 0.75rem;
+  z-index: 50;
+  background-color: rgba(58,58,58,0.9);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #f5f5f5;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.fullscreen-btn:hover { background-color: rgba(62,142,208,0.12); border-color: rgba(62,142,208,0.3); }
+
+/* Hide fullscreen button on small screens where we already collapse to single column */
+@media screen and (max-width: 1023px) {
+  .fullscreen-btn { display: none; }
+}
+
 /* Force 2-column layout on larger screens (like dev environment) */
 @media screen and (min-width: 1024px) {
   .editor-layout .columns {

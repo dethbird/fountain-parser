@@ -17,6 +17,8 @@ function App() {
   const previewRef = useRef(null)
   const editorRef = useRef(null)
   const blocksRef = useRef([])
+  const appRef = useRef(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
 
   // Load script content on component mount - prioritize localStorage over default
   useEffect(() => {
@@ -203,8 +205,39 @@ function App() {
     }
   }, [isHelpModalOpen, isCharacterModalOpen])
 
+  // Fullscreen change handling
+  useEffect(() => {
+    const onFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement)
+    }
+    document.addEventListener('fullscreenchange', onFsChange)
+    return () => document.removeEventListener('fullscreenchange', onFsChange)
+  }, [])
+
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        if (appRef.current && appRef.current.requestFullscreen) {
+          await appRef.current.requestFullscreen()
+          setIsFullscreen(true)
+        } else if (document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen()
+          setIsFullscreen(true)
+        }
+      } else {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen()
+          setIsFullscreen(false)
+        }
+      }
+    } catch (e) {
+      // ignore fullscreen errors
+      console.error('Fullscreen toggle failed', e)
+    }
+  }
+
   return (
-    <div className="fountain-app">
+  <div className="fountain-app" ref={appRef}>
       {showDesktopSuggestion && (
         <div className="modal-overlay" onClick={() => { localStorage.setItem('desktopSuggestionDismissed','1'); setShowDesktopSuggestion(false); }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -348,6 +381,15 @@ function App() {
 
       {/* Editor Layout */}
       <div className="editor-layout">
+        {/* Fullscreen toggle shown when side-by-side (hidden on small screens via CSS) */}
+        <button
+          className={`toolbar-btn fullscreen-btn ${isFullscreen ? 'is-active' : ''}`}
+          onClick={toggleFullscreen}
+          title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+          aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+        >
+          <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`} aria-hidden="true"></i>
+        </button>
         <div className="columns is-gapless">
           {/* Code Editor - Left Side */}
           <div className={`column is-half-desktop ${viewMode === 'preview' ? 'mobile-hidden' : ''}`}>
