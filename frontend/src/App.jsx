@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
@@ -62,6 +62,47 @@ function App() {
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
   // Preview pane selector: 'screenplay' shows the existing preview, 'player' will show the media player
   const [previewPane, setPreviewPane] = useState('screenplay')
+  // Player state (mocked panels derived from the editor code for now)
+  const [playerIndex, setPlayerIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef(null)
+
+  // Derive simple panels from the editor `code` by finding '####' panel headings
+  const mockPanels = useMemo(() => {
+    const lines = (code || '').split(/\r?\n/)
+    const panels = []
+    let current = null
+    for (let i = 0; i < lines.length; i++) {
+      const raw = lines[i]
+      const trimmed = raw.trim()
+      if (trimmed.startsWith('#')) {
+        // If it's a panel heading (####) start a panel; otherwise any other heading ends a panel
+        const headingMatch = trimmed.match(/^(#+)\s*(.*)$/)
+        if (headingMatch) {
+          const level = headingMatch[1].length
+          const title = headingMatch[2] || ''
+          if (level === 4) {
+            if (current) panels.push(current)
+            current = { title: title || `Panel ${panels.length + 1}`, lines: [] }
+            continue
+          } else {
+            // non-panel heading; close current panel if open
+            if (current) {
+              panels.push(current)
+              current = null
+            }
+            continue
+          }
+        }
+      }
+
+      if (current) {
+        current.lines.push(raw)
+      }
+    }
+    if (current) panels.push(current)
+    return panels.map((p, idx) => ({ title: p.title || `Panel ${idx + 1}`, snippet: p.lines.join('\n') }))
+  }, [code])
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -459,9 +500,51 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="media-player-placeholder" style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Media Player (placeholder)</div>
-                  <div style={{ fontSize: '0.9rem' }}>Player UI will appear here. We'll wire it up next.</div>
+                <div className="media-player" style={{ padding: '1rem' }}>
+                  {/* Controls row */}
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                    <button className="toolbar-btn" onClick={() => { setIsPlaying(false); setPlayerIndex(0); if (audioRef.current) { try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch(e){} } }} title="Stop">
+                      <i className="fas fa-stop" /> Stop
+                    </button>
+                    <button className="toolbar-btn" onClick={() => { setIsPlaying(true); if (audioRef.current) try { audioRef.current.play().catch(()=>{}) } catch(e){} }} title="Play">
+                      <i className="fas fa-play" /> Play
+                    </button>
+                    <button className="toolbar-btn" onClick={() => { setIsPlaying(false); if (audioRef.current) try { audioRef.current.pause() } catch(e){} }} title="Pause">
+                      <i className="fas fa-pause" /> Pause
+                    </button>
+                  </div>
+
+                  {/* Image placeholder */}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                    <img src={`https://picsum.photos/seed/fountain-${playerIndex}/640/360`} alt="panel placeholder" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                  </div>
+
+                  {/* Audio placeholder */}
+                  <div style={{ marginBottom: '0.75rem' }}>
+                    <audio ref={audioRef} controls src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3" style={{ width: '100%' }} />
+                  </div>
+
+                  {/* Panel snippet: render the panel lines in the same style as preview-content */}
+                  <div style={{ borderTop: '1px solid #2a2a2a', paddingTop: '0.75rem' }}>
+                    {mockPanels.length === 0 ? (
+                      <div style={{ color: '#999' }}>No panel content found in the script. Add '####' headings to create panels.</div>
+                    ) : (
+                      (() => {
+                        const p = mockPanels[playerIndex] || mockPanels[0]
+                        return (
+                          <div className="preview-content" style={{ padding: '1rem', margin: 0 }}>
+                            {p.snippet ? (
+                              p.snippet.split(/\r?\n/).map((ln, i) => (
+                                <div key={i} style={{ whiteSpace: 'pre-wrap' }}>{ln || '\u00A0'}</div>
+                              ))
+                            ) : (
+                              <div style={{ color: '#999' }}>No content for this panel.</div>
+                            )}
+                          </div>
+                        )
+                      })()
+                    )}
+                  </div>
                 </div>
               )}
             </div>
