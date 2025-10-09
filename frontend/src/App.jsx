@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
+import { usePlayerWorker } from './hooks/usePlayerWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
 
 // Main App component
@@ -40,6 +41,8 @@ function App() {
     
     setCode(scriptToLoad)
     processText(scriptToLoad)
+    // also parse panels for the player
+    try { if (typeof parsePanels === 'function') parsePanels(scriptToLoad) } catch (e) {}
   }, []) // Remove processText dependency to prevent infinite loop
 
   // Detect mobile-like clients and suggest enabling the browser "Desktop site" option
@@ -62,47 +65,11 @@ function App() {
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
   // Preview pane selector: 'screenplay' shows the existing preview, 'player' will show the media player
   const [previewPane, setPreviewPane] = useState('screenplay')
-  // Player state (mocked panels derived from the editor code for now)
+  // Player state
   const [playerIndex, setPlayerIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef(null)
-
-  // Derive simple panels from the editor `code` by finding '####' panel headings
-  const mockPanels = useMemo(() => {
-    const lines = (code || '').split(/\r?\n/)
-    const panels = []
-    let current = null
-    for (let i = 0; i < lines.length; i++) {
-      const raw = lines[i]
-      const trimmed = raw.trim()
-      if (trimmed.startsWith('#')) {
-        // If it's a panel heading (####) start a panel; otherwise any other heading ends a panel
-        const headingMatch = trimmed.match(/^(#+)\s*(.*)$/)
-        if (headingMatch) {
-          const level = headingMatch[1].length
-          const title = headingMatch[2] || ''
-          if (level === 4) {
-            if (current) panels.push(current)
-            current = { title: title || `Panel ${panels.length + 1}`, lines: [] }
-            continue
-          } else {
-            // non-panel heading; close current panel if open
-            if (current) {
-              panels.push(current)
-              current = null
-            }
-            continue
-          }
-        }
-      }
-
-      if (current) {
-        current.lines.push(raw)
-      }
-    }
-    if (current) panels.push(current)
-    return panels.map((p, idx) => ({ title: p.title || `Panel ${idx + 1}`, snippet: p.lines.join('\n') }))
-  }, [code])
+  const { panels, parsePanels } = usePlayerWorker()
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -112,7 +79,18 @@ function App() {
   const handleCodeChange = (newCode) => {
     setCode(newCode)
     processText(newCode)
+    try { if (typeof parsePanels === 'function') parsePanels(newCode) } catch (e) {}
   }
+
+  // Reset/clamp playerIndex when panels change
+  useEffect(() => {
+    if (!Array.isArray(panels) || panels.length === 0) {
+      setPlayerIndex(0)
+      setIsPlaying(false)
+      return
+    }
+    if (playerIndex >= panels.length) setPlayerIndex(0)
+  }, [panels])
 
   // localStorage operations
   const saveScript = () => {
@@ -526,20 +504,40 @@ function App() {
 
                   {/* Panel snippet: render the panel lines in the same style as preview-content */}
                   <div style={{ borderTop: '1px solid #2a2a2a', paddingTop: '0.75rem' }}>
-                    {mockPanels.length === 0 ? (
+                    {(!panels || panels.length === 0) ? (
                       <div style={{ color: '#999' }}>No panel content found in the script. Add '####' headings to create panels.</div>
                     ) : (
                       (() => {
-                        const p = mockPanels[playerIndex] || mockPanels[0]
+                        const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                        const img = p && p.imageUrl ? p.imageUrl : `https://picsum.photos/seed/fountain-${playerIndex}/640/360`
+                        const aud = p && p.audioUrl ? p.audioUrl : 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3'
+                        const dur = p && typeof p.duration === 'number' ? p.duration : null
+                        const durSrc = p && p.durationSource ? p.durationSource : null
                         return (
-                          <div className="preview-content" style={{ padding: '1rem', margin: 0 }}>
-                            {p.snippet ? (
-                              p.snippet.split(/\r?\n/).map((ln, i) => (
-                                <div key={i} style={{ whiteSpace: 'pre-wrap' }}>{ln || '\u00A0'}</div>
-                              ))
-                            ) : (
-                              <div style={{ color: '#999' }}>No content for this panel.</div>
-                            )}
+                          <div>
+                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}>
+                              <img src={img} alt="panel" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                            </div>
+                            <div style={{ marginBottom: '0.5rem' }}>
+                              <audio ref={audioRef} controls src={aud} style={{ width: '100%' }} />
+                            </div>
+                            <div style={{ padding: '0.5rem' }}>
+                              <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{p.title || `Panel ${playerIndex + 1}`}</div>
+                              <div style={{ fontSize: '0.85rem', color: '#999', marginBottom: '0.5rem' }}>Duration: {dur ? `${dur}s` : 'n/a'} {durSrc ? `(${durSrc})` : ''}</div>
+                              <div className="preview-content" style={{ padding: '1rem', margin: 0 }}>
+                                {p && p.blocks && p.blocks.length > 0 ? (
+                                  p.blocks.map((b) => (
+                                    <div key={b.id} className={`preview-line ${b.className || ''}`} dangerouslySetInnerHTML={{ __html: b.text || '\u00A0' }} />
+                                  ))
+                                ) : p && p.snippet ? (
+                                  p.snippet.split(/\r?\n/).map((ln, i) => (
+                                    <div key={i} style={{ whiteSpace: 'pre-wrap' }}>{ln || '\u00A0'}</div>
+                                  ))
+                                ) : (
+                                  <div style={{ color: '#999' }}>No content for this panel.</div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )
                       })()

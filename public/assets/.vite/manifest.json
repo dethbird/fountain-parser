@@ -1,27 +1,27 @@
 {
-  "_chunk-Dl70ecfl.js": {
-    "file": "chunk-Dl70ecfl.js",
+  "_chunk-JTsKQkEd.js": {
+    "file": "chunk-JTsKQkEd.js",
     "name": "fountainParser"
   },
   "src/main.jsx": {
-    "file": "main-B_um9b1m.js",
+    "file": "main-8CGmhlbD.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
-      "_chunk-Dl70ecfl.js"
+      "_chunk-JTsKQkEd.js"
     ],
     "css": [
       "asset-C6VEtTz6.css"
     ]
   },
   "src/workers/previewWorker.js": {
-    "file": "previewWorker-Ca0EiRGV.js",
+    "file": "previewWorker-RVGBnPvO.js",
     "name": "previewWorker",
     "src": "src/workers/previewWorker.js",
     "isEntry": true,
     "imports": [
-      "_chunk-Dl70ecfl.js"
+      "_chunk-JTsKQkEd.js"
     ]
   }
 }
