@@ -4,8 +4,12 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Runtime base - serve built files from /assets/ at runtime
+  base: '/assets/',
   plugins: [react()],
   build: {
+    // Emit static assets directly into the outDir root (no nested 'assets/' folder).
+    assetsDir: '',
     outDir: '../public/assets',
     emptyOutDir: true,
     manifest: true,
