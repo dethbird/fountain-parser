@@ -60,6 +60,8 @@ function App() {
   }, [])
 
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
+  // Preview pane selector: 'screenplay' shows the existing preview, 'player' will show the media player
+  const [previewPane, setPreviewPane] = useState('screenplay')
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -408,32 +410,60 @@ function App() {
           {/* Preview - Right Side */}
           <div className={`column is-half-desktop ${viewMode === 'edit' ? 'mobile-hidden' : ''}`}>
             <div className="box preview-box">
-              <h3 className="title is-6">Live Preview</h3>
-              <div className="preview-content" ref={previewRef}>
-                {blocks.length === 0 ? (
-                  <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
-                    Loading preview...
-                  </div>
-                ) : (
-                  blocks.map((block) => (
-                    <div 
-                      key={block.id} 
-                      className={`preview-line ${block.className || ''} ${block.index === currentLine ? 'current-line' : ''}`}
-                      data-type={block.type}
-                      data-line-id={block.id}
-                      data-line-index={block.index}
-                      onClick={() => handlePreviewClick(block.index)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' || block.type === 'page_number' ? (
-                        <div dangerouslySetInnerHTML={{ __html: block.text }} />
-                      ) : (
-                        block.text || '\u00A0'
-                      )}
-                    </div>
-                  ))
-                )}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h3 className="title is-6" style={{ margin: 0 }}>Live Preview</h3>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    className={`toolbar-btn ${previewPane === 'screenplay' ? 'is-active' : ''}`}
+                    onClick={() => setPreviewPane('screenplay')}
+                    aria-pressed={previewPane === 'screenplay'}
+                    title="Show screenplay preview"
+                  >
+                    Screenplay
+                  </button>
+                  <button
+                    className={`toolbar-btn ${previewPane === 'player' ? 'is-active' : ''}`}
+                    onClick={() => setPreviewPane('player')}
+                    aria-pressed={previewPane === 'player'}
+                    title="Show media player"
+                  >
+                    Player
+                  </button>
+                </div>
               </div>
+
+              {previewPane === 'screenplay' ? (
+                <div className="preview-content" ref={previewRef}>
+                  {blocks.length === 0 ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
+                      Loading preview...
+                    </div>
+                  ) : (
+                    blocks.map((block) => (
+                      <div 
+                        key={block.id} 
+                        className={`preview-line ${block.className || ''} ${block.index === currentLine ? 'current-line' : ''}`}
+                        data-type={block.type}
+                        data-line-id={block.id}
+                        data-line-index={block.index}
+                        onClick={() => handlePreviewClick(block.index)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' || block.type === 'page_number' ? (
+                          <div dangerouslySetInnerHTML={{ __html: block.text }} />
+                        ) : (
+                          block.text || '\u00A0'
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : (
+                <div className="media-player-placeholder" style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Media Player (placeholder)</div>
+                  <div style={{ fontSize: '0.9rem' }}>Player UI will appear here. We'll wire it up next.</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

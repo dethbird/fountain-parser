@@ -4,7 +4,7 @@
     "name": "fountainParser"
   },
   "src/main.jsx": {
-    "file": "main-CM62j1Lf.js",
+    "file": "main-DnvFqBTF.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
@@ -12,7 +12,7 @@
       "_chunk-Dl70ecfl.js"
     ],
     "css": [
-      "asset-C1Oqvewh.css"
+      "asset-C6VEtTz6.css"
     ]
   },
   "src/workers/previewWorker.js": {

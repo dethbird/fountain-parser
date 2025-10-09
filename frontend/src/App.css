@@ -75,6 +75,19 @@
   border-color: #117a8b;
 }
 
+/* Active state for toolbar buttons (used for toggle buttons) */
+.toolbar-btn.is-active {
+  background-color: #3e8ed0;
+  border-color: #2f6fa8;
+  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(62,142,208,0.08);
+}
+
+.toolbar-btn.is-active:hover:not(.disabled) {
+  background-color: #3b7fbf;
+  border-color: #2e6da6;
+}
+
 .toolbar-btn.character-btn {
   background-color: #28a745;
   border-color: #1e7e34;
