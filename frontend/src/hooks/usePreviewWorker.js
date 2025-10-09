@@ -1,244 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-
-// Fallback function that mimics the worker functionality
-function processTextFallback(text) {
-  const lines = text.split('\n')
-  const blocks = []
-  
-  // Page tracking
-  let currentPage = 1
-  
-  let state = {
-    character_extended: false,
-    note: false
-  }
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]
-    const trimmed = line.trim()
-    
-    // Blank line - resets character_extended state
-    if (!trimmed) {
-      state.character_extended = false
-      blocks.push({
-        id: `line-${i}`,
-        text: line,
-        index: i,
-        type: 'blank',
-        className: 'blank-line',
-        speaker: null
-      })
-      continue
-    }
-    
-    let type = 'action'
-    let className = 'action'
-    let speaker = null
-    
-    // Note handling
-    if (state.note) {
-      if (trimmed.includes(']]')) {
-        state.note = false
-      }
-      type = 'note'
-      className = 'note'
-    } else if (trimmed.includes('[[')) {
-      state.note = !trimmed.includes(']]') // stays in note state if not closed
-      type = 'note'
-      className = 'note'
-    }
-    // Scene headings
-    else if (/^(INT\.|EXT\.|EST\.|I\/E\.|\.)/i.test(trimmed)) {
-      state.character_extended = false
-      type = 'scene'
-      className = 'scene-heading'
-    }
-    // Transitions
-    else if (/^(FADE IN:|FADE OUT\.|FADE TO BLACK\.|CUT TO:|CUT TO BLACK\.|DISSOLVE TO:|SMASH CUT TO:)/.test(trimmed) || 
-             /TO:$/.test(trimmed)) {
-      state.character_extended = false
-      type = 'transition'
-      className = 'transition'
-    }
-  // Character lines - must be ALL CAPS and short (including dual dialogue with ^) OR start with @
-  // Allow periods and hyphens in names (e.g., MR. MILLER, DR-JONES)
-  else if (((/^[A-Z][A-Z0-9#\.\'\-\s]*(\^)?$/.test(trimmed) && 
-       trimmed.replace('^', '').length < 50 && 
-       trimmed.length > 1) ||
-       /^@.+$/.test(trimmed))) {
-      state.character_extended = true
-      if (trimmed.includes('^')) {
-        type = 'dual_character'
-        className = 'dual-character'
-      } else {
-        type = 'character'
-        className = 'character'
-      }
-      speaker = trimmed
-    }
-    // If we're in character_extended state, check for dialogue/parentheticals
-    else if (state.character_extended) {
-      if (/^\(.*\)$/.test(trimmed)) {
-        type = 'parenthetical'
-        className = 'parenthetical'
-      } else {
-        type = 'dialogue'
-        className = 'dialogue'
-      }
-    }
-    // Synopsis
-    else if (/^= /.test(trimmed)) {
-      state.character_extended = false
-      type = 'synopsis'
-      className = 'synopsis'
-    }
-    // Lyrics
-    else if (/^~ /.test(trimmed)) {
-      state.character_extended = false
-      type = 'lyrics'
-      className = 'lyrics'
-    }
-    // Milestone
-    else if (/^- /.test(trimmed)) {
-      state.character_extended = false
-      type = 'milestone'
-      className = 'milestone'
-    }
-    // Duration (mm:ss format, for #### panels only)
-    else if (/^\d{1,2}:\d{2}$/.test(trimmed)) {
-      state.character_extended = false
-      type = 'duration'
-      className = 'duration'
-    }
-    // Image [i]url
-    else if (/^\[i\]https?:\/\/.+/i.test(trimmed)) {
-      state.character_extended = false
-      type = 'image'
-      className = 'image'
-    }
-    // Audio [a]url
-    else if (/^\[a\]https?:\/\/.+/i.test(trimmed)) {
-      state.character_extended = false
-      type = 'audio'
-      className = 'audio'
-    }
-    // Title page elements
-    else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
-      state.character_extended = false
-      const match = trimmed.match(/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i)
-      if (match) {
-        const key = match[1].toLowerCase()
-        if (key === 'title') {
-          type = 'title'
-          className = 'title-page-title'
-        } else {
-          type = 'title_page'
-          className = 'title-page-element'
-        }
-      }
-    }
-    // Section markers (# ## ### ####)
-    else if (/^#{1,4}\s/.test(trimmed)) {
-      state.character_extended = false
-      const level = trimmed.match(/^(#{1,4})/)[1].length
-      type = 'section'
-      className = `section-${level}`
-    }
-    // Page break
-    else if (/^={3,}$/.test(trimmed)) {
-      state.character_extended = false
-      
-      // Add page number before the page break
-      blocks.push({
-        id: `page-number-${i}`,
-        text: `<div class="page-number">${currentPage}</div>`,
-        index: i,
-        type: 'page_number',
-        className: 'page-number',
-        speaker: null
-      })
-      
-      currentPage++
-      
-      type = 'page_break'
-      className = 'page-break'
-    }
-    // Centered text >TEXT<
-    else if (/^>.+<$/.test(trimmed)) {
-      state.character_extended = false
-      type = 'centered'
-      className = 'centered'
-    }
-    // Default: action
-    else {
-      state.character_extended = false
-      type = 'action'
-      className = 'action'
-    }
-    
-    let displayText = line
-    
-    // Special processing for different types
-    if (type === 'title') {
-      displayText = line.replace(/^title:\s*/i, '')
-    } else if (type === 'title_page') {
-      // Bold the key part for non-title elements
-      const match = line.match(/^([^:]+):\s*(.*)/)
-      if (match) {
-        const key = match[1]
-        const value = match[2]
-        displayText = `<strong>${key}:</strong> ${value}`
-      }
-    } else if (type === 'image') {
-      // Extract URL and create img tag
-      const url = line.replace(/^\[i\]/i, '')
-      displayText = `<img src="${url}" alt="Storyboard image" style="max-width: 100%; height: auto; border: 1px solid #ccc; margin: 0.5em 0;" />`
-    } else if (type === 'audio') {
-      // Extract URL and create audio tag
-      const url = line.replace(/^\[a\]/i, '')
-      displayText = `<audio controls style="width: 100%; margin: 0.5em 0;"><source src="${url}" type="audio/mpeg">Your browser does not support the audio element.</audio>`
-    } else if (type === 'page_break') {
-      // Render page break as hr element
-      displayText = '<hr />'
-    } else if (type === 'transition') {
-      // Remove '> ' prefix for power user transitions
-      displayText = line.replace(/^> /, '')
-    } else if (type === 'character' || type === 'dual_character') {
-      // Remove '@' prefix for power user characters
-      displayText = line.replace(/^@/, '')
-    } else if (type === 'scene') {
-      // Remove leading period from scene headings like .MONTAGE
-      displayText = line.replace(/^\./, '')
-    } else if (type === 'centered') {
-      // Format centered text as "> TEXT <" with spaces
-      const text = line.replace(/^>|<$/g, '')
-      displayText = `> ${text} <`
-    }
-    
-    blocks.push({
-      id: `line-${i}`,
-      text: displayText,
-      index: i,
-      type,
-      className,
-      speaker
-    })
-  }
-  
-  // Add final page number if script doesn't end with a page break
-  if (blocks.length > 0 && blocks[blocks.length - 1].type !== 'page_break') {
-    blocks.push({
-      id: `final-page-number`,
-      text: `<div class="page-number">${currentPage}</div>`,
-      index: lines.length,
-      type: 'page_number',
-      className: 'page-number',
-      speaker: null
-    })
-  }
-  
-  return blocks
-}
+import { parseBlocks } from '../utils/fountainParser'
 
 export function usePreviewWorker(initialText = '') {
   const [blocks, setBlocks] = useState([])
@@ -251,8 +12,10 @@ export function usePreviewWorker(initialText = '') {
     if (!useWorker) {
       // Use fallback processing
       if (initialText) {
-        const processedBlocks = processTextFallback(initialText)
-        setBlocks(processedBlocks)
+        const processed = parseBlocks(initialText)
+        setBlocks(processed.blocks)
+        setCharacters(processed.characters)
+        setCharacterLineCounts(processed.characterLineCounts)
       }
       return
     }
@@ -592,8 +355,10 @@ self.onmessage = function(e) {
   // Handle fallback processing when worker is disabled
   useEffect(() => {
     if (!useWorker && initialText) {
-      const processedBlocks = processTextFallback(initialText)
-      setBlocks(processedBlocks)
+      const processed = parseBlocks(initialText)
+      setBlocks(processed.blocks)
+      setCharacters(processed.characters)
+      setCharacterLineCounts(processed.characterLineCounts)
     }
   }, [useWorker, initialText])
 
@@ -605,8 +370,10 @@ self.onmessage = function(e) {
       })
     } else {
       // Use fallback
-      const processedBlocks = processTextFallback(text)
-      setBlocks(processedBlocks)
+      const processed = parseBlocks(text)
+      setBlocks(processed.blocks)
+      setCharacters(processed.characters)
+      setCharacterLineCounts(processed.characterLineCounts)
     }
   }
 
