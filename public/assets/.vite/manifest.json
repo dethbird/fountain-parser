@@ -1,11 +1,30 @@
 {
+  "_chunk-Dl70ecfl.js": {
+    "file": "chunk-Dl70ecfl.js",
+    "name": "fountainParser"
+  },
   "src/main.jsx": {
-    "file": "app-CoUuhnV9.js",
+    "file": "main-CwKz2bjl.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
+    "imports": [
+      "_chunk-Dl70ecfl.js"
+    ],
     "css": [
       "asset-C1Oqvewh.css"
+    ],
+    "assets": [
+      "asset-CDP6U7bJ.js"
+    ]
+  },
+  "src/workers/previewWorker.js": {
+    "file": "previewWorker-Ca0EiRGV.js",
+    "name": "previewWorker",
+    "src": "src/workers/previewWorker.js",
+    "isEntry": true,
+    "imports": [
+      "_chunk-Dl70ecfl.js"
     ]
   }
 }
