@@ -1,27 +1,27 @@
 {
-  "_chunk-CfUDwz28.js": {
-    "file": "chunk-CfUDwz28.js",
+  "_chunk-BUJgZvTL.js": {
+    "file": "chunk-BUJgZvTL.js",
     "name": "fountainParser"
   },
   "src/main.jsx": {
-    "file": "main-QicMfKhD.js",
+    "file": "main-BYW0l8te.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
     "imports": [
-      "_chunk-CfUDwz28.js"
+      "_chunk-BUJgZvTL.js"
     ],
     "css": [
-      "asset-DC2JlO92.css"
+      "asset-C1VVbudF.css"
     ]
   },
   "src/workers/previewWorker.js": {
-    "file": "previewWorker-B-RfOFCC.js",
+    "file": "previewWorker-CnxRSC6h.js",
     "name": "previewWorker",
     "src": "src/workers/previewWorker.js",
     "isEntry": true,
     "imports": [
-      "_chunk-CfUDwz28.js"
+      "_chunk-BUJgZvTL.js"
     ]
   }
 }

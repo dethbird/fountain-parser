@@ -72,6 +72,7 @@ function App() {
   const playbackTimerRef = useRef(null)
   const [playbackEnded, setPlaybackEnded] = useState(false)
   const navSourceRef = useRef(null) // 'user' | 'auto' | null
+  const [showNestingTooltip, setShowNestingTooltip] = useState(false)
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -269,6 +270,11 @@ function App() {
       console.log('Player will render panel:', { index: playerIndex, panel })
     } catch (e) {}
   }, [panels, playerIndex])
+
+  // hide tooltip when moving between panels
+  useEffect(() => {
+    setShowNestingTooltip(false)
+  }, [playerIndex])
 
   // localStorage operations
   const saveScript = () => {
@@ -677,7 +683,27 @@ function App() {
                           <div>
                           {/* Title (prominent) with inline index/total indicator */}
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                            <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{titleText}</div>
+                              <div className="panel-title-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                                <div
+                                  className="panel-title"
+                                  style={{ fontSize: '1.05rem', fontWeight: 700 }}
+                                  onMouseEnter={() => setShowNestingTooltip(true)}
+                                  onMouseLeave={() => setShowNestingTooltip(false)}
+                                  onClick={() => setShowNestingTooltip((v) => !v)}
+                                  aria-haspopup="true"
+                                  aria-expanded={showNestingTooltip}
+                                >
+                                  {titleText}
+                                </div>
+                                {p && p.nesting && (showNestingTooltip) ? (
+                                  <div className="panel-nesting-tooltip" role="tooltip">
+                                    {p.nesting.act ? <div><strong>Act:</strong> {p.nesting.act}</div> : null}
+                                    {p.nesting.sequence ? <div><strong>Sequence:</strong> {p.nesting.sequence}</div> : null}
+                                    {p.nesting.scene ? <div><strong>Scene:</strong> {p.nesting.scene}</div> : null}
+                                    {!p.nesting.act && !p.nesting.sequence && !p.nesting.scene ? <div style={{ color: '#999' }}>No nesting</div> : null}
+                                  </div>
+                                ) : null}
+                              </div>
                             <div style={{ fontSize: '0.85rem', color: '#bdbdbd' }}>{`(${playerIndex + 1} / ${total})`}</div>
                           </div>
 

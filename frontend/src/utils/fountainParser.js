@@ -208,6 +208,16 @@ export function parsePanels(text) {
   const lines = (text || '').split('\n')
   const panels = []
 
+  // pre-scan for section headings (#, ##, ###) so we can determine nesting
+  const headings = []
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = (lines[i] || '').trim()
+    const m = trimmed.match(/^(#{1,3})\s+(.*)/)
+    if (m) {
+      headings.push({ level: m[1].length, title: m[2].trim(), line: i })
+    }
+  }
+
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim()
     if (/^####\s/.test(line)) {
@@ -272,7 +282,17 @@ export function parsePanels(text) {
         durationSource,
         imageUrl: imageBlock ? (imageBlock.text || '').replace(/^<img src="?|".*$/g, '').replace(/^\[i\]/i, '') : null,
         audioUrl: audioBlock ? (audioBlock.text || '').replace(/^<audio.*src="?|".*$/g, '').replace(/^\[a\]/i, '') : null,
-  blocks: filteredBlocks
+  blocks: filteredBlocks,
+  // compute nesting from nearest preceding headings of levels 1..3
+  nesting: (function() {
+    function findNearest(level) {
+      for (let k = headings.length - 1; k >= 0; k--) {
+        if (headings[k].line < startLine && headings[k].level === level) return headings[k].title
+      }
+      return null
+    }
+    return { act: findNearest(1), sequence: findNearest(2), scene: findNearest(3) }
+  })()
       })
 
       // move i forward
