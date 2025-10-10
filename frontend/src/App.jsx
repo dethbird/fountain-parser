@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
+import { usePlayerWorker } from './hooks/usePlayerWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
 
 // Main App component
@@ -38,8 +39,9 @@ function App() {
       }
     }
     
-    setCode(scriptToLoad)
-    processText(scriptToLoad)
+  setCode(scriptToLoad)
+  processText(scriptToLoad)
+  try { if (typeof parsePanels === 'function') parsePanels(scriptToLoad) } catch (e) {}
   }, []) // Remove processText dependency to prevent infinite loop
 
   // Detect mobile-like clients and suggest enabling the browser "Desktop site" option
@@ -60,6 +62,17 @@ function App() {
   }, [])
 
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
+  const { panels, parsePanels } = usePlayerWorker()
+  const [playerIndex, setPlayerIndex] = useState(0)
+  // Preview pane selector: 'screenplay' shows the existing preview, 'player' will show the media player
+  const [previewPane, setPreviewPane] = useState('screenplay')
+  const audioRef = useRef(null)
+  const [isPlaying, setIsPlaying] = useState(false)
+  const mediaPlayerRef = useRef(null)
+  const playbackTimerRef = useRef(null)
+  const [playbackEnded, setPlaybackEnded] = useState(false)
+  const navSourceRef = useRef(null) // 'user' | 'auto' | null
+  const [showNestingTooltip, setShowNestingTooltip] = useState(false)
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -69,7 +82,198 @@ function App() {
   const handleCodeChange = (newCode) => {
     setCode(newCode)
     processText(newCode)
+    try { if (typeof parsePanels === 'function') parsePanels(newCode) } catch (e) {}
   }
+
+  // Player navigation helpers
+  const gotoPrev = () => {
+    if (!Array.isArray(panels) || panels.length === 0) return
+    // stop any active playback/timers
+    stopPlayback()
+    setPlaybackEnded(false)
+  navSourceRef.current = 'user'
+  setPlayerIndex((idx) => {
+      const n = panels.length
+      return ((idx - 1) % n + n) % n
+    })
+  }
+
+  // next; if userInitiated is true (default) stop playback timers. If false, this is programmatic auto-advance.
+  const gotoNext = (userInitiated = true) => {
+    if (!Array.isArray(panels) || panels.length === 0) return
+    navSourceRef.current = userInitiated ? 'user' : 'auto'
+    if (userInitiated) {
+      stopPlayback()
+      setPlaybackEnded(false)
+    }
+    setPlayerIndex((idx) => {
+      const n = panels.length
+      return (idx + 1) % n
+    })
+  }
+
+  // Audio control handlers
+  // Start playback sequence
+  const handlePlay = async () => {
+    // if we finished playback previously, restart from first panel
+    if (playbackEnded) {
+      setPlayerIndex(0)
+      setPlaybackEnded(false)
+    }
+    // If currently paused on a panel, start audio from the beginning
+    try {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.currentTime = 0
+      }
+    } catch (e) {}
+    setIsPlaying(true)
+  }
+
+  const handlePause = () => {
+  if (!audioRef.current) return
+  // mark this as a user-initiated pause so the onPause handler knows
+  navSourceRef.current = 'user'
+  try { audioRef.current.pause() } catch (e) {}
+  setIsPlaying(false)
+  }
+
+  const handleStop = () => {
+  // Stop playback and reset to first panel
+  stopPlayback()
+  setPlaybackEnded(false)
+  try { setPlayerIndex(0) } catch (e) {}
+  }
+
+  // Stop playback helper: clear timers, pause audio, reset time, set isPlaying false
+  function stopPlayback() {
+    try {
+      if (playbackTimerRef.current) {
+        clearTimeout(playbackTimerRef.current)
+        playbackTimerRef.current = null
+      }
+    } catch (e) {}
+    try {
+      if (audioRef.current) {
+        // mark as user stop so pause handlers don't mistakenly clear playing state
+        navSourceRef.current = 'user'
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      }
+    } catch (e) {}
+    setIsPlaying(false)
+  }
+
+  // Sync audio element events to state and auto-advance on end
+  useEffect(() => {
+    const a = audioRef.current
+    if (!a) return
+    const onPlay = () => setIsPlaying(true)
+    const onPause = () => {
+      // Only treat pause as stopping playback when it was user-initiated.
+      if (navSourceRef.current === 'user') setIsPlaying(false)
+    }
+    const onEnded = () => {
+      // Do not set isPlaying to false here; keep playing state so programmatic
+      // navigation (auto-advance) continues playback into the next panel.
+      // programmatic advance (not user initiated)
+      gotoNext(false)
+    }
+    a.addEventListener('play', onPlay)
+    a.addEventListener('pause', onPause)
+    a.addEventListener('ended', onEnded)
+    return () => {
+      a.removeEventListener('play', onPlay)
+      a.removeEventListener('pause', onPause)
+      a.removeEventListener('ended', onEnded)
+    }
+  }, [playerIndex, panels])
+
+  // Drive playback sequence: when isPlaying is true start timer for current panel
+  useEffect(() => {
+    // clear any existing timer first
+    if (playbackTimerRef.current) {
+      clearTimeout(playbackTimerRef.current)
+      playbackTimerRef.current = null
+    }
+
+    if (!isPlaying) return
+
+    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+    if (!p) {
+      setIsPlaying(false)
+      return
+    }
+
+    // try to play audio for this panel (if audio element present)
+    try {
+      if (audioRef.current) {
+        // ensure it's loaded with the current src in the DOM
+        // play may fail if not allowed, but user initiated the play so it should work
+        audioRef.current.play().catch(() => {})
+      }
+    } catch (e) {}
+
+    const durMs = Math.max(1000, (typeof p.duration === 'number' ? p.duration * 1000 : 3000))
+    playbackTimerRef.current = setTimeout(() => {
+      // if this is the last panel, end playback and show black screen
+      if (!panels || playerIndex >= panels.length - 1) {
+        setIsPlaying(false)
+        setPlaybackEnded(true)
+        playbackTimerRef.current = null
+      } else {
+        // advance to next panel; the effect will pick up and continue playback
+        setPlayerIndex((idx) => idx + 1)
+      }
+    }, durMs)
+
+    return () => {
+      if (playbackTimerRef.current) {
+        clearTimeout(playbackTimerRef.current)
+        playbackTimerRef.current = null
+      }
+    }
+  }, [isPlaying, playerIndex, panels])
+
+  // Pause/reset audio when switching panels
+  useEffect(() => {
+    // If navigation was user-initiated, pause/reset audio. For programmatic navigation (auto-advance)
+    // we want playback to continue.
+    if (audioRef.current) {
+      try {
+        if (navSourceRef.current === 'user') {
+          audioRef.current.pause()
+          audioRef.current.currentTime = 0
+          setIsPlaying(false)
+        }
+      } catch (e) {}
+    }
+    // reset nav source marker
+    navSourceRef.current = null
+    try {
+      if (mediaPlayerRef.current && typeof mediaPlayerRef.current.scrollTo === 'function') {
+        mediaPlayerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    } catch (e) {}
+  }, [playerIndex])
+
+  // cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      try { if (playbackTimerRef.current) clearTimeout(playbackTimerRef.current) } catch (e) {}
+    }
+  }, [])
+
+  // Debug: log which panel the player will render
+  useEffect(() => {
+    try {
+      const panel = (panels && panels.length > 0 && panels[playerIndex]) ? panels[playerIndex] : null
+    } catch (e) {}
+  }, [panels, playerIndex])
+
+  // hide tooltip when moving between panels
+  useEffect(() => {
+    setShowNestingTooltip(false)
+  }, [playerIndex])
 
   // localStorage operations
   const saveScript = () => {
@@ -408,32 +612,218 @@ function App() {
           {/* Preview - Right Side */}
           <div className={`column is-half-desktop ${viewMode === 'edit' ? 'mobile-hidden' : ''}`}>
             <div className="box preview-box">
-              <h3 className="title is-6">Live Preview</h3>
-              <div className="preview-content" ref={previewRef}>
-                {blocks.length === 0 ? (
-                  <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
-                    Loading preview...
-                  </div>
-                ) : (
-                  blocks.map((block) => (
-                    <div 
-                      key={block.id} 
-                      className={`preview-line ${block.className || ''} ${block.index === currentLine ? 'current-line' : ''}`}
-                      data-type={block.type}
-                      data-line-id={block.id}
-                      data-line-index={block.index}
-                      onClick={() => handlePreviewClick(block.index)}
-                      style={{ cursor: 'pointer' }}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h3 className="title is-6" style={{ margin: 0 }}>Live Preview:</h3>
+                  <div className="pane-toggle" style={{ display: 'flex' }}>
+                    <button
+                      className={`toolbar-btn pane-toggle-btn ${previewPane === 'screenplay' ? 'is-active' : ''}`}
+                      onClick={() => setPreviewPane('screenplay')}
+                      aria-pressed={previewPane === 'screenplay'}
+                      title="Show screenplay preview"
                     >
-                      {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' || block.type === 'page_number' ? (
-                        <div dangerouslySetInnerHTML={{ __html: block.text }} />
-                      ) : (
-                        block.text || '\u00A0'
-                      )}
-                    </div>
-                  ))
-                )}
+                      Screenplay
+                    </button>
+                    <button
+                      className={`toolbar-btn pane-toggle-btn ${previewPane === 'player' ? 'is-active' : ''}`}
+                      onClick={() => setPreviewPane('player')}
+                      aria-pressed={previewPane === 'player'}
+                      title="Show media player"
+                    >
+                      Player
+                    </button>
+                  </div>
+                </div>
+                <div />
               </div>
+
+              {previewPane === 'screenplay' ? (
+                <div className="preview-content" ref={previewRef}>
+                  {blocks.length === 0 ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
+                      Loading preview...
+                    </div>
+                  ) : (
+                    blocks.map((block) => (
+                      <div 
+                        key={block.id} 
+                        className={`preview-line ${block.className || ''} ${block.index === currentLine ? 'current-line' : ''}`}
+                        data-type={block.type}
+                        data-line-id={block.id}
+                        data-line-index={block.index}
+                        onClick={() => handlePreviewClick(block.index)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {block.type === 'image' || block.type === 'audio' || block.type === 'title_page' || block.type === 'page_break' || block.type === 'page_number' ? (
+                          <div dangerouslySetInnerHTML={{ __html: block.text }} />
+                        ) : (
+                          block.text || '\u00A0'
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
+              ) : (
+                <div className="media-player" ref={mediaPlayerRef} style={{ padding: '1rem', maxHeight: '80vh', overflowY: 'auto' }}>
+                  {/* Panel header: title + duration */}
+                  {(() => {
+                    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                    const dur = p && typeof p.duration === 'number' ? p.duration : null
+                    const total = (panels && panels.length) ? panels.length : 0
+
+                    // Normalize title: strip leading "Panel N:" if present, default to 'untitled'
+                    const rawTitle = p && p.title ? String(p.title) : ''
+                    let titleText = 'untitled'
+                    if (rawTitle && rawTitle.trim()) {
+                      titleText = rawTitle.replace(/^\s*Panel\s*\d+\s*[:\-]\s*/i, '').trim()
+                      if (!titleText) titleText = 'untitled'
+                    }
+
+                    return (
+                      <div className="player-header" style={{ marginBottom: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                          <div>
+                          {/* Title (prominent) with inline index/total indicator */}
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                              <div className="panel-title-wrapper" style={{ position: 'relative', display: 'inline-block' }}>
+                                <div
+                                  className="panel-title"
+                                  style={{ fontSize: '1.05rem', fontWeight: 700 }}
+                                  onMouseEnter={() => setShowNestingTooltip(true)}
+                                  onMouseLeave={() => setShowNestingTooltip(false)}
+                                  onClick={() => setShowNestingTooltip((v) => !v)}
+                                  aria-haspopup="true"
+                                  aria-expanded={showNestingTooltip}
+                                >
+                                  {titleText}
+                                </div>
+                                {p && p.nesting && (showNestingTooltip) ? (
+                                  <div className="panel-nesting-tooltip" role="tooltip">
+                                    {p.nesting.act ? <div><strong>Act:</strong> {p.nesting.act}</div> : null}
+                                    {p.nesting.scene ? <div><strong>Scene:</strong> {p.nesting.scene}</div> : null}
+                                    {p.nesting.sequence ? <div><strong>Sequence:</strong> {p.nesting.sequence}</div> : null}
+                                    {!p.nesting.act && !p.nesting.sequence && !p.nesting.scene ? <div style={{ color: '#999' }}>No nesting</div> : null}
+                                  </div>
+                                ) : null}
+                              </div>
+                            <div style={{ fontSize: '0.85rem', color: '#bdbdbd' }}>{`(${playerIndex + 1} / ${total})`}</div>
+                          </div>
+
+                          <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12, marginTop: '0.25rem', fontSize: '0.85rem', color: '#999' }}>
+                            <div style={{ color: '#999' }}>lines {p && typeof p.startLine === 'number' ? p.startLine : '?'}–{p && typeof p.endLine === 'number' ? p.endLine : '?'}</div>
+                          </div>
+                          </div>
+
+                          {/* Top-right controls (smaller) with duration floated right */}
+                          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                          <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', alignItems: 'center', gap: 6, marginRight: 6 }}><span style={{ fontSize: '0.95rem' }}>⏱</span>{dur ? `${dur}s` : 'n/a'}</div>
+                          <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏹</button>
+                          <button className={`toolbar-btn ${isPlaying ? 'is-active' : ''}`} title="Play" aria-label="Play" onClick={handlePlay} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            {isPlaying ? <span className="playing-indicator" aria-hidden="true" /> : null}
+                            ▶︎
+                          </button>
+                          <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏸</button>
+                          <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏮</button>
+                          <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏭</button>
+                          </div>
+                        </div>
+
+                        {/* Progress bar placed under the title/line area and just above the header bottom border */}
+                        {isPlaying && (() => {
+                          const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                          const dur = p && typeof p.duration === 'number' ? p.duration : null
+                          const durMs = Math.max(1000, (typeof dur === 'number' ? dur * 1000 : 3000))
+                          return (
+                            <div className="player-header-progress-wrapper" style={{ position: 'relative' }}>
+                              <div
+                                key={`player-progress-${playerIndex}-${durMs}`}
+                                className={`player-progress`}
+                                style={{
+                                  animationDuration: `${durMs}ms`
+                                }}
+                                aria-hidden="true"
+                              />
+                            </div>
+                          )
+                        })()}
+
+                      </div>
+                    )
+                  })()}
+                  
+
+                  {/* Image area (or black end slide if playback ended) */}
+                  {(() => {
+                    if (playbackEnded) {
+                      return (
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                          <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#000', aspectRatio: '16/9' }} />
+                        </div>
+                      )
+                    }
+                    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                    const img = p && p.imageUrl ? p.imageUrl : null
+                    return (
+                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                        {img ? (
+                          <img src={img} alt="panel" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                        ) : (
+                          <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#f0f0f0', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9a9a9a' }}>
+                            <span>No image</span>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })()}
+
+                  {/* Audio element */}
+                  {(() => {
+                    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                    const aud = p && p.audioUrl ? p.audioUrl : null
+                    return (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        {aud ? (
+                          <audio ref={audioRef} controls src={aud} style={{ width: '100%' }} />
+                        ) : (
+                          <audio ref={audioRef} controls disabled style={{ width: '100%' }} />
+                        )}
+
+                        {/* controls are in header */}
+                      </div>
+                    )
+                  })()}
+
+                  {/* Panel script snippet (rendered like the preview) */}
+                  <div style={{ borderTop: '1px solid #2a2a2a', paddingTop: '0.75rem' }}>
+                    {(!panels || panels.length === 0) ? (
+                      <div style={{ color: '#999' }}>No panel content found in the script. Add '####' headings to create panels.</div>
+                    ) : (
+                      (() => {
+                        const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                        return (
+                          <div>
+                            <div style={{ padding: '0.5rem' }}>
+                              <div className="preview-content player-preview-content" style={{ margin: 0 }}>
+                                {p && p.blocks && p.blocks.length > 0 ? (
+                                  p.blocks.map((b) => (
+                                    <div key={b.id} className={`preview-line ${b.className || ''}`} dangerouslySetInnerHTML={{ __html: b.text || '\u00A0' }} />
+                                  ))
+                                ) : p && p.snippet ? (
+                                  p.snippet.split(/\r?\n/).map((ln, i) => (
+                                    <div key={i} style={{ whiteSpace: 'pre-wrap' }}>{ln || '\u00A0'}</div>
+                                  ))
+                                ) : (
+                                  <div style={{ color: '#999' }}>No content for this panel.</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })()
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -1,7 +1,17 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    # static files (including favicon.ico in public/) will be served directly
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
+    # If the requested resource is an existing file or directory, serve it as-is
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # If someone requests a top-level previewWorker-<hash>.js (no /assets/),
+    # rewrite it to the emitted assets folder where Vite writes built files.
+    RewriteRule ^(previewWorker-[A-Za-z0-9._-]+\.js)$ assets/$1 [L]
+
+    # Allow direct access to common static folders without rewriting
+    RewriteRule ^(assets/|css/|img/|js/|favicon\.ico) - [L]
+
+    # Otherwise forward the request to the Slim front controller
     RewriteRule ^ index.php [QSA,L]
 </IfModule>

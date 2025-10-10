@@ -3,7 +3,7 @@
   "description": "Ultra-light Slim 4 skeleton for serving public assets and a tiny API",
   "type": "project",
   "require": {
-    "php": ">=8.4",
+    "php": ">=8.3",
     "slim/slim": "^4.13",
     "slim/psr7": "^1.7",
     "vlucas/phpdotenv": "^5.6",
