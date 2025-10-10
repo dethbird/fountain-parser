@@ -552,12 +552,38 @@ function App() {
                   {(() => {
                     const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
                     const dur = p && typeof p.duration === 'number' ? p.duration : null
+                    const total = (panels && panels.length) ? panels.length : 0
+
+                    // Normalize title: strip leading "Panel N:" if present, default to 'untitled'
+                    const rawTitle = p && p.title ? String(p.title) : ''
+                    let titleText = 'untitled'
+                    if (rawTitle && rawTitle.trim()) {
+                      titleText = rawTitle.replace(/^\s*Panel\s*\d+\s*[:\-]\s*/i, '').trim()
+                      if (!titleText) titleText = 'untitled'
+                    }
+
                     return (
-                      <div style={{ marginBottom: '0.75rem' }}>
-                        <div style={{ fontSize: '1rem', fontWeight: 700 }}>{p && p.title ? p.title : `Panel ${playerIndex + 1}`}</div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem', fontSize: '0.85rem', color: '#999' }}>
-                          <div style={{ fontSize: '0.85rem', color: '#999' }}>lines {p && typeof p.startLine === 'number' ? p.startLine : '?'}–{p && typeof p.endLine === 'number' ? p.endLine : '?'}</div>
-                          <div style={{ fontSize: '0.85rem', color: '#999' }}>Duration: {dur ? `${dur}s` : 'n/a'}</div>
+                      <div style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                        <div>
+                          {/* Title (prominent) with inline index/total indicator */}
+                          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                            <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{titleText}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#bdbdbd' }}>{`(${playerIndex + 1} / ${total})`}</div>
+                          </div>
+
+                          <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12, marginTop: '0.25rem', fontSize: '0.85rem', color: '#999' }}>
+                            <div style={{ color: '#999' }}>lines {p && typeof p.startLine === 'number' ? p.startLine : '?'}–{p && typeof p.endLine === 'number' ? p.endLine : '?'}</div>
+                          </div>
+                        </div>
+
+                        {/* Top-right controls (smaller) with duration floated right */}
+                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                          <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', alignItems: 'center', gap: 6, marginRight: 6 }}><span style={{ fontSize: '0.95rem' }}>⏱</span>{dur ? `${dur}s` : 'n/a'}</div>
+                          <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏮</button>
+                          <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏹</button>
+                          <button className="toolbar-btn" title="Play" aria-label="Play" onClick={handlePlay} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>▶︎</button>
+                          <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏸</button>
+                          <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏭</button>
                         </div>
                       </div>
                     )
@@ -592,14 +618,7 @@ function App() {
                           <audio ref={audioRef} controls disabled style={{ width: '100%' }} />
                         )}
 
-                        {/* Controls row (icons only) - moved below audio */}
-                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', alignItems: 'center', justifyContent: 'center' }}>
-                          <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev}>⏮</button>
-                          <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop}>⏹</button>
-                          <button className="toolbar-btn" title="Play" aria-label="Play" onClick={handlePlay}>▶︎</button>
-                          <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause}>⏸</button>
-                          <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext}>⏭</button>
-                        </div>
+                        {/* controls are in header */}
                       </div>
                     )
                   })()}
