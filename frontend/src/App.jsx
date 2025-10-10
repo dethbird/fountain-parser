@@ -480,19 +480,13 @@ function App() {
                     return (
                       <div style={{ marginBottom: '0.75rem' }}>
                         <div style={{ fontSize: '1rem', fontWeight: 700 }}>{p && p.title ? p.title : `Panel ${playerIndex + 1}`}</div>
-                        <div style={{ fontSize: '0.85rem', color: '#999' }}>Duration: {dur ? `${dur}s` : 'n/a'}</div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.25rem', fontSize: '0.85rem', color: '#999' }}>
+                          <div style={{ fontSize: '0.85rem', color: '#999' }}>lines {p && typeof p.startLine === 'number' ? p.startLine : '?'}–{p && typeof p.endLine === 'number' ? p.endLine : '?'}</div>
+                          <div style={{ fontSize: '0.85rem', color: '#999' }}>Duration: {dur ? `${dur}s` : 'n/a'}</div>
+                        </div>
                       </div>
                     )
                   })()}
-
-                  {/* Controls row (icons only) */}
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', alignItems: 'center' }}>
-                    <button className="toolbar-btn" title="Previous" aria-label="Previous">⏮</button>
-                    <button className="toolbar-btn" title="Stop" aria-label="Stop">⏹</button>
-                    <button className="toolbar-btn" title="Play" aria-label="Play">▶︎</button>
-                    <button className="toolbar-btn" title="Pause" aria-label="Pause">⏸</button>
-                    <button className="toolbar-btn" title="Next" aria-label="Next">⏭</button>
-                  </div>
 
                   {/* Image area */}
                   {(() => {
@@ -522,6 +516,15 @@ function App() {
                         ) : (
                           <audio controls disabled style={{ width: '100%' }} />
                         )}
+
+                        {/* Controls row (icons only) - moved below audio */}
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', alignItems: 'center', justifyContent: 'center' }}>
+                          <button className="toolbar-btn" title="Previous" aria-label="Previous">⏮</button>
+                          <button className="toolbar-btn" title="Stop" aria-label="Stop">⏹</button>
+                          <button className="toolbar-btn" title="Play" aria-label="Play">▶︎</button>
+                          <button className="toolbar-btn" title="Pause" aria-label="Pause">⏸</button>
+                          <button className="toolbar-btn" title="Next" aria-label="Next">⏭</button>
+                        </div>
                       </div>
                     )
                   })()}
