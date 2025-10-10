@@ -66,6 +66,8 @@ function App() {
   const [playerIndex, setPlayerIndex] = useState(0)
   // Preview pane selector: 'screenplay' shows the existing preview, 'player' will show the media player
   const [previewPane, setPreviewPane] = useState('screenplay')
+  const audioRef = useRef(null)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -77,6 +79,79 @@ function App() {
     processText(newCode)
     try { if (typeof parsePanels === 'function') parsePanels(newCode) } catch (e) {}
   }
+
+  // Player navigation helpers
+  const gotoPrev = () => {
+    if (!Array.isArray(panels) || panels.length === 0) return
+    setPlayerIndex((idx) => {
+      const n = panels.length
+      return ((idx - 1) % n + n) % n
+    })
+  }
+
+  const gotoNext = () => {
+    if (!Array.isArray(panels) || panels.length === 0) return
+    setPlayerIndex((idx) => {
+      const n = panels.length
+      return (idx + 1) % n
+    })
+  }
+
+  // Audio control handlers
+  const handlePlay = async () => {
+    try {
+      if (!audioRef.current) return
+      await audioRef.current.play()
+      setIsPlaying(true)
+    } catch (e) {
+      // play() may reject on autoplay policies; just log
+      console.warn('Play failed', e)
+    }
+  }
+
+  const handlePause = () => {
+    if (!audioRef.current) return
+    audioRef.current.pause()
+    setIsPlaying(false)
+  }
+
+  const handleStop = () => {
+    if (!audioRef.current) return
+    audioRef.current.pause()
+    try { audioRef.current.currentTime = 0 } catch (e) {}
+    setIsPlaying(false)
+  }
+
+  // Sync audio element events to state and auto-advance on end
+  useEffect(() => {
+    const a = audioRef.current
+    if (!a) return
+    const onPlay = () => setIsPlaying(true)
+    const onPause = () => setIsPlaying(false)
+    const onEnded = () => {
+      setIsPlaying(false)
+      gotoNext()
+    }
+    a.addEventListener('play', onPlay)
+    a.addEventListener('pause', onPause)
+    a.addEventListener('ended', onEnded)
+    return () => {
+      a.removeEventListener('play', onPlay)
+      a.removeEventListener('pause', onPause)
+      a.removeEventListener('ended', onEnded)
+    }
+  }, [playerIndex, panels])
+
+  // Pause/reset audio when switching panels
+  useEffect(() => {
+    if (audioRef.current) {
+      try {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      } catch (e) {}
+      setIsPlaying(false)
+    }
+  }, [playerIndex])
 
   // Debug: log which panel the player will render
   useEffect(() => {
@@ -512,18 +587,18 @@ function App() {
                     return (
                       <div style={{ marginBottom: '0.75rem' }}>
                         {aud ? (
-                          <audio controls src={aud} style={{ width: '100%' }} />
+                          <audio ref={audioRef} controls src={aud} style={{ width: '100%' }} />
                         ) : (
-                          <audio controls disabled style={{ width: '100%' }} />
+                          <audio ref={audioRef} controls disabled style={{ width: '100%' }} />
                         )}
 
                         {/* Controls row (icons only) - moved below audio */}
                         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', alignItems: 'center', justifyContent: 'center' }}>
-                          <button className="toolbar-btn" title="Previous" aria-label="Previous">⏮</button>
-                          <button className="toolbar-btn" title="Stop" aria-label="Stop">⏹</button>
-                          <button className="toolbar-btn" title="Play" aria-label="Play">▶︎</button>
-                          <button className="toolbar-btn" title="Pause" aria-label="Pause">⏸</button>
-                          <button className="toolbar-btn" title="Next" aria-label="Next">⏭</button>
+                          <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev}>⏮</button>
+                          <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop}>⏹</button>
+                          <button className="toolbar-btn" title="Play" aria-label="Play" onClick={handlePlay}>▶︎</button>
+                          <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause}>⏸</button>
+                          <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext}>⏭</button>
                         </div>
                       </div>
                     )
