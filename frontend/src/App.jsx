@@ -71,6 +71,7 @@ function App() {
   const mediaPlayerRef = useRef(null)
   const playbackTimerRef = useRef(null)
   const [playbackEnded, setPlaybackEnded] = useState(false)
+  const navSourceRef = useRef(null) // 'user' | 'auto' | null
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -89,7 +90,8 @@ function App() {
     // stop any active playback/timers
     stopPlayback()
     setPlaybackEnded(false)
-    setPlayerIndex((idx) => {
+  navSourceRef.current = 'user'
+  setPlayerIndex((idx) => {
       const n = panels.length
       return ((idx - 1) % n + n) % n
     })
@@ -98,6 +100,7 @@ function App() {
   // next; if userInitiated is true (default) stop playback timers. If false, this is programmatic auto-advance.
   const gotoNext = (userInitiated = true) => {
     if (!Array.isArray(panels) || panels.length === 0) return
+    navSourceRef.current = userInitiated ? 'user' : 'auto'
     if (userInitiated) {
       stopPlayback()
       setPlaybackEnded(false)
@@ -120,9 +123,11 @@ function App() {
   }
 
   const handlePause = () => {
-    if (!audioRef.current) return
-    audioRef.current.pause()
-    setIsPlaying(false)
+  if (!audioRef.current) return
+  // mark this as a user-initiated pause so the onPause handler knows
+  navSourceRef.current = 'user'
+  try { audioRef.current.pause() } catch (e) {}
+  setIsPlaying(false)
   }
 
   const handleStop = () => {
@@ -140,6 +145,8 @@ function App() {
     } catch (e) {}
     try {
       if (audioRef.current) {
+        // mark as user stop so pause handlers don't mistakenly clear playing state
+        navSourceRef.current = 'user'
         audioRef.current.pause()
         audioRef.current.currentTime = 0
       }
@@ -152,9 +159,13 @@ function App() {
     const a = audioRef.current
     if (!a) return
     const onPlay = () => setIsPlaying(true)
-    const onPause = () => setIsPlaying(false)
+    const onPause = () => {
+      // Only treat pause as stopping playback when it was user-initiated.
+      if (navSourceRef.current === 'user') setIsPlaying(false)
+    }
     const onEnded = () => {
-      setIsPlaying(false)
+      // Do not set isPlaying to false here; keep playing state so programmatic
+      // navigation (auto-advance) continues playback into the next panel.
       // programmatic advance (not user initiated)
       gotoNext(false)
     }
@@ -216,13 +227,19 @@ function App() {
 
   // Pause/reset audio when switching panels
   useEffect(() => {
+    // If navigation was user-initiated, pause/reset audio. For programmatic navigation (auto-advance)
+    // we want playback to continue.
     if (audioRef.current) {
       try {
-        audioRef.current.pause()
-        audioRef.current.currentTime = 0
+        if (navSourceRef.current === 'user') {
+          audioRef.current.pause()
+          audioRef.current.currentTime = 0
+          setIsPlaying(false)
+        }
       } catch (e) {}
-      setIsPlaying(false)
     }
+    // reset nav source marker
+    navSourceRef.current = null
     try {
       if (mediaPlayerRef.current && typeof mediaPlayerRef.current.scrollTo === 'function') {
         mediaPlayerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
@@ -664,7 +681,10 @@ function App() {
                         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                           <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', alignItems: 'center', gap: 6, marginRight: 6 }}><span style={{ fontSize: '0.95rem' }}>⏱</span>{dur ? `${dur}s` : 'n/a'}</div>
                           <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏹</button>
-                          <button className="toolbar-btn" title="Play" aria-label="Play" onClick={handlePlay} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>▶︎</button>
+                          <button className={`toolbar-btn ${isPlaying ? 'is-active' : ''}`} title="Play" aria-label="Play" onClick={handlePlay} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            {isPlaying ? <span className="playing-indicator" aria-hidden="true" /> : null}
+                            ▶︎
+                          </button>
                           <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏸</button>
                           <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏮</button>
                           <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏭</button>
