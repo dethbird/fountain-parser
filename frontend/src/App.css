@@ -469,6 +469,36 @@
   padding-left: 1em;
 }
 
+/* Player header progress bar: appears as a thin bar at the bottom of the sticky header */
+.media-player .player-header {
+  position: sticky;
+  top: 0;
+  background: transparent;
+  z-index: 5;
+}
+.player-header-progress-wrapper {
+  position: relative;
+  height: 2px; /* decreased height */
+  overflow: hidden;
+}
+.player-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  bottom: 1px; /* sit just above the header's bottom border */
+  background: linear-gradient(90deg, #3e8ed0, #2f6fa8); /* primary blue gradient */
+  transform-origin: right center;
+  transform: scaleX(1);
+  animation-name: shrink-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+@keyframes shrink-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
 .preview-line.synopsis {
   color: #607d8b;
   background-color: rgba(96, 125, 139, 0.1);

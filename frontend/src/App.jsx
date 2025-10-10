@@ -664,8 +664,9 @@ function App() {
                     }
 
                     return (
-                      <div className="player-header" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                        <div>
+                      <div className="player-header" style={{ marginBottom: '0.5rem', display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                          <div>
                           {/* Title (prominent) with inline index/total indicator */}
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
                             <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{titleText}</div>
@@ -675,10 +676,10 @@ function App() {
                           <div style={{ display: 'flex', justifyContent: 'flex-start', gap: 12, marginTop: '0.25rem', fontSize: '0.85rem', color: '#999' }}>
                             <div style={{ color: '#999' }}>lines {p && typeof p.startLine === 'number' ? p.startLine : '?'}–{p && typeof p.endLine === 'number' ? p.endLine : '?'}</div>
                           </div>
-                        </div>
+                          </div>
 
-                        {/* Top-right controls (smaller) with duration floated right */}
-                        <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                          {/* Top-right controls (smaller) with duration floated right */}
+                          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                           <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', alignItems: 'center', gap: 6, marginRight: 6 }}><span style={{ fontSize: '0.95rem' }}>⏱</span>{dur ? `${dur}s` : 'n/a'}</div>
                           <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏹</button>
                           <button className={`toolbar-btn ${isPlaying ? 'is-active' : ''}`} title="Play" aria-label="Play" onClick={handlePlay} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -688,10 +689,32 @@ function App() {
                           <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏸</button>
                           <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏮</button>
                           <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏭</button>
+                          </div>
                         </div>
+
+                        {/* Progress bar placed under the title/line area and just above the header bottom border */}
+                        {isPlaying && (() => {
+                          const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                          const dur = p && typeof p.duration === 'number' ? p.duration : null
+                          const durMs = Math.max(1000, (typeof dur === 'number' ? dur * 1000 : 3000))
+                          return (
+                            <div className="player-header-progress-wrapper" style={{ position: 'relative' }}>
+                              <div
+                                key={`player-progress-${playerIndex}-${durMs}`}
+                                className={`player-progress`}
+                                style={{
+                                  animationDuration: `${durMs}ms`
+                                }}
+                                aria-hidden="true"
+                              />
+                            </div>
+                          )
+                        })()}
+
                       </div>
                     )
                   })()}
+                  
 
                   {/* Image area (or black end slide if playback ended) */}
                   {(() => {
