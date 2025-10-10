@@ -1,0 +1,207 @@
+Title: FOUNTAIN WRITER — PANEL PLAYER DEMO
+Credit: Written by
+Author: Demo Bot
+Draft Date: October 6, 2025
+Date: 10/06/2025
+Contact:
+    Demo Person
+    demo@example.com
+Notes: Demo script for testing panel-based media playback.
+Copyright: (c) 2025 Demo
+
+===
+
+FADE IN:
+
+# Act I
+## Scene 1: Rooftop — Evening
+### Sequence A: The Quiet Start
+
+#### Panel 1: Skyline establishing
+00:08
+[i]https://images.unsplash.com/photo-1500048993953-d23a436266cf?w=1600
+[a]https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3
+The city glows. WIND moves across concrete like a patient tide.
+
+= Establishes mood and location
+
+#### Panel 2: Jane on the ledge
+00:12
+[i]https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=1600
+[a]https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3
+JANE leans on the parapet, phone in hand, eyes tracking the street below.
+
+JANE
+(softly)
+Okay. One small scene at a time.
+
+#### Panel 3: Incoming text
+00:07
+[i]https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1600
+[a]https://www.soundjay.com/button/sounds/button-16.mp3
+Her phone buzzes. A text from BOB: “ready when you are”.
+
+> CUT TO:
+
+## Scene 2: Workspace — Night
+### Sequence B: The Plan
+
+#### Panel 4: Whiteboard reveal
+00:10
+[i]https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=1600
+[a]https://www.soundjay.com/mechanical/sounds/typewriter-key-1.mp3
+A whiteboard crammed with beats, arrows, and a big circled word: “PANELS”.
+
+JANE
+We anchor everything on panel duration. No more drift.
+
+#### Panel 5: Player UI close-up
+00:09
+[i]https://images.unsplash.com/photo-1518770660439-4636190af475?w=1600
+[a]https://www.soundjay.com/misc/sounds/click-01a.mp3
+The prototype media controls blink to life: ▶︎, ⏸, ⏭, a progress ring.
+
+= UX beat: confirm basic controls are visible
+
+#### Panel 6: First playback test
+00:11
+[i]https://images.unsplash.com/photo-1518972559570-7cc1309f3229?w=1600
+[a]https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3
+JANE
+Count with me. Eleven seconds. Panels should snap to the next clip without a hitch.
+
+BOB
+(confident)
+No frame gaps. Promise.
+
+[[ Inline note: Watch transition between panel 6→7 for timing jitter ]]
+
+### Sequence C: Momentum
+
+#### Panel 7: Coffee steam / tempo up
+00:06
+[i]https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1600
+[a]https://www.soundjay.com/ambience/sounds/coffee-shop-1.mp3
+Steam curls. Keyboard chatter ramps. The team hits stride.
+
+#### Panel 8: Dual dialogue dry run
+00:10
+[i]https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6?w=1600
+[a]https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3
+JANE^
+BOB^
+(whispering)
+Testing simultaneous cues.
+
+JANE
+You take timing, I take rendering.
+
+BOB
+And we meet in the middle.
+
+= Dual cue sanity check
+
+# Act II
+## Scene 3: Street — Night
+### Sequence D: Field Test
+
+#### Panel 9: Exterior cutaway
+00:08
+[i]https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=1600
+[a]https://www.soundjay.com/transportation/sounds/city-traffic-outdoor-1.mp3
+Rain stipples the asphalt. Neon reflects like liquid code.
+
+#### Panel 10: Voice memo overlay
+00:14
+[i]https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1600
+[a]https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3
+JANE (V.O.)
+If a panel has both image and audio, play both, then display this content as the panel’s script.
+
+- Verify audio fades under 250ms
+- Verify image stays until duration completes
+
+#### Panel 11: Audio-only resilience
+00:05
+[a]https://www.soundjay.com/button/sounds/button-26.mp3
+The image is intentionally omitted here. The panel should still run for five seconds and render this text.
+
+= Edge case: audio-only panel
+
+#### Panel 12: Image-only resilience
+00:05
+[i]https://images.unsplash.com/photo-1481277542470-605612bd2d61?w=1600
+Silence. Only the image remains while the caption breathes under it.
+
+= Edge case: image-only panel
+
+## Scene 4: Back at the workspace — Late night
+### Sequence E: Polishing
+
+#### Panel 13: Centered break
+00:04
+[i]https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=1600
+>INTERMISSION<
+A brief visual beat. You can still render centered text after media finishes.
+
+#### Panel 14: Lyrics test
+00:08
+[i]https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=1600
+[a]https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3
+~ “we debug by moonlight”
+~ “refactor at dawn”
+A soft chorus under a still frame.
+
+#### Panel 15: Notes inline
+00:06
+[i]https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=1600
+[a]https://www.soundjay.com/button/sounds/beep-07.mp3
+Some action here [[with an inline note]] continues. Notes should not block playback.
+
+# Act III
+## Scene 5: Launch — Morning
+### Sequence F: Ship It
+
+#### Panel 16: Countdown
+00:05
+[i]https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1600
+[a]https://www.soundjay.com/misc/sounds/clock-ticking-1.mp3
+Numbers cascade on screen. Fingers hover over Enter.
+
+#### Panel 17: Ship
+00:07
+[i]https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600
+[a]https://www.soundjay.com/button/sounds/button-10.mp3
+BOB
+Ship it.
+
+JANE
+(smiles)
+Ship it.
+
+#### Panel 18: Confirmation
+00:06
+[i]https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1600
+[a]https://www.soundjay.com/button/sounds/button-3.mp3
+A tiny toast appears: “It worked.” Everyone exhales.
+
+= End beat: relief, not fireworks
+
+FADE OUT.
+
+===
+
+# Appendix
+## Player Test Checklist
+### Sequence G: QA
+#### Panel 19: QA bullets
+00:09
+[i]https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600
+[a]https://www.soundjay.com/misc/sounds/camera-shutter-click-01.mp3
+- Each panel: duration respected
+- Image and audio start together (if both exist)
+- On complete: reveal remaining text for this panel
+- Seamless advance to next panel
+- Click-to-seek works on panel titles
+
+> CUT TO BLACK.
