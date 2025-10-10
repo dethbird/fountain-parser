@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
@@ -39,10 +39,9 @@ function App() {
       }
     }
     
-    setCode(scriptToLoad)
-    processText(scriptToLoad)
-    // also parse panels for the player
-    try { if (typeof parsePanels === 'function') parsePanels(scriptToLoad) } catch (e) {}
+  setCode(scriptToLoad)
+  processText(scriptToLoad)
+  try { if (typeof parsePanels === 'function') parsePanels(scriptToLoad) } catch (e) {}
   }, []) // Remove processText dependency to prevent infinite loop
 
   // Detect mobile-like clients and suggest enabling the browser "Desktop site" option
@@ -63,13 +62,10 @@ function App() {
   }, [])
 
   const { blocks, characters, characterLineCounts, processText } = usePreviewWorker('')
+  const { panels, parsePanels } = usePlayerWorker()
+  const [playerIndex, setPlayerIndex] = useState(0)
   // Preview pane selector: 'screenplay' shows the existing preview, 'player' will show the media player
   const [previewPane, setPreviewPane] = useState('screenplay')
-  // Player state
-  const [playerIndex, setPlayerIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const audioRef = useRef(null)
-  const { panels, parsePanels } = usePlayerWorker()
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -82,15 +78,13 @@ function App() {
     try { if (typeof parsePanels === 'function') parsePanels(newCode) } catch (e) {}
   }
 
-  // Reset/clamp playerIndex when panels change
+  // Debug: log which panel the player will render
   useEffect(() => {
-    if (!Array.isArray(panels) || panels.length === 0) {
-      setPlayerIndex(0)
-      setIsPlaying(false)
-      return
-    }
-    if (playerIndex >= panels.length) setPlayerIndex(0)
-  }, [panels])
+    try {
+      const panel = (panels && panels.length > 0 && panels[playerIndex]) ? panels[playerIndex] : null
+      console.log('Player will render panel:', { index: playerIndex, panel })
+    } catch (e) {}
+  }, [panels, playerIndex])
 
   // localStorage operations
   const saveScript = () => {
@@ -478,84 +472,9 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="media-player" style={{ padding: '1rem' }}>
-                  {/* Controls row */}
-                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                    <button className="toolbar-btn" onClick={() => { setIsPlaying(false); setPlayerIndex(0); if (audioRef.current) { try { audioRef.current.pause(); audioRef.current.currentTime = 0 } catch(e){} } }} title="Stop">
-                      <i className="fas fa-stop" /> Stop
-                    </button>
-                    <button className="toolbar-btn" onClick={() => { setIsPlaying(true); if (audioRef.current) try { audioRef.current.play().catch(()=>{}) } catch(e){} }} title="Play">
-                      <i className="fas fa-play" /> Play
-                    </button>
-                    <button className="toolbar-btn" onClick={() => { setIsPlaying(false); if (audioRef.current) try { audioRef.current.pause() } catch(e){} }} title="Pause">
-                      <i className="fas fa-pause" /> Pause
-                    </button>
-                  </div>
-
-                  {/* Image placeholder */}
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-                    {/* 16:9 grey box placeholder when no image available */}
-                    <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#323232', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9a9a9a' }}>
-                      <span>No image</span>
-                    </div>
-                  </div>
-
-                  {/* Audio placeholder: disabled when there's no real audio */}
-                  <div style={{ marginBottom: '0.75rem' }}>
-                    <audio controls disabled style={{ width: '100%' }} />
-                  </div>
-
-                  {/* Panel snippet: render the panel lines in the same style as preview-content */}
-                  <div style={{ borderTop: '1px solid #2a2a2a', paddingTop: '0.75rem' }}>
-                    {(!panels || panels.length === 0) ? (
-                      <div style={{ color: '#999' }}>No panel content found in the script. Add '####' headings to create panels.</div>
-                    ) : (
-                      (() => {
-                        const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
-                        const img = p && p.imageUrl ? p.imageUrl : null
-                        const aud = p && p.audioUrl ? p.audioUrl : null
-                        const dur = p && typeof p.duration === 'number' ? p.duration : null
-                        const durSrc = p && p.durationSource ? p.durationSource : null
-                        return (
-                          <div>
-                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}>
-                              {img ? (
-                                <img src={img} alt="panel" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
-                              ) : (
-                                <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#323232', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9a9a9a' }}>
-                                  <span>No image</span>
-                                </div>
-                              )}
-                            </div>
-                            <div style={{ marginBottom: '0.5rem' }}>
-                              {aud ? (
-                                <audio ref={audioRef} controls src={aud} style={{ width: '100%' }} />
-                              ) : (
-                                <audio controls disabled style={{ width: '100%' }} />
-                              )}
-                            </div>
-                            <div style={{ padding: '0.5rem' }}>
-                              <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{p.title || `Panel ${playerIndex + 1}`}</div>
-                              <div style={{ fontSize: '0.85rem', color: '#999', marginBottom: '0.5rem' }}>Duration: {dur ? `${dur}s` : 'n/a'} {durSrc ? `(${durSrc})` : ''}</div>
-                              <div className="preview-content" style={{ padding: '1rem', margin: 0 }}>
-                                {p && p.blocks && p.blocks.length > 0 ? (
-                                  p.blocks.map((b) => (
-                                    <div key={b.id} className={`preview-line ${b.className || ''}`} dangerouslySetInnerHTML={{ __html: b.text || '\u00A0' }} />
-                                  ))
-                                ) : p && p.snippet ? (
-                                  p.snippet.split(/\r?\n/).map((ln, i) => (
-                                    <div key={i} style={{ whiteSpace: 'pre-wrap' }}>{ln || '\u00A0'}</div>
-                                  ))
-                                ) : (
-                                  <div style={{ color: '#999' }}>No content for this panel.</div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )
-                      })()
-                    )}
-                  </div>
+                <div className="media-player-placeholder" style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Media Player (placeholder)</div>
+                  <div style={{ fontSize: '0.9rem' }}>Player UI will appear here. We'll wire it up next.</div>
                 </div>
               )}
             </div>
