@@ -869,3 +869,13 @@
 .media-player::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+/* Sticky header inside the scrollable media-player */
+.media-player .player-header {
+  position: sticky;
+  top: 0;
+  background: linear-gradient(180deg, rgba(26,26,26,0.95), rgba(26,26,26,0.9));
+  z-index: 5;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}

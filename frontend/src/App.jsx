@@ -68,6 +68,7 @@ function App() {
   const [previewPane, setPreviewPane] = useState('screenplay')
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const mediaPlayerRef = useRef(null)
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -151,6 +152,11 @@ function App() {
       } catch (e) {}
       setIsPlaying(false)
     }
+    try {
+      if (mediaPlayerRef.current && typeof mediaPlayerRef.current.scrollTo === 'function') {
+        mediaPlayerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+    } catch (e) {}
   }, [playerIndex])
 
   // Debug: log which panel the player will render
@@ -547,7 +553,7 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="media-player" style={{ padding: '1rem', maxHeight: '80vh', overflowY: 'auto' }}>
+                <div className="media-player" ref={mediaPlayerRef} style={{ padding: '1rem', maxHeight: '80vh', overflowY: 'auto' }}>
                   {/* Panel header: title + duration */}
                   {(() => {
                     const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
@@ -563,7 +569,7 @@ function App() {
                     }
 
                     return (
-                      <div style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                      <div className="player-header" style={{ marginBottom: '0.5rem', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                         <div>
                           {/* Title (prominent) with inline index/total indicator */}
                           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
