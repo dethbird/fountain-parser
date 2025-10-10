@@ -119,6 +119,12 @@ function App() {
       setPlayerIndex(0)
       setPlaybackEnded(false)
     }
+    // If currently paused on a panel, start audio from the beginning
+    try {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.currentTime = 0
+      }
+    } catch (e) {}
     setIsPlaying(true)
   }
 
@@ -131,8 +137,10 @@ function App() {
   }
 
   const handleStop = () => {
-    stopPlayback()
-    setPlaybackEnded(false)
+  // Stop playback and reset to first panel
+  stopPlayback()
+  setPlaybackEnded(false)
+  try { setPlayerIndex(0) } catch (e) {}
   }
 
   // Stop playback helper: clear timers, pause audio, reset time, set isPlaying false
