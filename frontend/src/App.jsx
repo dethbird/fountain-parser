@@ -267,7 +267,6 @@ function App() {
   useEffect(() => {
     try {
       const panel = (panels && panels.length > 0 && panels[playerIndex]) ? panels[playerIndex] : null
-      console.log('Player will render panel:', { index: playerIndex, panel })
     } catch (e) {}
   }, [panels, playerIndex])
 
@@ -614,25 +613,28 @@ function App() {
           <div className={`column is-half-desktop ${viewMode === 'edit' ? 'mobile-hidden' : ''}`}>
             <div className="box preview-box">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <h3 className="title is-6" style={{ margin: 0 }}>Live Preview</h3>
-                <div className="pane-toggle" style={{ display: 'flex' }}>
-                  <button
-                    className={`toolbar-btn pane-toggle-btn ${previewPane === 'screenplay' ? 'is-active' : ''}`}
-                    onClick={() => setPreviewPane('screenplay')}
-                    aria-pressed={previewPane === 'screenplay'}
-                    title="Show screenplay preview"
-                  >
-                    Screenplay
-                  </button>
-                  <button
-                    className={`toolbar-btn pane-toggle-btn ${previewPane === 'player' ? 'is-active' : ''}`}
-                    onClick={() => setPreviewPane('player')}
-                    aria-pressed={previewPane === 'player'}
-                    title="Show media player"
-                  >
-                    Player
-                  </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <h3 className="title is-6" style={{ margin: 0 }}>Live Preview:</h3>
+                  <div className="pane-toggle" style={{ display: 'flex' }}>
+                    <button
+                      className={`toolbar-btn pane-toggle-btn ${previewPane === 'screenplay' ? 'is-active' : ''}`}
+                      onClick={() => setPreviewPane('screenplay')}
+                      aria-pressed={previewPane === 'screenplay'}
+                      title="Show screenplay preview"
+                    >
+                      Screenplay
+                    </button>
+                    <button
+                      className={`toolbar-btn pane-toggle-btn ${previewPane === 'player' ? 'is-active' : ''}`}
+                      onClick={() => setPreviewPane('player')}
+                      aria-pressed={previewPane === 'player'}
+                      title="Show media player"
+                    >
+                      Player
+                    </button>
+                  </div>
                 </div>
+                <div />
               </div>
 
               {previewPane === 'screenplay' ? (
@@ -698,8 +700,8 @@ function App() {
                                 {p && p.nesting && (showNestingTooltip) ? (
                                   <div className="panel-nesting-tooltip" role="tooltip">
                                     {p.nesting.act ? <div><strong>Act:</strong> {p.nesting.act}</div> : null}
-                                    {p.nesting.sequence ? <div><strong>Sequence:</strong> {p.nesting.sequence}</div> : null}
                                     {p.nesting.scene ? <div><strong>Scene:</strong> {p.nesting.scene}</div> : null}
+                                    {p.nesting.sequence ? <div><strong>Sequence:</strong> {p.nesting.sequence}</div> : null}
                                     {!p.nesting.act && !p.nesting.sequence && !p.nesting.scene ? <div style={{ color: '#999' }}>No nesting</div> : null}
                                   </div>
                                 ) : null}

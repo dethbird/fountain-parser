@@ -291,7 +291,8 @@ export function parsePanels(text) {
       }
       return null
     }
-    return { act: findNearest(1), sequence: findNearest(2), scene: findNearest(3) }
+  // map level 1 -> act, level 2 -> scene, level 3 -> sequence
+  return { act: findNearest(1), scene: findNearest(2), sequence: findNearest(3) }
   })()
       })
 

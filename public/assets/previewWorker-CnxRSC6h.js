@@ -1,1 +1,0 @@
-import{p as a}from"./chunk-BUJgZvTL.js";self.onmessage=function(e){const{type:t,text:r}=e.data;if(t==="process")try{const s=a(r);self.postMessage({type:"result",blocks:s.blocks,characters:s.characters,characterLineCounts:s.characterLineCounts})}catch(s){self.postMessage({type:"error",message:String(s)})}};
