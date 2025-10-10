@@ -244,13 +244,15 @@ export function parsePanels(text) {
   // player script snippet doesn't render those items below the panel media.
   // Any other [i]/[a]/duration blocks present in the panel will remain.
   const filteredBlocks = blocks.filter((b) => {
-    if (!b) return false
-    // remove the explicit duration block if it was used
-    if (durBlock && b.id === durBlock.id) return false
-    // remove the image/audio blocks that we nominated for the panel media
-    if (imageBlock && b.id === imageBlock.id) return false
-    if (audioBlock && b.id === audioBlock.id) return false
-    return true
+  if (!b) return false
+  // drop page number blocks entirely from panel snippet
+  if (b.type === 'page_number') return false
+  // remove the explicit duration block if it was used
+  if (durBlock && b.id === durBlock.id) return false
+  // remove the image/audio blocks that we nominated for the panel media
+  if (imageBlock && b.id === imageBlock.id) return false
+  if (audioBlock && b.id === audioBlock.id) return false
+  return true
   })
 
       // If no explicit duration, estimate from textual content
