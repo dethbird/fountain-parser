@@ -847,3 +847,25 @@
   color: #b5b5b5;
   font-size: 14px;
 }
+
+/* Player-specific preview tweaks: make the snippet auto-height and remove large min-height */
+.player-preview-content {
+  padding: 1rem !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Hide scrollbars on preview panes but keep scrolling functional */
+.preview-content,
+.player-preview-content,
+.media-player {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.preview-content::-webkit-scrollbar,
+.player-preview-content::-webkit-scrollbar,
+.media-player::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}

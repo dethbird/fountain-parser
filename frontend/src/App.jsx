@@ -579,10 +579,10 @@ function App() {
                         {/* Top-right controls (smaller) with duration floated right */}
                         <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
                           <div style={{ fontSize: '0.85rem', color: '#999', display: 'flex', alignItems: 'center', gap: 6, marginRight: 6 }}><span style={{ fontSize: '0.95rem' }}>⏱</span>{dur ? `${dur}s` : 'n/a'}</div>
-                          <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏮</button>
                           <button className="toolbar-btn" title="Stop" aria-label="Stop" onClick={handleStop} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏹</button>
                           <button className="toolbar-btn" title="Play" aria-label="Play" onClick={handlePlay} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>▶︎</button>
                           <button className="toolbar-btn" title="Pause" aria-label="Pause" onClick={handlePause} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏸</button>
+                          <button className="toolbar-btn" title="Previous" aria-label="Previous" onClick={gotoPrev} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏮</button>
                           <button className="toolbar-btn" title="Next" aria-label="Next" onClick={gotoNext} style={{ padding: '0.25rem 0.4rem', fontSize: '0.9rem' }}>⏭</button>
                         </div>
                       </div>
@@ -633,7 +633,7 @@ function App() {
                         return (
                           <div>
                             <div style={{ padding: '0.5rem' }}>
-                              <div className="preview-content" style={{ padding: '1rem', margin: 0 }}>
+                              <div className="preview-content player-preview-content" style={{ margin: 0 }}>
                                 {p && p.blocks && p.blocks.length > 0 ? (
                                   p.blocks.map((b) => (
                                     <div key={b.id} className={`preview-line ${b.className || ''}`} dangerouslySetInnerHTML={{ __html: b.text || '\u00A0' }} />
