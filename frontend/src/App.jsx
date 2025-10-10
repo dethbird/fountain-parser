@@ -547,7 +547,7 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="media-player" style={{ padding: '1rem' }}>
+                <div className="media-player" style={{ padding: '1rem', maxHeight: '80vh', overflowY: 'auto' }}>
                   {/* Panel header: title + duration */}
                   {(() => {
                     const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
