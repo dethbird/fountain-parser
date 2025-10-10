@@ -237,8 +237,21 @@ export function parsePanels(text) {
         }
       }
 
-      const imageBlock = blocks.find((b) => b.type === 'image')
-      const audioBlock = blocks.find((b) => b.type === 'audio')
+  const imageBlock = blocks.find((b) => b.type === 'image')
+  const audioBlock = blocks.find((b) => b.type === 'audio')
+
+  // Remove only the specific blocks we used for duration/image/audio so the
+  // player script snippet doesn't render those items below the panel media.
+  // Any other [i]/[a]/duration blocks present in the panel will remain.
+  const filteredBlocks = blocks.filter((b) => {
+    if (!b) return false
+    // remove the explicit duration block if it was used
+    if (durBlock && b.id === durBlock.id) return false
+    // remove the image/audio blocks that we nominated for the panel media
+    if (imageBlock && b.id === imageBlock.id) return false
+    if (audioBlock && b.id === audioBlock.id) return false
+    return true
+  })
 
       // If no explicit duration, estimate from textual content
       if (duration === null) {
@@ -257,7 +270,7 @@ export function parsePanels(text) {
         durationSource,
         imageUrl: imageBlock ? (imageBlock.text || '').replace(/^<img src="?|".*$/g, '').replace(/^\[i\]/i, '') : null,
         audioUrl: audioBlock ? (audioBlock.text || '').replace(/^<audio.*src="?|".*$/g, '').replace(/^\[a\]/i, '') : null,
-        blocks
+  blocks: filteredBlocks
       })
 
       // move i forward
