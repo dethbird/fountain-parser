@@ -69,6 +69,8 @@ function App() {
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const mediaPlayerRef = useRef(null)
+  const playbackTimerRef = useRef(null)
+  const [playbackEnded, setPlaybackEnded] = useState(false)
 
   // Keep blocks ref in sync
   useEffect(() => {
@@ -84,14 +86,22 @@ function App() {
   // Player navigation helpers
   const gotoPrev = () => {
     if (!Array.isArray(panels) || panels.length === 0) return
+    // stop any active playback/timers
+    stopPlayback()
+    setPlaybackEnded(false)
     setPlayerIndex((idx) => {
       const n = panels.length
       return ((idx - 1) % n + n) % n
     })
   }
 
-  const gotoNext = () => {
+  // next; if userInitiated is true (default) stop playback timers. If false, this is programmatic auto-advance.
+  const gotoNext = (userInitiated = true) => {
     if (!Array.isArray(panels) || panels.length === 0) return
+    if (userInitiated) {
+      stopPlayback()
+      setPlaybackEnded(false)
+    }
     setPlayerIndex((idx) => {
       const n = panels.length
       return (idx + 1) % n
@@ -99,15 +109,14 @@ function App() {
   }
 
   // Audio control handlers
+  // Start playback sequence
   const handlePlay = async () => {
-    try {
-      if (!audioRef.current) return
-      await audioRef.current.play()
-      setIsPlaying(true)
-    } catch (e) {
-      // play() may reject on autoplay policies; just log
-      console.warn('Play failed', e)
+    // if we finished playback previously, restart from first panel
+    if (playbackEnded) {
+      setPlayerIndex(0)
+      setPlaybackEnded(false)
     }
+    setIsPlaying(true)
   }
 
   const handlePause = () => {
@@ -117,9 +126,24 @@ function App() {
   }
 
   const handleStop = () => {
-    if (!audioRef.current) return
-    audioRef.current.pause()
-    try { audioRef.current.currentTime = 0 } catch (e) {}
+    stopPlayback()
+    setPlaybackEnded(false)
+  }
+
+  // Stop playback helper: clear timers, pause audio, reset time, set isPlaying false
+  function stopPlayback() {
+    try {
+      if (playbackTimerRef.current) {
+        clearTimeout(playbackTimerRef.current)
+        playbackTimerRef.current = null
+      }
+    } catch (e) {}
+    try {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.currentTime = 0
+      }
+    } catch (e) {}
     setIsPlaying(false)
   }
 
@@ -131,7 +155,8 @@ function App() {
     const onPause = () => setIsPlaying(false)
     const onEnded = () => {
       setIsPlaying(false)
-      gotoNext()
+      // programmatic advance (not user initiated)
+      gotoNext(false)
     }
     a.addEventListener('play', onPlay)
     a.addEventListener('pause', onPause)
@@ -142,6 +167,52 @@ function App() {
       a.removeEventListener('ended', onEnded)
     }
   }, [playerIndex, panels])
+
+  // Drive playback sequence: when isPlaying is true start timer for current panel
+  useEffect(() => {
+    // clear any existing timer first
+    if (playbackTimerRef.current) {
+      clearTimeout(playbackTimerRef.current)
+      playbackTimerRef.current = null
+    }
+
+    if (!isPlaying) return
+
+    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+    if (!p) {
+      setIsPlaying(false)
+      return
+    }
+
+    // try to play audio for this panel (if audio element present)
+    try {
+      if (audioRef.current) {
+        // ensure it's loaded with the current src in the DOM
+        // play may fail if not allowed, but user initiated the play so it should work
+        audioRef.current.play().catch(() => {})
+      }
+    } catch (e) {}
+
+    const durMs = Math.max(1000, (typeof p.duration === 'number' ? p.duration * 1000 : 3000))
+    playbackTimerRef.current = setTimeout(() => {
+      // if this is the last panel, end playback and show black screen
+      if (!panels || playerIndex >= panels.length - 1) {
+        setIsPlaying(false)
+        setPlaybackEnded(true)
+        playbackTimerRef.current = null
+      } else {
+        // advance to next panel; the effect will pick up and continue playback
+        setPlayerIndex((idx) => idx + 1)
+      }
+    }, durMs)
+
+    return () => {
+      if (playbackTimerRef.current) {
+        clearTimeout(playbackTimerRef.current)
+        playbackTimerRef.current = null
+      }
+    }
+  }, [isPlaying, playerIndex, panels])
 
   // Pause/reset audio when switching panels
   useEffect(() => {
@@ -158,6 +229,13 @@ function App() {
       }
     } catch (e) {}
   }, [playerIndex])
+
+  // cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      try { if (playbackTimerRef.current) clearTimeout(playbackTimerRef.current) } catch (e) {}
+    }
+  }, [])
 
   // Debug: log which panel the player will render
   useEffect(() => {
@@ -595,8 +673,15 @@ function App() {
                     )
                   })()}
 
-                  {/* Image area */}
+                  {/* Image area (or black end slide if playback ended) */}
                   {(() => {
+                    if (playbackEnded) {
+                      return (
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                          <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#000', aspectRatio: '16/9' }} />
+                        </div>
+                      )
+                    }
                     const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
                     const img = p && p.imageUrl ? p.imageUrl : null
                     return (
