@@ -472,9 +472,89 @@ function App() {
                   )}
                 </div>
               ) : (
-                <div className="media-player-placeholder" style={{ padding: '2rem', textAlign: 'center', color: '#999' }}>
-                  <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.5rem' }}>Media Player (placeholder)</div>
-                  <div style={{ fontSize: '0.9rem' }}>Player UI will appear here. We'll wire it up next.</div>
+                <div className="media-player" style={{ padding: '1rem' }}>
+                  {/* Panel header: title + duration */}
+                  {(() => {
+                    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                    const dur = p && typeof p.duration === 'number' ? p.duration : null
+                    return (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        <div style={{ fontSize: '1rem', fontWeight: 700 }}>{p && p.title ? p.title : `Panel ${playerIndex + 1}`}</div>
+                        <div style={{ fontSize: '0.85rem', color: '#999' }}>Duration: {dur ? `${dur}s` : 'n/a'}</div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* Controls row (icons only) */}
+                  <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', alignItems: 'center' }}>
+                    <button className="toolbar-btn" title="Previous" aria-label="Previous">⏮</button>
+                    <button className="toolbar-btn" title="Stop" aria-label="Stop">⏹</button>
+                    <button className="toolbar-btn" title="Play" aria-label="Play">▶︎</button>
+                    <button className="toolbar-btn" title="Pause" aria-label="Pause">⏸</button>
+                    <button className="toolbar-btn" title="Next" aria-label="Next">⏭</button>
+                  </div>
+
+                  {/* Image area */}
+                  {(() => {
+                    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                    const img = p && p.imageUrl ? p.imageUrl : null
+                    return (
+                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
+                        {img ? (
+                          <img src={img} alt="panel" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                        ) : (
+                          <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#f0f0f0', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9a9a9a' }}>
+                            <span>No image</span>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })()}
+
+                  {/* Audio element */}
+                  {(() => {
+                    const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                    const aud = p && p.audioUrl ? p.audioUrl : null
+                    return (
+                      <div style={{ marginBottom: '0.75rem' }}>
+                        {aud ? (
+                          <audio controls src={aud} style={{ width: '100%' }} />
+                        ) : (
+                          <audio controls disabled style={{ width: '100%' }} />
+                        )}
+                      </div>
+                    )
+                  })()}
+
+                  {/* Panel script snippet (rendered like the preview) */}
+                  <div style={{ borderTop: '1px solid #2a2a2a', paddingTop: '0.75rem' }}>
+                    {(!panels || panels.length === 0) ? (
+                      <div style={{ color: '#999' }}>No panel content found in the script. Add '####' headings to create panels.</div>
+                    ) : (
+                      (() => {
+                        const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
+                        return (
+                          <div>
+                            <div style={{ padding: '0.5rem' }}>
+                              <div className="preview-content" style={{ padding: '1rem', margin: 0 }}>
+                                {p && p.blocks && p.blocks.length > 0 ? (
+                                  p.blocks.map((b) => (
+                                    <div key={b.id} className={`preview-line ${b.className || ''}`} dangerouslySetInnerHTML={{ __html: b.text || '\u00A0' }} />
+                                  ))
+                                ) : p && p.snippet ? (
+                                  p.snippet.split(/\r?\n/).map((ln, i) => (
+                                    <div key={i} style={{ whiteSpace: 'pre-wrap' }}>{ln || '\u00A0'}</div>
+                                  ))
+                                ) : (
+                                  <div style={{ color: '#999' }}>No content for this panel.</div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })()
+                    )}
+                  </div>
                 </div>
               )}
             </div>
