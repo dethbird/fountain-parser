@@ -17,9 +17,9 @@ export function usePlayerWorker() {
         try { workerRef.current.terminate() } catch (e) {}
         workerRef.current = null
       }
-      // reject any pending promises
-      for (const [, { reject }] of pendingRef.current) {
-        try { reject(new Error('unmounted')) } catch (e) {}
+      // settle any pending promises on unmount to avoid uncaught rejections
+      for (const [, { resolve }] of pendingRef.current) {
+        try { resolve([]) } catch (e) {}
       }
       pendingRef.current.clear()
     }
