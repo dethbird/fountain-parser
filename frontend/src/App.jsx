@@ -494,12 +494,15 @@ function App() {
 
                   {/* Image placeholder */}
                   <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.75rem' }}>
-                    <img src={`https://picsum.photos/seed/fountain-${playerIndex}/640/360`} alt="panel placeholder" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                    {/* 16:9 grey box placeholder when no image available */}
+                    <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#323232', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9a9a9a' }}>
+                      <span>No image</span>
+                    </div>
                   </div>
 
-                  {/* Audio placeholder */}
+                  {/* Audio placeholder: disabled when there's no real audio */}
                   <div style={{ marginBottom: '0.75rem' }}>
-                    <audio ref={audioRef} controls src="https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3" style={{ width: '100%' }} />
+                    <audio controls disabled style={{ width: '100%' }} />
                   </div>
 
                   {/* Panel snippet: render the panel lines in the same style as preview-content */}
@@ -509,17 +512,27 @@ function App() {
                     ) : (
                       (() => {
                         const p = (panels && panels.length > 0) ? (panels[playerIndex] || panels[0]) : null
-                        const img = p && p.imageUrl ? p.imageUrl : `https://picsum.photos/seed/fountain-${playerIndex}/640/360`
-                        const aud = p && p.audioUrl ? p.audioUrl : 'https://interactive-examples.mdn.mozilla.net/media/cc0-audio/t-rex-roar.mp3'
+                        const img = p && p.imageUrl ? p.imageUrl : null
+                        const aud = p && p.audioUrl ? p.audioUrl : null
                         const dur = p && typeof p.duration === 'number' ? p.duration : null
                         const durSrc = p && p.durationSource ? p.durationSource : null
                         return (
                           <div>
                             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.5rem' }}>
-                              <img src={img} alt="panel" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                              {img ? (
+                                <img src={img} alt="panel" style={{ width: '100%', maxWidth: 640, borderRadius: 6 }} />
+                              ) : (
+                                <div style={{ width: '100%', maxWidth: 640, borderRadius: 6, background: '#323232', aspectRatio: '16/9', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9a9a9a' }}>
+                                  <span>No image</span>
+                                </div>
+                              )}
                             </div>
                             <div style={{ marginBottom: '0.5rem' }}>
-                              <audio ref={audioRef} controls src={aud} style={{ width: '100%' }} />
+                              {aud ? (
+                                <audio ref={audioRef} controls src={aud} style={{ width: '100%' }} />
+                              ) : (
+                                <audio controls disabled style={{ width: '100%' }} />
+                              )}
                             </div>
                             <div style={{ padding: '0.5rem' }}>
                               <div style={{ fontSize: '0.95rem', fontWeight: 600 }}>{p.title || `Panel ${playerIndex + 1}`}</div>
