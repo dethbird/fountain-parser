@@ -626,6 +626,31 @@
   margin-right: 0.5rem;
 }
 
+/* Connected pane toggle (Screenplay / Player) */
+.pane-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #404040;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.pane-toggle-btn {
+  border-radius: 0 !important;
+  padding: 0.25rem 0.6rem !important;
+  font-size: 0.78rem !important;
+  border-left: 1px solid rgba(255,255,255,0.02);
+}
+.pane-toggle-btn:first-child {
+  border-left: none;
+  border-top-left-radius: 6px !important;
+  border-bottom-left-radius: 6px !important;
+}
+.pane-toggle-btn:last-child {
+  border-top-right-radius: 6px !important;
+  border-bottom-right-radius: 6px !important;
+}
+
 /* Responsive behavior */
 @media screen and (max-width: 1023px) {
   .mobile-view-toggle {

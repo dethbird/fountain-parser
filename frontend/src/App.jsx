@@ -609,9 +609,9 @@ function App() {
             <div className="box preview-box">
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <h3 className="title is-6" style={{ margin: 0 }}>Live Preview</h3>
-                <div style={{ display: 'flex', gap: 8 }}>
+                <div className="pane-toggle" style={{ display: 'flex' }}>
                   <button
-                    className={`toolbar-btn ${previewPane === 'screenplay' ? 'is-active' : ''}`}
+                    className={`toolbar-btn pane-toggle-btn ${previewPane === 'screenplay' ? 'is-active' : ''}`}
                     onClick={() => setPreviewPane('screenplay')}
                     aria-pressed={previewPane === 'screenplay'}
                     title="Show screenplay preview"
@@ -619,7 +619,7 @@ function App() {
                     Screenplay
                   </button>
                   <button
-                    className={`toolbar-btn ${previewPane === 'player' ? 'is-active' : ''}`}
+                    className={`toolbar-btn pane-toggle-btn ${previewPane === 'player' ? 'is-active' : ''}`}
                     onClick={() => setPreviewPane('player')}
                     aria-pressed={previewPane === 'player'}
                     title="Show media player"
