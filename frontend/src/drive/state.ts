@@ -1,6 +1,8 @@
 export type DriveState = {
   folderId?: string;
   folderName?: string;
+  // The selected folder object from Google Picker (may include id, name, url, etc.)
+  folder?: Record<string, unknown>;
   fileId?: string;
   fileName?: string;
 };

@@ -29,11 +29,12 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
   // Basic button handlers (placeholders for later integration)
   async function chooseFolder() {
     try {
-      const pick = await openFolderPicker();
-      if (!pick) return;
-      const next = { ...driveState, folderId: pick.id, folderName: pick.name };
-      setDriveState(next);
-      saveDriveState(next);
+  const pick = await openFolderPicker();
+  if (!pick) return;
+  const next = { ...driveState, folderId: pick.id, folderName: pick.name, folder: pick };
+  setDriveState(next);
+  saveDriveState(next);
+  console.log('DriveBar: saved fountain:driveState =', localStorage.getItem('fountain:driveState'));
     } catch (err) {
       console.error('Folder pick failed', err);
       alert('Could not open folder picker. Check console for details.');

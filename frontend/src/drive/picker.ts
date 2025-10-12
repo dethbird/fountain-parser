@@ -45,14 +45,24 @@ export async function openFolderPicker(): Promise<{ id: string; name?: string } 
     .setMimeTypes('application/vnd.google-apps.folder');
 
   return new Promise((resolve) => {
+    const env = (import.meta as any).env || {};
     const picker = new googleNS.picker.PickerBuilder()
-      .setAppId(import.meta.env.VITE_GCP_PROJECT_NUMBER)
-      .setDeveloperKey(import.meta.env.VITE_GOOGLE_API_KEY)
+      .setAppId(env.VITE_GCP_PROJECT_NUMBER)
+      .setDeveloperKey(env.VITE_GOOGLE_API_KEY)
       .setOAuthToken(oauthToken)
       .addView(view)
       .setTitle('Choose a Drive Folder')
       .setCallback((data: PickerResult) => {
         if (data.action === googleNS.picker.Action.PICKED && data.docs?.length) {
+          // Log the selected folder for debugging/visibility
+          console.log('Google Picker selected folder:', data.docs[0]);
+          try {
+            const save = { folder: data.docs[0], folderId: data.docs[0].id, folderName: data.docs[0].name };
+            localStorage.setItem('fountain:driveState', JSON.stringify(save));
+            console.log('Picker: saved fountain:driveState =', localStorage.getItem('fountain:driveState'));
+          } catch (e) {
+            console.warn('Picker: could not write to localStorage', e);
+          }
           resolve({ id: data.docs[0].id, name: data.docs[0].name });
         } else resolve(null);
       })
@@ -72,9 +82,10 @@ export async function openFilePicker(): Promise<{ id: string; name: string } | n
     .setMimeTypes('text/plain');
 
   return new Promise((resolve) => {
+    const env = (import.meta as any).env || {};
     const picker = new googleNS.picker.PickerBuilder()
-      .setAppId(import.meta.env.VITE_GCP_PROJECT_NUMBER)
-      .setDeveloperKey(import.meta.env.VITE_GOOGLE_API_KEY)
+      .setAppId(env.VITE_GCP_PROJECT_NUMBER)
+      .setDeveloperKey(env.VITE_GOOGLE_API_KEY)
       .setOAuthToken(oauthToken)
       .addView(view)
       .setTitle('Open Fountain file')
