@@ -1,0 +1,77 @@
+import React, { useEffect, useState } from 'react';
+
+export default function DriveBar({ getDoc, setDoc, getDocName }: {
+  getDoc?: () => string;
+  setDoc?: (text: string) => void;
+  getDocName?: () => string | null;
+}) {
+  const [visible, setVisible] = useState(false);
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    // detect touch devices
+    const touch = ('ontouchstart' in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+    setIsTouch(!!touch);
+
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'g') {
+        e.preventDefault();
+        setVisible(v => !v);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // Basic button handlers (placeholders for later integration)
+  function chooseFolder() { alert('Choose Folder — not implemented yet'); }
+  function save() { alert('Save — not implemented yet'); }
+  function saveAs() { alert('Save As — not implemented yet'); }
+  function loadFromDrive() { alert('Load — not implemented yet'); }
+
+  // Floating touch button to open the Drive bar on mobile
+  const fab = (
+    <button
+      onClick={() => setVisible(v => !v)}
+      aria-label="Open Drive toolbar"
+      style={{
+        position: 'fixed',
+        right: 12,
+        bottom: 12,
+        zIndex: 1200,
+        borderRadius: 9999,
+        width: 48,
+        height: 48,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#2563eb',
+        color: 'white',
+        border: 'none',
+        boxShadow: '0 6px 12px rgba(0,0,0,0.12)',
+      }}
+    >
+      <span style={{ fontSize: 18, lineHeight: 1 }}>⇪</span>
+    </button>
+  );
+
+  if (!visible && !isTouch) return null;
+
+  return (
+    <>
+      {isTouch ? fab : null}
+      {visible && (
+        <div style={{ display: 'flex', gap: 8, padding: 8, border: '1px solid #ddd', borderRadius: 8, background: '#fafafa', marginBottom: 8, alignItems: 'center' }}>
+          <button className="toolbar-btn" onClick={chooseFolder}><i className="fas fa-folder-open" aria-hidden="true"></i> Choose Folder</button>
+          <button className="toolbar-btn" onClick={save}><i className="fas fa-save" aria-hidden="true"></i> Save</button>
+          <button className="toolbar-btn" onClick={saveAs}><i className="fas fa-file-export" aria-hidden="true"></i> Save As</button>
+          <button className="toolbar-btn" onClick={loadFromDrive}><i className="fas fa-download" aria-hidden="true"></i> Load</button>
+          <div style={{ marginLeft: 'auto', fontSize: 12, color: '#475569' }}>
+            {/* Placeholder state info */}
+            No folder selected
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
