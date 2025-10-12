@@ -53,10 +53,11 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
     try {
   const pick = await openFolderPicker();
   if (!pick) return;
+  // Do not directly persist here. The picker dispatches a
+  // 'fountain:drive:folderSelected' event which DriveBar listens to and
+  // persists centrally. We still update local state immediately for UX.
   const next = { ...driveState, folderId: pick.id, folderName: pick.name, folder: pick };
   setDriveState(next);
-  saveDriveState(next);
-  console.log('DriveBar: saved fountain:driveState =', localStorage.getItem('fountain:driveState'));
     } catch (err) {
       console.error('Folder pick failed', err);
       alert('Could not open folder picker. Check console for details.');
