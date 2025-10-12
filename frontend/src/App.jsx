@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
+import DriveBar from './components/DriveBar'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import { usePlayerWorker } from './hooks/usePlayerWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
@@ -557,6 +558,14 @@ function App() {
             Last saved: {lastSavedDate.toLocaleDateString()} at {lastSavedDate.toLocaleTimeString()}
           </div>
         )}
+        {/* Drive toolbar mount point (Ctrl+G toggles) */}
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 12 }}>
+          <DriveBar
+            getDoc={() => code}
+            setDoc={(t) => { setCode(t); processText(t); }}
+            getDocName={() => null}
+          />
+        </div>
       </div>
 
       {/* Mobile View Toggle */}
