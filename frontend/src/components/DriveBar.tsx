@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { openFolderPicker } from '../drive/picker';
+import { loadDriveState, saveDriveState } from '../drive/state';
 
 export default function DriveBar({ getDoc, setDoc, getDocName }: {
   getDoc?: () => string;
@@ -7,6 +9,7 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
 }) {
   const [visible, setVisible] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
+  const [driveState, setDriveState] = useState(() => loadDriveState());
 
   useEffect(() => {
     // detect touch devices
@@ -24,7 +27,18 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
   }, []);
 
   // Basic button handlers (placeholders for later integration)
-  function chooseFolder() { alert('Choose Folder — not implemented yet'); }
+  async function chooseFolder() {
+    try {
+      const pick = await openFolderPicker();
+      if (!pick) return;
+      const next = { ...driveState, folderId: pick.id, folderName: pick.name };
+      setDriveState(next);
+      saveDriveState(next);
+    } catch (err) {
+      console.error('Folder pick failed', err);
+      alert('Could not open folder picker. Check console for details.');
+    }
+  }
   function save() { alert('Save — not implemented yet'); }
   function saveAs() { alert('Save As — not implemented yet'); }
   function loadFromDrive() { alert('Load — not implemented yet'); }
@@ -67,8 +81,7 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
           <button className="toolbar-btn" onClick={saveAs}><i className="fas fa-file-export" aria-hidden="true"></i> Save As</button>
           <button className="toolbar-btn" onClick={loadFromDrive}><i className="fas fa-download" aria-hidden="true"></i> Load</button>
           <div style={{ marginLeft: 'auto', fontSize: 12, color: '#475569' }}>
-            {/* Placeholder state info */}
-            No folder selected
+            {driveState.folderName ? `Folder: ${driveState.folderName}` : 'No folder selected'}
           </div>
         </div>
       )}
