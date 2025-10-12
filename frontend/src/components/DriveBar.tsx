@@ -26,6 +26,28 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  // Listen for folderSelected events dispatched by the picker so DriveBar
+  // can persist the selection. This decouples the picker implementation
+  // from DriveBar and works across contexts.
+  useEffect(() => {
+    const onFolderSelected = (e: Event) => {
+      try {
+        // @ts-ignore - event detail typed as any
+        const detail = (e as CustomEvent).detail as any;
+        if (detail && detail.id) {
+          const next = { ...loadDriveState(), folderId: detail.id, folderName: detail.name, folder: detail };
+          setDriveState(next);
+          saveDriveState(next);
+          console.log('DriveBar: persisted folder from event', next);
+        }
+      } catch (err) {
+        console.error('DriveBar: error handling folderSelected event', err);
+      }
+    };
+    window.addEventListener('fountain:drive:folderSelected', onFolderSelected as EventListener);
+    return () => window.removeEventListener('fountain:drive:folderSelected', onFolderSelected as EventListener);
+  }, []);
+
   // Basic button handlers (placeholders for later integration)
   async function chooseFolder() {
     try {

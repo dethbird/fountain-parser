@@ -57,11 +57,13 @@ export async function openFolderPicker(): Promise<{ id: string; name?: string } 
           // Log the selected folder for debugging/visibility
           console.log('Google Picker selected folder:', data.docs[0]);
           try {
-            const save = { folder: data.docs[0], folderId: data.docs[0].id, folderName: data.docs[0].name };
-            localStorage.setItem('fountain:driveState', JSON.stringify(save));
-            console.log('Picker: saved fountain:driveState =', localStorage.getItem('fountain:driveState'));
+            // Dispatch an application-level event so DriveBar can listen and
+            // persist the selection. This avoids direct localStorage access
+            // inside the picker implementation.
+            const evt = new CustomEvent('fountain:drive:folderSelected', { detail: data.docs[0] });
+            window.dispatchEvent(evt);
           } catch (e) {
-            console.warn('Picker: could not write to localStorage', e);
+            console.warn('picker: could not dispatch folderSelected event', e);
           }
           resolve({ id: data.docs[0].id, name: data.docs[0].name });
         } else resolve(null);
