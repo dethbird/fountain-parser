@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
+import DriveBar from './components/DriveBar'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import { usePlayerWorker } from './hooks/usePlayerWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
@@ -550,6 +551,14 @@ function App() {
               <span className="character-count-badge">{characters.length}</span>
             )}
           </button>
+        </div>
+        {/* Google Drive toolbar (toggle with Ctrl+G) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginLeft: 12 }}>
+          <DriveBar
+            getDoc={() => code}
+            setDoc={(t) => { setCode(t); processText(t); }}
+            getDocName={() => null}
+          />
         </div>
         
         {lastSavedDate && (
