@@ -22,3 +22,11 @@ export async function listFilesInFolder(folderId: string) {
   const data = await res.json()
   return (data.files || []).map((f: any) => ({ id: f.id, name: f.name, mimeType: f.mimeType }))
 }
+
+export async function getFileContent(fileId: string) {
+  if (!fileId) throw new Error('fileId required')
+  const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
+  const res = await authedFetch(url)
+  if (!res.ok) throw new Error(`Failed to fetch file content: ${res.status}`)
+  return await res.text()
+}

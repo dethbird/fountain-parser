@@ -3,7 +3,7 @@ import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { openFolderPicker } from './drive/picker'
 import { loadDriveState, clearDriveState } from './drive/state'
-import { listFountainFilesInFolder, listFilesInFolder } from './drive/files'
+import { listFountainFilesInFolder, listFilesInFolder, getFileContent } from './drive/files'
 import { persistDriveState } from './drive/persistence'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import { usePlayerWorker } from './hooks/usePlayerWorker'
@@ -1148,7 +1148,33 @@ function App() {
                     <ul>
                       {gdriveFiles.map((f) => (
                         <li key={f.id} style={{ padding: '6px 0' }}>
-                          <a href="#" onClick={(e) => { e.preventDefault(); console.log('GDrive selected file:', f); setIsGDriveLoadOpen(false); }}>{f.name}</a>
+                          <a
+                            href="#"
+                            onClick={async (e) => {
+                              e.preventDefault()
+                              try {
+                                // Fetch file content from Drive and load into editor
+                                const content = await getFileContent(f.id)
+                                setCode(content)
+                                try { processText(content) } catch (err) { console.error('processText failed', err) }
+                                // Persist selected file metadata in drive state
+                                try {
+                                  const current = loadDriveState() || {}
+                                  const next = { ...current, fileId: f.id, fileName: f.name }
+                                  persistDriveState(next)
+                                  setDriveState(next)
+                                } catch (err) {
+                                  console.error('Failed to persist selected file', err)
+                                }
+                                setIsGDriveLoadOpen(false)
+                              } catch (err) {
+                                console.error('Failed to load file from Drive', err)
+                                alert('Could not load file from Drive. Check console for details.')
+                              }
+                            }}
+                          >
+                            {f.name}
+                          </a>
                         </li>
                       ))}
                     </ul>
