@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
-import DriveBar from './components/DriveBar'
+import { openFolderPicker } from './drive/picker'
+import { loadDriveState, clearDriveState } from './drive/state'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import { usePlayerWorker } from './hooks/usePlayerWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
@@ -16,6 +17,9 @@ function App() {
   const [currentLine, setCurrentLine] = useState(0)
   const [hasSavedScript, setHasSavedScript] = useState(false)
   const [lastSavedDate, setLastSavedDate] = useState(null)
+  const [gdriveOn, setGdriveOn] = useState(false)
+  const [driveState, setDriveState] = useState(() => loadDriveState())
+  const hasDriveFolder = !!(driveState && (driveState.folderId || driveState.folderName))
   const previewRef = useRef(null)
   const editorRef = useRef(null)
   const blocksRef = useRef([])
@@ -59,6 +63,39 @@ function App() {
       }
     } catch (e) {
       // ignore detection errors
+    }
+  }, [])
+
+  // Global keyboard handler to toggle GDrive mode (Ctrl/Cmd+G). This keeps
+  // the logic centralized in App and allows swapping the persistence toolbar
+  // buttons in-place.
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === 'g') {
+        e.preventDefault()
+        setGdriveOn(v => !v)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  // Keep App-level driveState in sync with DriveBar / picker events so we
+  // can show the selected folder in the persistence toolbar.
+  useEffect(() => {
+    const handler = (e) => {
+      try {
+        setDriveState(loadDriveState())
+      } catch (err) {
+        console.error('App: failed to load drive state', err)
+      }
+    }
+    const onCleared = () => setDriveState({})
+    window.addEventListener('fountain:drive:folderSelected', handler)
+    window.addEventListener('fountain:drive:cleared', onCleared)
+    return () => {
+      window.removeEventListener('fountain:drive:folderSelected', handler)
+      window.removeEventListener('fountain:drive:cleared', onCleared)
     }
   }, [])
 
@@ -289,6 +326,19 @@ function App() {
     }
   }
 
+  // Open the Drive folder picker (used by the persistence toolbar Choose Folder button)
+  const chooseFolderApp = async () => {
+    try {
+      const pick = await openFolderPicker()
+      if (!pick) return
+      // Picker dispatches 'fountain:drive:folderSelected' which DriveBar listens to
+      // so we don't persist here. We simply trigger the picker.
+    } catch (err) {
+      console.error('Folder pick failed', err)
+      alert('Could not open folder picker. Check console for details.')
+    }
+  }
+
   const loadScript = () => {
     const savedData = localStorage.getItem('fountain-script')
     if (savedData) {
@@ -467,43 +517,56 @@ function App() {
       {/* Persistence Toolbar */}
       <div className="persistence-toolbar">
         <div className="toolbar-group">
-          <button 
-            className={`toolbar-btn ${!code.trim() ? 'disabled' : ''}`}
-            onClick={saveScript}
-            disabled={!code.trim()}
-            title="Save current script to browser storage"
-          >
-            <i className="fas fa-save"></i>
-            Save
-          </button>
-          
-          <button 
-            className={`toolbar-btn ${!hasSavedScript ? 'disabled' : ''}`}
-            onClick={loadScript}
-            disabled={!hasSavedScript}
-            title={lastSavedDate ? `Load saved script (${lastSavedDate.toLocaleDateString()} ${lastSavedDate.toLocaleTimeString()})` : 'Load saved script'}
-          >
-            <i className="fas fa-folder-open"></i>
-            Load
-          </button>
-          
-          <button 
-            className="toolbar-btn"
-            onClick={copyToClipboard}
-            title="Copy editor contents to clipboard"
-          >
-            <i className="fas fa-copy"></i>
-            Copy
-          </button>
-          
-          <button 
-            className="toolbar-btn"
-            onClick={pasteFromClipboard}
-            title="Paste from clipboard to editor"
-          >
-            <i className="fas fa-paste"></i>
-            Paste
-          </button>
+          {!gdriveOn ? (
+            <> 
+              <button 
+                className={`toolbar-btn ${!code.trim() ? 'disabled' : ''}`}
+                onClick={saveScript}
+                disabled={!code.trim()}
+                title="Save current script to browser storage"
+              >
+                <i className="fas fa-save"></i>
+                Save
+              </button>
+              
+              <button 
+                className={`toolbar-btn ${!hasSavedScript ? 'disabled' : ''}`}
+                onClick={loadScript}
+                disabled={!hasSavedScript}
+                title={lastSavedDate ? `Load saved script (${lastSavedDate.toLocaleDateString()} ${lastSavedDate.toLocaleTimeString()})` : 'Load saved script'}
+              >
+                <i className="fas fa-folder-open"></i>
+                Load
+              </button>
+              
+              <button 
+                className="toolbar-btn"
+                onClick={copyToClipboard}
+                title="Copy editor contents to clipboard"
+              >
+                <i className="fas fa-copy"></i>
+                Copy
+              </button>
+              
+              <button 
+                className="toolbar-btn"
+                onClick={pasteFromClipboard}
+                title="Paste from clipboard to editor"
+              >
+                <i className="fas fa-paste"></i>
+                Paste
+              </button>
+            </>
+            ) : (
+            // GDrive buttons replace the local persistence buttons in-place
+            <>
+              <button className="toolbar-btn" onClick={chooseFolderApp} title="Choose Drive folder"><i className="fas fa-folder-open"></i> Choose Folder</button>
+              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save to Google Drive"><i className="fab fa-google-drive"></i> GDrive Save</button>
+              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save as to Google Drive"><i className="fas fa-file-export"></i> GDrive Save As</button>
+              <button className={`toolbar-btn ${!hasSavedScript ? 'disabled' : ''}`} onClick={() => alert('GDrive Load — not implemented yet')} disabled={!hasSavedScript} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
+              
+            </>
+          )}
           
           <button
             className={`toolbar-btn danger ${!code.trim() ? 'disabled' : ''}`}
@@ -514,17 +577,46 @@ function App() {
             <i className="fas fa-trash"></i>
             Clear Editor
           </button>
-          
-          <button 
-            className={`toolbar-btn danger ${!hasSavedScript ? 'disabled' : ''}`}
-            onClick={clearSaved}
-            disabled={!hasSavedScript}
-            title="Clear saved script from storage"
-          >
-            <i className="fas fa-trash"></i>
-            Clear Saved
-          </button>
-          
+
+          {!gdriveOn ? (
+            <button 
+              className={`toolbar-btn danger ${!hasSavedScript ? 'disabled' : ''}`}
+              onClick={clearSaved}
+              disabled={!hasSavedScript}
+              title="Clear saved script from storage"
+            >
+              <i className="fas fa-trash"></i>
+              Clear Saved
+            </button>
+          ) : (
+            // In GDrive mode replace the Clear Saved button with the selected
+            // folder display and a Clear link (similar to DriveBar).
+            <div style={{ fontSize: 12, color: '#f5f5f5' }}>
+              {driveState && driveState.folderName ? (
+                <span>
+                  <strong>Folder:</strong> {driveState.folderName}
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      try {
+                        clearDriveState()
+                        setDriveState({})
+                        window.dispatchEvent(new CustomEvent('fountain:drive:cleared'))
+                        console.log('App: cleared drive state')
+                      } catch (err) {
+                        console.error('App: failed to clear drive state', err)
+                      }
+                    }}
+                    style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
+                  >
+                    Clear
+                  </a>
+                </span>
+              ) : 'No folder selected'}
+            </div>
+          )}
+
           <div className="toolbar-divider"></div>
           
           {/* Help Button (writing help) */}
@@ -558,14 +650,7 @@ function App() {
             Last saved: {lastSavedDate.toLocaleDateString()} at {lastSavedDate.toLocaleTimeString()}
           </div>
         )}
-        {/* Drive toolbar mount point (Ctrl+G toggles) */}
-        <div style={{ display: 'flex', alignItems: 'center', marginLeft: 12 }}>
-          <DriveBar
-            getDoc={() => code}
-            setDoc={(t) => { setCode(t); processText(t); }}
-            getDocName={() => null}
-          />
-        </div>
+        {/* Drive toolbar was consolidated into the persistence toolbar; mount point removed. */}
       </div>
 
       {/* Mobile View Toggle */}
