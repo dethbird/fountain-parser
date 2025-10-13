@@ -568,15 +568,17 @@ function App() {
             </>
           )}
           
-          <button
-            className={`toolbar-btn danger ${!code.trim() ? 'disabled' : ''}`}
-            onClick={clearEditor}
-            disabled={!code.trim()}
-            title="Clear editor contents"
-          >
-            <i className="fas fa-trash"></i>
-            Clear Editor
-          </button>
+          {!gdriveOn && (
+            <button
+              className={`toolbar-btn danger ${!code.trim() ? 'disabled' : ''}`}
+              onClick={clearEditor}
+              disabled={!code.trim()}
+              title="Clear editor contents"
+            >
+              <i className="fas fa-trash"></i>
+              Clear Editor
+            </button>
+          )}
 
           {!gdriveOn ? (
             <button 
