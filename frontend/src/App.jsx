@@ -728,9 +728,10 @@ function App() {
             // folder display and a Clear link (similar to DriveBar).
             <div style={{ fontSize: 12, color: '#f5f5f5' }}>
               {persistedDriveState && persistedDriveState.folderName ? (
-                <div>
                   <div>
-                    <strong>Folder:</strong> {persistedDriveState.folderName}
+                    <div>
+                      <i className="fas fa-folder-open" aria-hidden="true" style={{ marginRight: 8, color: '#999' }}></i>
+                      {persistedDriveState.folderName}
                     <a
                       href="#"
                       onClick={(e) => {
@@ -747,13 +748,14 @@ function App() {
                       }}
                       style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
                     >
-                      Clear
+                      <i className="fas fa-trash" aria-hidden="true" style={{ fontSize: 10, verticalAlign: 'middle' }}></i>
                     </a>
                   </div>
                   {persistedDriveState && persistedDriveState.fileName ? (
                     <div style={{ marginTop: 4 }}>
                       <span style={{ fontSize: 12, color: '#ddd' }}>
-                        <strong>File:</strong> {persistedDriveState.fileName}
+                        <i className="fas fa-file" aria-hidden="true" style={{ marginRight: 8, color: '#999' }}></i>
+                        {persistedDriveState.fileName}
                       </span>
                       <a
                         href="#"
@@ -770,7 +772,7 @@ function App() {
                         }}
                         style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
                       >
-                        Clear file
+                        <i className="fas fa-trash" aria-hidden="true" style={{ fontSize: 10, verticalAlign: 'middle' }}></i>
                       </a>
                     </div>
                   ) : null}
