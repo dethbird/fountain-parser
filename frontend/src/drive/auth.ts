@@ -9,20 +9,23 @@ function waitForGoogle(): Promise<void> {
   });
 }
 
-export async function getAccessToken(opts?: { prompt?: '' | 'consent' }): Promise<string> {
+export async function getAccessToken(opts?: { prompt?: '' | 'consent', extraScopes?: string[] }): Promise<string> {
   // If we already have a token and caller didn't ask to force consent, reuse it.
   if (accessToken && !(opts && opts.prompt === 'consent')) return accessToken;
   await waitForGoogle();
   const google = (window as any).google;
   const env = (import.meta as any).env || {};
+  // Base scopes we need for normal operation
+  const baseScopes = [
+    'https://www.googleapis.com/auth/drive.readonly',
+    'https://www.googleapis.com/auth/drive.file',
+    'https://www.googleapis.com/auth/drive.metadata.readonly'
+  ]
+  // Allow callers to request additional scopes (e.g., full drive) when forcing consent
+  const scopes = Array.from(new Set([...(opts && opts.extraScopes ? opts.extraScopes : []), ...baseScopes]))
   const client = google.accounts.oauth2.initTokenClient({
     client_id: env.VITE_GOOGLE_CLIENT_ID,
-    scope: [
-      // Include readonly drive scope so we can fetch file contents (alt=media)
-      'https://www.googleapis.com/auth/drive.readonly',
-      'https://www.googleapis.com/auth/drive.file',
-      'https://www.googleapis.com/auth/drive.metadata.readonly'
-    ].join(' '),
+    scope: scopes.join(' '),
     callback: (resp: any) => { accessToken = resp.access_token; },
   });
   return new Promise<string>((resolve, reject) => {
@@ -65,9 +68,10 @@ export async function authedFetch(input: RequestInfo, init: RequestInit = {}, _r
   // If forbidden, attempt a single re-consent flow to request broader scopes and retry once.
   if (res.status === 403 && !_retry) {
     try {
-      console.debug('authedFetch: 403 received, attempting re-consent and retry');
+      console.debug('authedFetch: 403 received, attempting re-consent with broader Drive scope and retry');
       accessToken = '';
-      await getAccessToken({ prompt: 'consent' });
+      // Request broader drive permission to allow updating files the app didn't originally create.
+      await getAccessToken({ prompt: 'consent', extraScopes: ['https://www.googleapis.com/auth/drive'] });
       return authedFetch(input, init, true);
     } catch (e) {
       console.debug('authedFetch: re-consent attempt failed', e);
