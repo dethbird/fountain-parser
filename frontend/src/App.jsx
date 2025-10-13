@@ -80,7 +80,7 @@ function App() {
 
   // Log when driveState changes so we can trace why UI doesn't show persisted file
   useEffect(() => {
-    try { console.log('App: driveState changed', driveState) } catch (e) {}
+    // Debug log removed: avoid noisy console output in normal usage
   }, [driveState])
 
   // When in GDrive mode, show the Drive file's modifiedTime as the lastSavedDate
@@ -977,13 +977,14 @@ function App() {
               <span className="character-count-badge">{characters.length}</span>
             )}
           </button>
+          {/* Move last-saved next to Characters button for better discoverability */}
+          {lastSavedDate && (
+            <div className="last-saved" style={{ marginLeft: 8 }}>
+              Last saved: {lastSavedDate.toLocaleDateString()} at {lastSavedDate.toLocaleTimeString()}
+            </div>
+          )}
         </div>
         
-        {lastSavedDate && (
-          <div className="last-saved">
-            Last saved: {lastSavedDate.toLocaleDateString()} at {lastSavedDate.toLocaleTimeString()}
-          </div>
-        )}
         {/* Drive toolbar was consolidated into the persistence toolbar; mount point removed. */}
       </div>
 
