@@ -405,6 +405,12 @@ function App() {
   // Only include files that are plain binary/text blobs (application/octet-stream)
   // which correspond to true .fountain files in our usage.
   const fountainFiles = (files || []).filter((f) => f && f.mimeType === 'application/octet-stream')
+  // Sort by modifiedTime descending (newest first). Some files may not have modifiedTime; treat them as oldest.
+  fountainFiles.sort((a, b) => {
+    const ta = a && a.modifiedTime ? new Date(a.modifiedTime).getTime() : 0
+    const tb = b && b.modifiedTime ? new Date(b.modifiedTime).getTime() : 0
+    return tb - ta
+  })
   setGdriveFiles(fountainFiles)
     } catch (err) {
       console.error('openGDriveLoad failed', err)
@@ -1246,7 +1252,12 @@ function App() {
                               }
                             }}
                           >
-                            {f.name}
+                            <span style={{ display: 'inline-block', minWidth: 240 }}> 
+                              {f.name}
+                            </span>
+                            <span style={{ marginLeft: 8, color: '#9ca3af', fontSize: 12 }}>
+                              {f.modifiedTime ? new Date(f.modifiedTime).toLocaleString() : 'unknown'}
+                            </span>
                           </a>
                         </li>
                       ))}
