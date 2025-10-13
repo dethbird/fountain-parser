@@ -462,6 +462,42 @@ function App() {
     }
   }
 
+  // GDrive Save As: prompt for filename, append .fountain, create in selected folder
+  const gdriveSaveAs = async () => {
+    if (!code.trim()) return alert('Editor is empty')
+    try {
+      const ds = loadDriveState() || {}
+      const folderId = ds && ds.folderId ? ds.folderId : null
+      if (!folderId) return alert('No Drive folder selected')
+
+      // suggest a default base filename (without extension)
+      const suggested = ds.fileName ? ds.fileName.replace(/\.fountain$/i, '') : `script-${new Date().toISOString().replace(/[:.]/g, '-')}`
+      const input = window.prompt('Enter filename (without extension):', suggested)
+      if (input === null) return // user cancelled
+      const nameTrim = String(input || '').trim()
+      if (!nameTrim) return alert('Filename cannot be empty')
+      const filename = nameTrim.toLowerCase().endsWith('.fountain') ? nameTrim : `${nameTrim}.fountain`
+
+      // create file in selected folder
+      const meta = await createFileInFolder(folderId, filename, code)
+      console.log('GDrive Save As created:', meta)
+
+      const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
+      try { persistDriveState(next) } catch (e) {}
+      setDriveState(next)
+      try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
+
+      // update local saved script metadata as well
+      const scriptData = { content: code, savedAt: new Date().toISOString() }
+      localStorage.setItem('fountain-script', JSON.stringify(scriptData))
+      setHasSavedScript(true)
+      setLastSavedDate(new Date())
+    } catch (err) {
+      console.error('GDrive Save As failed', err)
+      alert('Failed to save file to Drive. See console for details.')
+    }
+  }
+
   // Open modal and list .fountain files in selected folder
   const openGDriveLoad = async () => {
     try {
@@ -719,7 +755,7 @@ function App() {
                 <i className={`${(isSaving || isReloading) ? 'fas fa-spinner fa-spin' : 'fab fa-google-drive'}`}></i>
                 GDrive Save
               </button>
-              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving || isReloading) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder || isSaving || isReloading} title={(isSaving || isReloading) ? 'Saving...' : 'Save as to Google Drive'}><i className="fas fa-file-export"></i> GDrive Save As</button>
+              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving || isReloading) ? 'disabled' : ''}`} onClick={gdriveSaveAs} disabled={!code.trim() || !hasDriveFolder || isSaving || isReloading} title={(isSaving || isReloading) ? 'Saving...' : 'Save as to Google Drive'}><i className="fas fa-file-export"></i> GDrive Save As</button>
               <button className={`toolbar-btn ${(!hasDriveFolder || isSaving || isReloading) ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasDriveFolder || isSaving || isReloading} title={(isSaving || isReloading) ? 'Saving...' : 'Load from Google Drive'}><i className="fas fa-download"></i> GDrive Load</button>
               
             </>
