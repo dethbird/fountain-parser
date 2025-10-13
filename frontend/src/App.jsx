@@ -1338,7 +1338,8 @@ function App() {
             </div>
             {gdriveFolderName && (
               <div style={{ padding: '0 16px 8px 16px', color: '#cbd5e1', fontSize: 13 }}>
-                Listing files from: <strong style={{ color: '#e2e8f0' }}>{gdriveFolderName}</strong>
+                <i className="fas fa-folder-open persistence-icon" aria-hidden="true"></i>
+                <strong style={{ color: '#e2e8f0' }}>{gdriveFolderName}</strong>
               </div>
             )}
             <div className="modal-body">
