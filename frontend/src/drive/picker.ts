@@ -1,4 +1,5 @@
 import { getAccessToken } from './auth';
+import { loadDriveState, saveDriveState } from './state';
 
 type PickerResult = { action: string; docs?: Array<{ id: string; name: string; mimeType: string }> };
 
@@ -64,6 +65,15 @@ export async function openFolderPicker(): Promise<{ id: string; name?: string } 
             window.dispatchEvent(evt);
           } catch (e) {
             console.warn('picker: could not dispatch folderSelected event', e);
+          }
+          // Robust fallback: persist selection immediately in case event
+          // listeners aren't yet registered (HMR/mount ordering issues).
+          try {
+            const next = { ...loadDriveState(), folderId: data.docs[0].id, folderName: data.docs[0].name, folder: data.docs[0] };
+            saveDriveState(next);
+            console.debug('picker: persisted folder as fallback', next);
+          } catch (e) {
+            console.warn('picker: failed to persist folder as fallback', e);
           }
           resolve({ id: data.docs[0].id, name: data.docs[0].name });
         } else resolve(null);
