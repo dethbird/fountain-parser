@@ -154,6 +154,58 @@ function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  // Persist non-GDrive editor content when switching into GDrive mode, and
+  // restore from localStorage (or default script) when switching back to
+  // non-GDrive mode. This keeps user's local copy safe whenever they enable
+  // Drive persistence.
+  useEffect(() => {
+    try {
+      // On switch to GDrive mode (true): save current code to localStorage
+      if (gdriveOn) {
+        try {
+          const scriptData = {
+            content: code || '',
+            savedAt: new Date().toISOString()
+          }
+          localStorage.setItem('fountain-script', JSON.stringify(scriptData))
+          // mark that we have a saved script
+          setHasSavedScript(true)
+          setLastSavedDate(new Date())
+          console.log('App: saved local copy to fountain-script before entering GDrive mode')
+        } catch (err) {
+          console.error('App: failed to persist local script when entering GDrive mode', err)
+        }
+      } else {
+        // On switch out of GDrive mode (false): restore local copy if present
+        try {
+          const savedData = localStorage.getItem('fountain-script')
+          if (savedData) {
+            const parsed = JSON.parse(savedData)
+            const content = parsed && parsed.content ? parsed.content : defaultScriptContent
+            setCode(content)
+            try { processText(content) } catch (e) { console.error('App: processText failed while restoring local script', e) }
+            if (parsed && parsed.savedAt) setLastSavedDate(new Date(parsed.savedAt))
+            setHasSavedScript(!!(parsed && parsed.content))
+            console.log('App: restored local copy from fountain-script after leaving GDrive mode')
+          } else {
+            // no saved data; restore default script
+            setCode(defaultScriptContent)
+            try { processText(defaultScriptContent) } catch (e) { console.error('App: processText failed while loading default script', e) }
+            setHasSavedScript(false)
+            setLastSavedDate(null)
+            console.log('App: no local copy found, loaded default script after leaving GDrive mode')
+          }
+        } catch (err) {
+          console.error('App: failed to restore local script after leaving GDrive mode', err)
+        }
+      }
+    } catch (e) {
+      // don't let storage issues break the app
+    }
+    // Only run when gdriveOn changes intentionally
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gdriveOn])
+
   // Keep App-level driveState in sync with DriveBar / picker events so we
   // can show the selected folder in the persistence toolbar.
   useEffect(() => {
