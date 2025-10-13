@@ -3,6 +3,7 @@ import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { openFolderPicker } from './drive/picker'
 import { loadDriveState, clearDriveState } from './drive/state'
+import { persistDriveState } from './drive/persistence'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import { usePlayerWorker } from './hooks/usePlayerWorker'
 import defaultScriptContent from './assets/defaultScript.fountain?raw'
@@ -89,7 +90,7 @@ function App() {
         const detail = e && e.detail ? e.detail : null
         if (detail && detail.id) {
           const next = { ...loadDriveState(), folderId: detail.id, folderName: detail.name, folder: detail }
-          try { saveDriveState(next) } catch (err) { console.error('App: saveDriveState failed', err) }
+          try { persistDriveState(next) } catch (err) { console.error('App: persistDriveState failed', err) }
           setDriveState(next)
         } else {
           setDriveState(loadDriveState())
@@ -253,8 +254,6 @@ function App() {
     // try to play audio for this panel (if audio element present)
     try {
       if (audioRef.current) {
-        // ensure it's loaded with the current src in the DOM
-        // play may fail if not allowed, but user initiated the play so it should work
         audioRef.current.play().catch(() => {})
       }
     } catch (e) {}

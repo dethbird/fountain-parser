@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { openFolderPicker } from '../drive/picker';
-import { loadDriveState, saveDriveState, clearDriveState } from '../drive/state';
+import { loadDriveState, clearDriveState } from '../drive/state';
+import { persistDriveState } from '../drive/persistence';
 
 export default function DriveBar({ getDoc, setDoc, getDocName, open, gdriveOn }: {
   getDoc?: () => string;
@@ -42,7 +43,7 @@ export default function DriveBar({ getDoc, setDoc, getDocName, open, gdriveOn }:
         if (detail && detail.id) {
           const next = { ...loadDriveState(), folderId: detail.id, folderName: detail.name, folder: detail };
           setDriveState(next);
-          saveDriveState(next);
+          persistDriveState(next);
           console.log('DriveBar: persisted folder from event', next);
         }
       } catch (err) {
