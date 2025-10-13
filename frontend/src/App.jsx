@@ -402,7 +402,9 @@ function App() {
       setIsGDriveLoadOpen(true)
       setGdriveLoading(true)
   const files = await listFilesInFolder(fid)
-  const fountainFiles = (files || []).filter((f) => typeof f.name === 'string' && f.name.toLowerCase().endsWith('.fountain'))
+  // Only include files that are plain binary/text blobs (application/octet-stream)
+  // which correspond to true .fountain files in our usage.
+  const fountainFiles = (files || []).filter((f) => f && f.mimeType === 'application/octet-stream')
   setGdriveFiles(fountainFiles)
     } catch (err) {
       console.error('openGDriveLoad failed', err)

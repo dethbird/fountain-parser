@@ -20,6 +20,10 @@ export async function listFilesInFolder(folderId: string) {
   const res = await authedFetch(url)
   if (!res.ok) throw new Error(`Drive list failed: ${res.status}`)
   const data = await res.json()
+  // Log the raw file objects so developers can inspect mimeType and other metadata
+  try {
+    console.log('Drive: files in folder', folderId, data.files)
+  } catch (e) {}
   return (data.files || []).map((f: any) => ({ id: f.id, name: f.name, mimeType: f.mimeType }))
 }
 
