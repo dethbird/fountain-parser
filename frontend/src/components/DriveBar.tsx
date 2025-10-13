@@ -110,7 +110,7 @@ export default function DriveBar({ getDoc, setDoc, getDocName, open, gdriveOn }:
         <div style={{ display: 'flex', gap: 8, padding: 8, border: '1px solid #ddd', borderRadius: 8, background: '#fafafa', marginBottom: 8, alignItems: 'center' }}>
           {/* Left: primary actions depend on mode */}
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button className="toolbar-btn" onClick={chooseFolder}><i className="fas fa-folder-open" aria-hidden="true"></i> Choose Folder</button>
+            <button className="toolbar-btn" onClick={chooseFolder}><i className="fas fa-folder-open" aria-hidden="true"></i> Change Folder</button>
             {!gdriveOn ? (
               /* Local mode */
               <>

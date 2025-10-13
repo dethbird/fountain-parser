@@ -568,10 +568,10 @@ function App() {
             ) : (
             // GDrive buttons replace the local persistence buttons in-place
             <>
-              <button className="toolbar-btn" onClick={chooseFolderApp} title="Choose Drive folder"><i className="fas fa-folder-open"></i> Choose Folder</button>
+              <button className="toolbar-btn" onClick={chooseFolderApp} title="Change Drive folder"><i className="fas fa-folder-open"></i> Change Folder</button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save to Google Drive"><i className="fab fa-google-drive"></i> GDrive Save</button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save as to Google Drive"><i className="fas fa-file-export"></i> GDrive Save As</button>
-              <button className={`toolbar-btn ${!hasSavedScript ? 'disabled' : ''}`} onClick={() => alert('GDrive Load — not implemented yet')} disabled={!hasSavedScript} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
+              <button className={`toolbar-btn ${(!hasSavedScript || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Load — not implemented yet')} disabled={!hasSavedScript || !hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
               
             </>
           )}
