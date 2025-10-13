@@ -66,6 +66,7 @@ function App() {
   const [gdriveFiles, setGdriveFiles] = useState([])
   const [gdriveFolderName, setGdriveFolderName] = useState(null)
   const [gdriveLoading, setGdriveLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
 
   // Log when driveState changes so we can trace why UI doesn't show persisted file
   useEffect(() => {
@@ -366,8 +367,10 @@ function App() {
   }, [playerIndex])
 
   // localStorage operations
-  const saveScript = () => {
-    if (code.trim()) {
+  const saveScript = async () => {
+    if (!code.trim()) return
+    setIsSaving(true)
+    try {
       // If a Drive file was loaded (fileId present), always try to update that file
       try {
         const ds = loadDriveState() || {}
@@ -377,13 +380,12 @@ function App() {
 
         if (existingFileId) {
           console.log('Saving to existing Drive file', existingFileId)
-          updateFileContent(existingFileId, code).then((meta) => {
-            console.log('Saved script to Drive (updated):', meta)
-            const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
-            try { persistDriveState(next) } catch (e) {}
-            setDriveState(next)
-            try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
-          }).catch((e) => { console.error('Drive update failed', e) })
+          const meta = await updateFileContent(existingFileId, code)
+          console.log('Saved script to Drive (updated):', meta)
+          const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
+          try { persistDriveState(next) } catch (e) {}
+          setDriveState(next)
+          try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
           const scriptData = { content: code, savedAt: new Date().toISOString() }
           localStorage.setItem('fountain-script', JSON.stringify(scriptData))
           setHasSavedScript(true)
@@ -394,13 +396,12 @@ function App() {
         // If no existing file but user has Drive mode on and a folder selected, create a new file
         if (gdriveOn && folderId) {
           console.log('Creating new Drive file in folder', folderId)
-          createFileInFolder(folderId, targetFileName, code).then((meta) => {
-            console.log('Saved script to Drive (created):', meta)
-            const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
-            try { persistDriveState(next) } catch (e) {}
-            setDriveState(next)
-            try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
-          }).catch((e) => { console.error('Drive create failed', e) })
+          const meta = await createFileInFolder(folderId, targetFileName, code)
+          console.log('Saved script to Drive (created):', meta)
+          const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
+          try { persistDriveState(next) } catch (e) {}
+          setDriveState(next)
+          try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
           const scriptData = { content: code, savedAt: new Date().toISOString() }
           localStorage.setItem('fountain-script', JSON.stringify(scriptData))
           setHasSavedScript(true)
@@ -419,6 +420,8 @@ function App() {
       localStorage.setItem('fountain-script', JSON.stringify(scriptData))
       setHasSavedScript(true)
       setLastSavedDate(new Date())
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -647,13 +650,13 @@ function App() {
           {!gdriveOn ? (
             <> 
               <button 
-                className={`toolbar-btn ${!code.trim() ? 'disabled' : ''}`}
+                className={`toolbar-btn ${!code.trim() || isSaving ? 'disabled' : ''}`}
                 onClick={saveScript}
-                disabled={!code.trim()}
-                title="Save current script to browser storage"
+                disabled={!code.trim() || isSaving}
+                title={isSaving ? 'Saving...' : 'Save current script to browser storage'}
               >
-                <i className="fas fa-save"></i>
-                Save
+                <i className={`fas ${isSaving ? 'fa-spinner fa-spin' : 'fa-save'}`}></i>
+                {isSaving ? 'Saving...' : 'Save'}
               </button>
               
               <button 
@@ -688,7 +691,10 @@ function App() {
             // GDrive buttons replace the local persistence buttons in-place
             <>
               <button className="toolbar-btn" onClick={chooseFolderApp} title="Change Drive folder"><i className="fas fa-folder-open"></i> Change Folder</button>
-              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={saveScript} disabled={!code.trim() || !hasDriveFolder} title="Save to Google Drive"><i className="fab fa-google-drive"></i> GDrive Save</button>
+              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving) ? 'disabled' : ''}`} onClick={saveScript} disabled={!code.trim() || !hasDriveFolder || isSaving} title={isSaving ? 'Saving...' : 'Save to Google Drive'}>
+                <i className={`${isSaving ? 'fas fa-spinner fa-spin' : 'fab fa-google-drive'}`}></i>
+                {isSaving ? 'Saving...' : 'GDrive Save'}
+              </button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save as to Google Drive"><i className="fas fa-file-export"></i> GDrive Save As</button>
               <button className={`toolbar-btn ${!hasDriveFolder ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
               
