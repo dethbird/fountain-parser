@@ -3,6 +3,7 @@ import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { openFolderPicker } from './drive/picker'
 import { loadDriveState, clearDriveState } from './drive/state'
+import { listFountainFilesInFolder, listFilesInFolder } from './drive/files'
 import { persistDriveState } from './drive/persistence'
 import { usePreviewWorker } from './hooks/usePreviewWorker'
 import { usePlayerWorker } from './hooks/usePlayerWorker'
@@ -26,6 +27,10 @@ function App() {
   const blocksRef = useRef([])
   const appRef = useRef(null)
   const [isFullscreen, setIsFullscreen] = useState(false)
+  // GDrive Load modal state
+  const [isGDriveLoadOpen, setIsGDriveLoadOpen] = useState(false)
+  const [gdriveFiles, setGdriveFiles] = useState([])
+  const [gdriveLoading, setGdriveLoading] = useState(false)
 
   // Load script content on component mount - prioritize localStorage over default
   useEffect(() => {
@@ -346,6 +351,28 @@ function App() {
     }
   }
 
+  // Open modal and list .fountain files in selected folder
+  const openGDriveLoad = async () => {
+    try {
+      const ds = loadDriveState()
+      const fid = ds && ds.folderId ? ds.folderId : null
+      if (!fid) {
+        alert('No Drive folder selected. Use Change Folder first.')
+        return
+      }
+      setIsGDriveLoadOpen(true)
+      setGdriveLoading(true)
+  const files = await listFilesInFolder(fid)
+  const fountainFiles = (files || []).filter((f) => typeof f.name === 'string' && f.name.toLowerCase().endsWith('.fountain'))
+  setGdriveFiles(fountainFiles)
+    } catch (err) {
+      console.error('openGDriveLoad failed', err)
+      alert('Could not list files from Drive. Check console for details.')
+    } finally {
+      setGdriveLoading(false)
+    }
+  }
+
   const loadScript = () => {
     const savedData = localStorage.getItem('fountain-script')
     if (savedData) {
@@ -570,7 +597,7 @@ function App() {
               <button className="toolbar-btn" onClick={chooseFolderApp} title="Change Drive folder"><i className="fas fa-folder-open"></i> Change Folder</button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save to Google Drive"><i className="fab fa-google-drive"></i> GDrive Save</button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save as to Google Drive"><i className="fas fa-file-export"></i> GDrive Save As</button>
-              <button className={`toolbar-btn ${(!hasSavedScript || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Load — not implemented yet')} disabled={!hasSavedScript || !hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
+              <button className={`toolbar-btn ${(!hasSavedScript || !hasDriveFolder) ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasSavedScript || !hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
               
             </>
           )}
@@ -1099,6 +1126,40 @@ function App() {
                   <p>Use = for synopsis notes, === for page breaks, ~ for lyrics. Each lyric line must begin with ~.</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* GDrive Load Modal */}
+      {isGDriveLoadOpen && (
+        <div className="modal-overlay" onClick={() => setIsGDriveLoadOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Open .fountain from Drive</h2>
+              <button className="modal-close" onClick={() => setIsGDriveLoadOpen(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              {gdriveLoading ? (
+                <div>Loading...</div>
+              ) : (
+                <div>
+                  {gdriveFiles && gdriveFiles.length > 0 ? (
+                    <ul>
+                      {gdriveFiles.map((f) => (
+                        <li key={f.id} style={{ padding: '6px 0' }}>
+                          <a href="#" onClick={(e) => { e.preventDefault(); console.log('GDrive selected file:', f); setIsGDriveLoadOpen(false); }}>{f.name}</a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div>No .fountain files found in this folder.</div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="modal-header" style={{ borderTop: '1px solid #404040', justifyContent: 'flex-end' }}>
+              <button className="toolbar-btn" onClick={() => setIsGDriveLoadOpen(false)}>Close</button>
             </div>
           </div>
         </div>
