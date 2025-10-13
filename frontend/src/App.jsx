@@ -53,7 +53,9 @@ function App() {
       window.removeEventListener('fountain:drive:fileCleared', onFileCleared)
     }
   }, [])
-  const hasDriveFolder = !!(driveState && (driveState.folderId || driveState.folderName))
+  // Consider both persisted localStorage state and in-memory driveState so buttons
+  // reflect a folder selected in a different context (picker/fallback persist).
+  const hasDriveFolder = !!(persistedDriveState && (persistedDriveState.folderId || persistedDriveState.folderName))
   const previewRef = useRef(null)
   const editorRef = useRef(null)
   const blocksRef = useRef([])
@@ -634,7 +636,7 @@ function App() {
               <button className="toolbar-btn" onClick={chooseFolderApp} title="Change Drive folder"><i className="fas fa-folder-open"></i> Change Folder</button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save to Google Drive"><i className="fab fa-google-drive"></i> GDrive Save</button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save as to Google Drive"><i className="fas fa-file-export"></i> GDrive Save As</button>
-              <button className={`toolbar-btn ${(!hasSavedScript || !hasDriveFolder) ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasSavedScript || !hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
+              <button className={`toolbar-btn ${!hasDriveFolder ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
               
             </>
           )}
