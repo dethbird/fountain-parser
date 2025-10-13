@@ -19,7 +19,13 @@ function App() {
   const [currentLine, setCurrentLine] = useState(0)
   const [hasSavedScript, setHasSavedScript] = useState(false)
   const [lastSavedDate, setLastSavedDate] = useState(null)
-  const [gdriveOn, setGdriveOn] = useState(false)
+  const [gdriveOn, setGdriveOn] = useState(() => {
+    try {
+      return localStorage.getItem('fountain:gdriveOn') === '1'
+    } catch (e) {
+      return false
+    }
+  })
   const [driveState, setDriveState] = useState(() => loadDriveState())
   // Merge persisted drive state (localStorage) with App reactive state so the
   // toolbar always reflects the up-to-date values. This prevents cases where
@@ -121,7 +127,10 @@ function App() {
     const onKey = (e) => {
       if ((e.ctrlKey || e.metaKey) && String(e.key).toLowerCase() === 'g') {
         e.preventDefault()
-        setGdriveOn(v => !v)
+        setGdriveOn((v) => {
+          try { localStorage.setItem('fountain:gdriveOn', (!v) ? '1' : '0') } catch (err) {}
+          return !v
+        })
       }
     }
     window.addEventListener('keydown', onKey)
