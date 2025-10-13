@@ -175,6 +175,26 @@ function App() {
         } catch (err) {
           console.error('App: failed to persist local script when entering GDrive mode', err)
         }
+        // If a Drive file is already selected, asynchronously load it into the editor
+        try {
+          const ds = loadDriveState() || {}
+          const fileId = ds && ds.fileId ? ds.fileId : null
+          if (fileId) {
+            // mark reloading state while we fetch the Drive file
+            setIsReloading(true)
+            getFileContent(fileId).then((content) => {
+              setCode(content)
+              try { processText(content) } catch (e) { console.error('App: processText failed while loading Drive file on toggle', e) }
+              setHasSavedScript(true)
+              setLastSavedDate(new Date())
+              console.log('App: loaded selected Drive file after entering GDrive mode')
+            }).catch((err) => {
+              console.error('App: failed to load selected Drive file on entering GDrive mode', err)
+            }).finally(() => setIsReloading(false))
+          }
+        } catch (err) {
+          console.error('App: error while attempting to load Drive file on toggle', err)
+        }
       } else {
         // On switch out of GDrive mode (false): restore local copy if present
         try {
