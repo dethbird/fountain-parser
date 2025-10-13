@@ -80,6 +80,23 @@ function App() {
     try { console.log('App: driveState changed', driveState) } catch (e) {}
   }, [driveState])
 
+  // When in GDrive mode, show the Drive file's modifiedTime as the lastSavedDate
+  useEffect(() => {
+    try {
+      if (gdriveOn) {
+        const s = persistedDriveState || {}
+        const fileMeta = s.file || {}
+        const mod = fileMeta.modifiedTime || fileMeta.modified_time || null
+        if (mod) {
+          setLastSavedDate(new Date(mod))
+          setHasSavedScript(true)
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [gdriveOn, driveState])
+
   // Load script content on component mount - prioritize localStorage over default
   useEffect(() => {
     const savedData = localStorage.getItem('fountain-script')
@@ -381,45 +398,43 @@ function App() {
     if (!code.trim()) return
     setIsSaving(true)
     try {
-      // If a Drive file was loaded (fileId present), always try to update that file
-      try {
-        const ds = loadDriveState() || {}
-        const existingFileId = ds && ds.fileId ? ds.fileId : null
-        const folderId = ds && ds.folderId ? ds.folderId : null
-        const targetFileName = ds.fileName || `script-${new Date().toISOString().replace(/[:.]/g, '-')}.fountain`
+      // Only attempt Drive operations when in GDrive mode
+      if (gdriveOn) {
+        try {
+          const ds = loadDriveState() || {}
+          const existingFileId = ds && ds.fileId ? ds.fileId : null
+          const folderId = ds && ds.folderId ? ds.folderId : null
+          const targetFileName = ds.fileName || `script-${new Date().toISOString().replace(/[:.]/g, '-')}.fountain`
 
-        if (existingFileId) {
-          console.log('Saving to existing Drive file', existingFileId)
-          const meta = await updateFileContent(existingFileId, code)
-          console.log('Saved script to Drive (updated):', meta)
-          const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
-          try { persistDriveState(next) } catch (e) {}
-          setDriveState(next)
-          try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
-          const scriptData = { content: code, savedAt: new Date().toISOString() }
-          localStorage.setItem('fountain-script', JSON.stringify(scriptData))
-          setHasSavedScript(true)
-          setLastSavedDate(new Date())
-          return
-        }
+          if (existingFileId) {
+            console.log('Saving to existing Drive file', existingFileId)
+            const meta = await updateFileContent(existingFileId, code)
+            console.log('Saved script to Drive (updated):', meta)
+            const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
+            try { persistDriveState(next) } catch (e) {}
+            setDriveState(next)
+            try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
+            setHasSavedScript(true)
+            setLastSavedDate(new Date())
+            return
+          }
 
-        // If no existing file but user has Drive mode on and a folder selected, create a new file
-        if (gdriveOn && folderId) {
-          console.log('Creating new Drive file in folder', folderId)
-          const meta = await createFileInFolder(folderId, targetFileName, code)
-          console.log('Saved script to Drive (created):', meta)
-          const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
-          try { persistDriveState(next) } catch (e) {}
-          setDriveState(next)
-          try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
-          const scriptData = { content: code, savedAt: new Date().toISOString() }
-          localStorage.setItem('fountain-script', JSON.stringify(scriptData))
-          setHasSavedScript(true)
-          setLastSavedDate(new Date())
-          return
+          // If no existing file but user has Drive mode on and a folder selected, create a new file
+          if (folderId) {
+            console.log('Creating new Drive file in folder', folderId)
+            const meta = await createFileInFolder(folderId, targetFileName, code)
+            console.log('Saved script to Drive (created):', meta)
+            const next = { ...ds, fileId: meta.id, fileName: meta.name, file: meta }
+            try { persistDriveState(next) } catch (e) {}
+            setDriveState(next)
+            try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
+            setHasSavedScript(true)
+            setLastSavedDate(new Date())
+            return
+          }
+        } catch (e) {
+          console.error('GDrive save attempt failed', e)
         }
-      } catch (e) {
-        console.error('GDrive save attempt failed', e)
       }
 
       // Fallback: save to localStorage
@@ -458,11 +473,9 @@ function App() {
       const content = await getFileContent(fileId)
       setCode(content)
       try { processText(content) } catch (err) { console.error('processText failed', err) }
-      // update last saved markers in localStorage (we don't change drive state)
-      const scriptData = { content, savedAt: new Date().toISOString() }
-      localStorage.setItem('fountain-script', JSON.stringify(scriptData))
-      setHasSavedScript(true)
-      setLastSavedDate(new Date())
+  // update in-memory markers to reflect the loaded Drive content
+  setHasSavedScript(true)
+  setLastSavedDate(new Date())
     } catch (err) {
       console.error('Failed to reload Drive file', err)
       alert('Failed to reload Drive file. See console for details.')
@@ -496,11 +509,9 @@ function App() {
       setDriveState(next)
       try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: next })) } catch (e) {}
 
-      // update local saved script metadata as well
-      const scriptData = { content: code, savedAt: new Date().toISOString() }
-      localStorage.setItem('fountain-script', JSON.stringify(scriptData))
-      setHasSavedScript(true)
-      setLastSavedDate(new Date())
+  // mark as saved (Drive)
+  setHasSavedScript(true)
+  setLastSavedDate(new Date())
     } catch (err) {
       console.error('GDrive Save As failed', err)
       alert('Failed to save file to Drive. See console for details.')
