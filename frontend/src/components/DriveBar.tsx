@@ -73,6 +73,9 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
   function saveAs() { alert('Save As — not implemented yet'); }
   function loadFromDrive() { alert('Load — not implemented yet'); }
 
+  // Helper boolean: whether a folder is currently selected/persisted
+  const hasFolder = !!(driveState && (driveState.folderId || driveState.folderName));
+
   // Floating touch button to open the Drive bar on mobile
   const fab = (
     <button
@@ -107,9 +110,27 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
       {visible && (
         <div style={{ display: 'flex', gap: 8, padding: 8, border: '1px solid #ddd', borderRadius: 8, background: '#fafafa', marginBottom: 8, alignItems: 'center' }}>
           <button className="toolbar-btn" onClick={chooseFolder}><i className="fas fa-folder-open" aria-hidden="true"></i> Choose Folder</button>
-          <button className="toolbar-btn" onClick={save}><i className="fas fa-save" aria-hidden="true"></i> Save</button>
-          <button className="toolbar-btn" onClick={saveAs}><i className="fas fa-file-export" aria-hidden="true"></i> Save As</button>
-          <button className="toolbar-btn" onClick={loadFromDrive}><i className="fas fa-download" aria-hidden="true"></i> Load</button>
+          <button
+            className="toolbar-btn"
+            onClick={save}
+            disabled={!hasFolder}
+            aria-disabled={!hasFolder}
+            style={!hasFolder ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+          ><i className="fas fa-save" aria-hidden="true"></i> Save</button>
+          <button
+            className="toolbar-btn"
+            onClick={saveAs}
+            disabled={!hasFolder}
+            aria-disabled={!hasFolder}
+            style={!hasFolder ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+          ><i className="fas fa-file-export" aria-hidden="true"></i> Save As</button>
+          <button
+            className="toolbar-btn"
+            onClick={loadFromDrive}
+            disabled={!hasFolder}
+            aria-disabled={!hasFolder}
+            style={!hasFolder ? { opacity: 0.5, cursor: 'not-allowed' } : undefined}
+          ><i className="fas fa-download" aria-hidden="true"></i> Load</button>
           <div style={{ marginLeft: 'auto', fontSize: 12, color: '#475569' }}>
             {driveState.folderName ? (
               <span>
