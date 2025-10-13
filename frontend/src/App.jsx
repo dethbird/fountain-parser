@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { openFolderPicker } from './drive/picker'
-import DriveBar from './components/DriveBar'
 import { loadDriveState, clearDriveState } from './drive/state'
 import { listFountainFilesInFolder, listFilesInFolder, getFileContent } from './drive/files'
 import { persistDriveState } from './drive/persistence'
@@ -754,8 +753,7 @@ function App() {
         {/* Drive toolbar was consolidated into the persistence toolbar; mount point removed. */}
       </div>
 
-    {/* Also render the DriveBar component so it can show folder/file details and additional actions */}
-    <DriveBar getDoc={() => code} setDoc={(t) => { setCode(t); processText(t); }} getDocName={() => null} open={gdriveOn} gdriveOn={gdriveOn} />
+  {/* DriveBar removed: single sticky persistence toolbar now handles Drive UI (user requested no duplicate menus) */}
 
       {/* Mobile View Toggle */}
       <div className="mobile-view-toggle">
