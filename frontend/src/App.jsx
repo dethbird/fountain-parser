@@ -653,10 +653,10 @@ function App() {
                 className={`toolbar-btn ${!code.trim() || isSaving ? 'disabled' : ''}`}
                 onClick={saveScript}
                 disabled={!code.trim() || isSaving}
-                title={isSaving ? 'Saving...' : 'Save current script to browser storage'}
+                title={'Save current script to browser storage'}
               >
                 <i className={`fas ${isSaving ? 'fa-spinner fa-spin' : 'fa-save'}`}></i>
-                {isSaving ? 'Saving...' : 'Save'}
+                Save
               </button>
               
               <button 
@@ -690,13 +690,13 @@ function App() {
             ) : (
             // GDrive buttons replace the local persistence buttons in-place
             <>
-              <button className="toolbar-btn" onClick={chooseFolderApp} title="Change Drive folder"><i className="fas fa-folder-open"></i> Change Folder</button>
-              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving) ? 'disabled' : ''}`} onClick={saveScript} disabled={!code.trim() || !hasDriveFolder || isSaving} title={isSaving ? 'Saving...' : 'Save to Google Drive'}>
+              <button className={`toolbar-btn ${isSaving ? 'disabled' : ''}`} onClick={chooseFolderApp} disabled={isSaving} title={isSaving ? 'Saving...' : 'Change Drive folder'}><i className="fas fa-folder-open"></i> Change Folder</button>
+              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving) ? 'disabled' : ''}`} onClick={saveScript} disabled={!code.trim() || !hasDriveFolder || isSaving} title={'Save to Google Drive'}>
                 <i className={`${isSaving ? 'fas fa-spinner fa-spin' : 'fab fa-google-drive'}`}></i>
-                {isSaving ? 'Saving...' : 'GDrive Save'}
+                GDrive Save
               </button>
-              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder} title="Save as to Google Drive"><i className="fas fa-file-export"></i> GDrive Save As</button>
-              <button className={`toolbar-btn ${!hasDriveFolder ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasDriveFolder} title="Load from Google Drive"><i className="fas fa-download"></i> GDrive Load</button>
+              <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving) ? 'disabled' : ''}`} onClick={() => alert('GDrive Save As — not implemented yet')} disabled={!code.trim() || !hasDriveFolder || isSaving} title={isSaving ? 'Saving...' : 'Save as to Google Drive'}><i className="fas fa-file-export"></i> GDrive Save As</button>
+              <button className={`toolbar-btn ${(!hasDriveFolder || isSaving) ? 'disabled' : ''}`} onClick={openGDriveLoad} disabled={!hasDriveFolder || isSaving} title={isSaving ? 'Saving...' : 'Load from Google Drive'}><i className="fas fa-download"></i> GDrive Load</button>
               
             </>
           )}
