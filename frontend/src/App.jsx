@@ -62,6 +62,9 @@ function App() {
   // Consider both persisted localStorage state and in-memory driveState so buttons
   // reflect a folder selected in a different context (picker/fallback persist).
   const hasDriveFolder = !!(persistedDriveState && (persistedDriveState.folderId || persistedDriveState.folderName))
+  // Deterministic source-of-truth from persisted storage to avoid HMR/in-memory divergences
+  const _storedDriveState = loadDriveState() || {}
+  const storedHasDriveFolder = !!(_storedDriveState.folderId || _storedDriveState.folderName)
   const previewRef = useRef(null)
   const editorRef = useRef(null)
   const blocksRef = useRef([])
@@ -842,7 +845,15 @@ function App() {
             ) : (
             // GDrive buttons replace the local persistence buttons in-place
             <>
-              <button className={`toolbar-btn ${(isSaving || isReloading) ? 'disabled' : ''}`} onClick={chooseFolderApp} disabled={isSaving || isReloading} title={(isSaving || isReloading) ? 'Saving...' : 'Change Drive folder'}><i className="fas fa-folder-open"></i> Change Folder</button>
+              <button
+                className={`toolbar-btn ${(isSaving || isReloading) ? 'disabled' : ''}`}
+                onClick={chooseFolderApp}
+                disabled={isSaving || isReloading}
+                title={(isSaving || isReloading) ? 'Saving...' : (storedHasDriveFolder ? 'Change Drive folder' : 'Select Drive folder')}
+              >
+                <i className="fas fa-folder-open"></i>
+                {storedHasDriveFolder ? ' Change Folder' : ' Select Folder'}
+              </button>
               <button className={`toolbar-btn ${(!code.trim() || !hasDriveFolder || isSaving || isReloading) ? 'disabled' : ''}`} onClick={saveScript} disabled={!code.trim() || !hasDriveFolder || isSaving || isReloading} title={'Save to Google Drive'}>
                 <i className={`${(isSaving || isReloading) ? 'fas fa-spinner fa-spin' : 'fab fa-google-drive'}`}></i>
                 GDrive Save
