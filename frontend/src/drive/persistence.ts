@@ -7,15 +7,11 @@ export function persistDriveState(s: any) {
   try {
     // Future enhancements (debounce, batching) can go here.
     try {
-      // Log what we're about to save for troubleshooting persistence issues.
-      console.log('persistDriveState: about to save', s)
+      // Debug logging removed: persistDriveState about to save
     } catch (e) {}
     saveDriveState(s)
     try {
-      // Read back and log the stored value to confirm the write succeeded.
-      const KEY = 'fountain:driveState'
-      const after = localStorage.getItem(KEY)
-      console.log('persistDriveState: saved to localStorage', { key: KEY, valuePreview: after && after.slice ? after.slice(0, 1000) : after })
+      // Debug logging removed: persistDriveState saved to localStorage
     } catch (e) {}
   } catch (err) {
     console.error('persistDriveState failed', err)

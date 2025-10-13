@@ -56,8 +56,7 @@ export async function openFolderPicker(): Promise<{ id: string; name?: string } 
       .setTitle('Choose a Drive Folder')
       .setCallback((data: PickerResult) => {
         if (data.action === googleNS.picker.Action.PICKED && data.docs?.length) {
-          // Log the selected folder for debugging/visibility
-          console.log('Google Picker selected folder:', data.docs[0]);
+          // Selected folder (debug logging removed)
           try {
             // Dispatch an application-level event so DriveBar can listen and
             // persist the selection. This avoids direct localStorage access

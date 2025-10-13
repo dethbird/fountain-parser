@@ -44,7 +44,6 @@ export default function DriveBar({ getDoc, setDoc, getDocName, open, gdriveOn }:
           const next = { ...loadDriveState(), folderId: detail.id, folderName: detail.name, folder: detail };
           setDriveState(next);
           persistDriveState(next);
-          console.log('DriveBar: persisted folder from event', next);
         }
       } catch (err) {
         console.error('DriveBar: error handling folderSelected event', err);
@@ -161,7 +160,6 @@ export default function DriveBar({ getDoc, setDoc, getDocName, open, gdriveOn }:
                         setDriveState(next);
                         // Notify other components that drive selection was cleared
                         window.dispatchEvent(new CustomEvent('fountain:drive:cleared'));
-                        console.log('DriveBar: cleared drive state');
                       } catch (err) {
                         console.error('DriveBar: failed to clear drive state', err);
                       }
