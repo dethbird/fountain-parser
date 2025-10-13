@@ -138,6 +138,27 @@
   font-style: italic;
 }
 
+/* Persistence toolbar icon helpers */
+.persistence-icon {
+  margin-right: 8px;
+  color: #999; /* slightly darker than the last-saved color */
+}
+
+.small-trash {
+  font-size: 10px;
+  vertical-align: middle;
+  color: #ddd;
+}
+
+.small-action {
+  font-size: 12px;
+  vertical-align: middle;
+  color: #ddd;
+  margin-left: 8px;
+  cursor: pointer;
+}
+.small-action:hover { color: #fff; }
+
 /* Mobile responsiveness for toolbar */
 @media screen and (max-width: 768px) {
   .persistence-toolbar {

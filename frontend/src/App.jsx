@@ -67,6 +67,7 @@ function App() {
   const [gdriveFolderName, setGdriveFolderName] = useState(null)
   const [gdriveLoading, setGdriveLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isReloading, setIsReloading] = useState(false)
 
   // Log when driveState changes so we can trace why UI doesn't show persisted file
   useEffect(() => {
@@ -438,6 +439,29 @@ function App() {
     }
   }
 
+  // Reload the currently selected Drive file into the editor
+  const reloadDriveFile = async () => {
+    try {
+      const ds = loadDriveState() || {}
+      const fileId = ds && ds.fileId ? ds.fileId : null
+      if (!fileId) return alert('No Drive file selected to reload')
+      setIsReloading(true)
+      const content = await getFileContent(fileId)
+      setCode(content)
+      try { processText(content) } catch (err) { console.error('processText failed', err) }
+      // update last saved markers in localStorage (we don't change drive state)
+      const scriptData = { content, savedAt: new Date().toISOString() }
+      localStorage.setItem('fountain-script', JSON.stringify(scriptData))
+      setHasSavedScript(true)
+      setLastSavedDate(new Date())
+    } catch (err) {
+      console.error('Failed to reload Drive file', err)
+      alert('Failed to reload Drive file. See console for details.')
+    } finally {
+      setIsReloading(false)
+    }
+  }
+
   // Open modal and list .fountain files in selected folder
   const openGDriveLoad = async () => {
     try {
@@ -730,7 +754,7 @@ function App() {
               {persistedDriveState && persistedDriveState.folderName ? (
                   <div>
                     <div>
-                      <i className="fas fa-folder-open" aria-hidden="true" style={{ marginRight: 8, color: '#999' }}></i>
+                      <i className="fas fa-folder-open persistence-icon" aria-hidden="true"></i>
                       {persistedDriveState.folderName}
                     <a
                       href="#"
@@ -748,13 +772,14 @@ function App() {
                       }}
                       style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
                     >
-                      <i className="fas fa-trash" aria-hidden="true" style={{ fontSize: 10, verticalAlign: 'middle' }}></i>
+                      <i className="fas fa-trash small-trash" aria-hidden="true"></i>
                     </a>
+                    
                   </div>
                   {persistedDriveState && persistedDriveState.fileName ? (
                     <div style={{ marginTop: 4 }}>
                       <span style={{ fontSize: 12, color: '#ddd' }}>
-                        <i className="fas fa-file" aria-hidden="true" style={{ marginRight: 8, color: '#999' }}></i>
+                        <i className="fas fa-file persistence-icon" aria-hidden="true"></i>
                         {persistedDriveState.fileName}
                       </span>
                       <a
@@ -772,8 +797,14 @@ function App() {
                         }}
                         style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
                       >
-                        <i className="fas fa-trash" aria-hidden="true" style={{ fontSize: 10, verticalAlign: 'middle' }}></i>
+                        <i className="fas fa-trash small-trash" aria-hidden="true"></i>
                       </a>
+                      <i
+                        className={`fas fa-sync-alt small-action ${isSaving || isReloading ? 'disabled' : ''}`}
+                        title={isReloading ? 'Reloading...' : 'Reload file from Drive'}
+                        onClick={(e) => { e.preventDefault(); if (!isSaving && !isReloading) reloadDriveFile() }}
+                        aria-hidden="true"
+                      ></i>
                     </div>
                   ) : null}
                 </div>
