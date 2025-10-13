@@ -64,6 +64,7 @@ function App() {
   // GDrive Load modal state
   const [isGDriveLoadOpen, setIsGDriveLoadOpen] = useState(false)
   const [gdriveFiles, setGdriveFiles] = useState([])
+  const [gdriveFolderName, setGdriveFolderName] = useState(null)
   const [gdriveLoading, setGdriveLoading] = useState(false)
 
   // Log when driveState changes so we can trace why UI doesn't show persisted file
@@ -399,7 +400,8 @@ function App() {
         alert('No Drive folder selected. Use Change Folder first.')
         return
       }
-      setIsGDriveLoadOpen(true)
+  setIsGDriveLoadOpen(true)
+  setGdriveFolderName(ds && ds.folderName ? ds.folderName : null)
       setGdriveLoading(true)
   const files = await listFilesInFolder(fid)
   // Only include files that are plain binary/text blobs (application/octet-stream)
@@ -1215,6 +1217,11 @@ function App() {
               <h2>Open .fountain from Drive</h2>
               <button className="modal-close" onClick={() => setIsGDriveLoadOpen(false)}>×</button>
             </div>
+            {gdriveFolderName && (
+              <div style={{ padding: '0 16px 8px 16px', color: '#cbd5e1', fontSize: 13 }}>
+                Listing files from: <strong style={{ color: '#e2e8f0' }}>{gdriveFolderName}</strong>
+              </div>
+            )}
             <div className="modal-body">
               {gdriveLoading ? (
                 <div>Loading...</div>
