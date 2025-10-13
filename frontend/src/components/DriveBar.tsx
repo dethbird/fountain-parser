@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { openFolderPicker } from '../drive/picker';
-import { loadDriveState, saveDriveState } from '../drive/state';
+import { loadDriveState, saveDriveState, clearDriveState } from '../drive/state';
 
 export default function DriveBar({ getDoc, setDoc, getDocName }: {
   getDoc?: () => string;
@@ -10,6 +10,12 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
   const [visible, setVisible] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
   const [driveState, setDriveState] = useState(() => loadDriveState());
+
+  // If a folder was persisted previously, show the DriveBar so the user can
+  // see and clear the selection without needing the keyboard shortcut.
+  useEffect(() => {
+    if (driveState && driveState.folderName) setVisible(true);
+  }, [driveState && driveState.folderName]);
 
   useEffect(() => {
     // detect touch devices
@@ -105,7 +111,31 @@ export default function DriveBar({ getDoc, setDoc, getDocName }: {
           <button className="toolbar-btn" onClick={saveAs}><i className="fas fa-file-export" aria-hidden="true"></i> Save As</button>
           <button className="toolbar-btn" onClick={loadFromDrive}><i className="fas fa-download" aria-hidden="true"></i> Load</button>
           <div style={{ marginLeft: 'auto', fontSize: 12, color: '#475569' }}>
-            {driveState.folderName ? `Folder: ${driveState.folderName}` : 'No folder selected'}
+            {driveState.folderName ? (
+              <span>
+                <strong>Folder:</strong> {driveState.folderName} {' '}
+                <a
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    // Clear persisted drive state and local UI state
+                    try {
+                      clearDriveState();
+                      const next = { ...driveState, folderId: undefined, folderName: undefined, folder: undefined };
+                      setDriveState(next);
+                      // Notify other components that drive selection was cleared
+                      window.dispatchEvent(new CustomEvent('fountain:drive:cleared'));
+                      console.log('DriveBar: cleared drive state');
+                    } catch (err) {
+                      console.error('DriveBar: failed to clear drive state', err);
+                    }
+                  }}
+                  style={{ marginLeft: 8, color: '#6b7280', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
+                >
+                  Clear
+                </a>
+              </span>
+            ) : 'No folder selected'}
           </div>
         </div>
       )}

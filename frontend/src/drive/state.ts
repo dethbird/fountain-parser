@@ -15,3 +15,8 @@ export function loadDriveState(): DriveState {
 export function saveDriveState(s: DriveState) {
   localStorage.setItem(KEY, JSON.stringify(s));
 }
+
+// Remove the saved drive state from localStorage.
+export function clearDriveState() {
+  localStorage.removeItem(KEY);
+}
