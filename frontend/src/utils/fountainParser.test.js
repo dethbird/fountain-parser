@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest'
 import { parseBlocks, parsePanels } from './fountainParser'
 
 describe('fountainParser', () => {

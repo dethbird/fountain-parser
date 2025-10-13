@@ -55,7 +55,8 @@ describe('usePreviewWorker', () => {
 		// Wait for fallback processing to populate the DOM
 		await waitFor(() => expect(screen.getByText(/My Film/i)).toBeInTheDocument(), { timeout: 2000 })
 		expect(screen.getByText(/INT. HOUSE - DAY/i)).toBeInTheDocument()
-		expect(screen.getByText(/BOB/i)).toBeInTheDocument()
+		// multiple elements may contain the character name (blocks + summary); ensure at least one exists
+		expect(screen.getAllByText(/BOB/i).length).toBeGreaterThan(0)
 		expect(screen.getByText(/Hello there/i)).toBeInTheDocument()
 		expect(screen.getByText(/a private note/i)).toBeInTheDocument()
 

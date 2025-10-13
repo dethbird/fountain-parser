@@ -34,6 +34,10 @@ export function parseBlocks(text) {
 
   const characters = new Set()
   const characterLineCounts = new Map()
+  // track the current speaker across lines so dialogue lines can be
+  // attributed to the correct character even when the character name
+  // appears on its own line in the previous iteration
+  let currentSpeaker = null
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
@@ -52,9 +56,12 @@ export function parseBlocks(text) {
       continue
     }
 
-    let type = 'action'
-    let className = 'action'
-    let speaker = null
+  let type = 'action'
+  let className = 'action'
+  // reuse the persistent currentSpeaker for this iteration so that
+  // dialogue lines (which appear after a character line) can be
+  // correctly attributed
+  let speaker = currentSpeaker
 
     if (state.note) {
       if (trimmed.includes(']]')) state.note = false
@@ -81,7 +88,9 @@ export function parseBlocks(text) {
         type = 'character'
         className = 'character'
       }
+      // set the persistent currentSpeaker to this character
       speaker = trimmed
+      currentSpeaker = trimmed
 
       const normalizedCharacter = trimmed.replace(/[@^]/g, '').trim().toUpperCase()
       characters.add(normalizedCharacter)
@@ -94,8 +103,10 @@ export function parseBlocks(text) {
         type = 'dialogue'
         className = 'dialogue'
         // increment count for current speaker if present
-        if (speaker) {
-          const normalized = speaker.replace(/[@^]/g, '').trim().toUpperCase()
+        // prefer the persistent currentSpeaker (set when we saw the name)
+        const active = (currentSpeaker || speaker)
+        if (active) {
+          const normalized = active.replace(/[@^]/g, '').trim().toUpperCase()
           if (characterLineCounts.has(normalized)) {
             characterLineCounts.set(normalized, characterLineCounts.get(normalized) + 1)
           }
@@ -103,26 +114,32 @@ export function parseBlocks(text) {
       }
     } else if (/^= /.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
       type = 'synopsis'
       className = 'synopsis'
     } else if (/^~ /.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
       type = 'lyrics'
       className = 'lyrics'
     } else if (/^- /.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
       type = 'milestone'
       className = 'milestone'
     } else if (/^\d{1,2}:\d{2}$/.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
       type = 'duration'
       className = 'duration'
     } else if (/^\[i\]https?:\/\/.+/i.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
       type = 'image'
       className = 'image'
     } else if (/^\[a\]https?:\/\/.+/i.test(trimmed)) {
       state.character_extended = false
+      currentSpeaker = null
       type = 'audio'
       className = 'audio'
     } else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
@@ -162,6 +179,7 @@ export function parseBlocks(text) {
       className = 'centered'
     } else {
       state.character_extended = false
+      currentSpeaker = null
       type = 'action'
       className = 'action'
     }
