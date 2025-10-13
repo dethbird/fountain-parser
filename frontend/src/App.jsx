@@ -85,7 +85,15 @@ function App() {
   useEffect(() => {
     const handler = (e) => {
       try {
-        setDriveState(loadDriveState())
+        // @ts-ignore - event detail is untyped
+        const detail = e && e.detail ? e.detail : null
+        if (detail && detail.id) {
+          const next = { ...loadDriveState(), folderId: detail.id, folderName: detail.name, folder: detail }
+          try { saveDriveState(next) } catch (err) { console.error('App: saveDriveState failed', err) }
+          setDriveState(next)
+        } else {
+          setDriveState(loadDriveState())
+        }
       } catch (err) {
         console.error('App: failed to load drive state', err)
       }
