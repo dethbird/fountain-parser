@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react'
 import './App.css'
 import CodeMirrorEditor from './components/CodeMirrorEditor'
 import { openFolderPicker } from './drive/picker'
+import DriveBar from './components/DriveBar'
 import { loadDriveState, clearDriveState } from './drive/state'
 import { listFountainFilesInFolder, listFilesInFolder, getFileContent } from './drive/files'
 import { persistDriveState } from './drive/persistence'
@@ -21,6 +22,38 @@ function App() {
   const [lastSavedDate, setLastSavedDate] = useState(null)
   const [gdriveOn, setGdriveOn] = useState(false)
   const [driveState, setDriveState] = useState(() => loadDriveState())
+  // Merge persisted drive state (localStorage) with App reactive state so the
+  // toolbar always reflects the up-to-date values. This prevents cases where
+  // localStorage has a fileName but React state hasn't been updated yet.
+  const persistedDriveState = { ...(loadDriveState() || {}), ...(driveState || {}) }
+
+  // Ensure App updates when files are selected/cleared elsewhere (picker/modal)
+  useEffect(() => {
+    const onFileSelected = (e) => {
+      try {
+        const detail = e && e.detail ? e.detail : null
+        if (detail && detail.id) {
+          const next = { ...loadDriveState(), fileId: detail.id, fileName: detail.name, file: detail }
+          try { persistDriveState(next) } catch (err) { console.error('App: persistDriveState failed', err) }
+          setDriveState(next)
+        }
+      } catch (err) { console.error('App: fileSelected handler failed', err) }
+    }
+    const onFileCleared = () => {
+      try {
+        const s = loadDriveState() || {}
+        const next = { ...s, fileId: undefined, fileName: undefined, file: undefined }
+        try { persistDriveState(next) } catch (err) { console.error('App: persistDriveState failed', err) }
+        setDriveState(next)
+      } catch (err) { console.error('App: fileCleared handler failed', err) }
+    }
+    window.addEventListener('fountain:drive:fileSelected', onFileSelected)
+    window.addEventListener('fountain:drive:fileCleared', onFileCleared)
+    return () => {
+      window.removeEventListener('fountain:drive:fileSelected', onFileSelected)
+      window.removeEventListener('fountain:drive:fileCleared', onFileCleared)
+    }
+  }, [])
   const hasDriveFolder = !!(driveState && (driveState.folderId || driveState.folderName))
   const previewRef = useRef(null)
   const editorRef = useRef(null)
@@ -31,6 +64,11 @@ function App() {
   const [isGDriveLoadOpen, setIsGDriveLoadOpen] = useState(false)
   const [gdriveFiles, setGdriveFiles] = useState([])
   const [gdriveLoading, setGdriveLoading] = useState(false)
+
+  // Log when driveState changes so we can trace why UI doesn't show persisted file
+  useEffect(() => {
+    try { console.log('App: driveState changed', driveState) } catch (e) {}
+  }, [driveState])
 
   // Load script content on component mount - prioritize localStorage over default
   useEffect(() => {
@@ -628,27 +666,54 @@ function App() {
             // In GDrive mode replace the Clear Saved button with the selected
             // folder display and a Clear link (similar to DriveBar).
             <div style={{ fontSize: 12, color: '#f5f5f5' }}>
-              {driveState && driveState.folderName ? (
-                <span>
-                  <strong>Folder:</strong> {driveState.folderName}
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      try {
-                        clearDriveState()
-                        setDriveState({})
-                        window.dispatchEvent(new CustomEvent('fountain:drive:cleared'))
-                        console.log('App: cleared drive state')
-                      } catch (err) {
-                        console.error('App: failed to clear drive state', err)
-                      }
-                    }}
-                    style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
-                  >
-                    Clear
-                  </a>
-                </span>
+              {persistedDriveState && persistedDriveState.folderName ? (
+                <div>
+                  <div>
+                    <strong>Folder:</strong> {persistedDriveState.folderName}
+                    <a
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        try {
+                          clearDriveState()
+                          // Persisted state cleared; notify listeners
+                          setDriveState({})
+                          window.dispatchEvent(new CustomEvent('fountain:drive:cleared'))
+                          console.log('App: cleared drive state')
+                        } catch (err) {
+                          console.error('App: failed to clear drive state', err)
+                        }
+                      }}
+                      style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
+                    >
+                      Clear
+                    </a>
+                  </div>
+                  {persistedDriveState && persistedDriveState.fileName ? (
+                    <div style={{ marginTop: 4 }}>
+                      <span style={{ fontSize: 12, color: '#ddd' }}>
+                        <strong>File:</strong> {persistedDriveState.fileName}
+                      </span>
+                      <a
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          try {
+                            const next = { ...loadDriveState(), fileId: undefined, fileName: undefined, file: undefined }
+                            persistDriveState(next)
+                            setDriveState(next)
+                            window.dispatchEvent(new CustomEvent('fountain:drive:fileCleared'))
+                          } catch (err) {
+                            console.error('App: failed to clear file selection', err)
+                          }
+                        }}
+                        style={{ marginLeft: 8, color: '#ddd', textDecoration: 'underline', cursor: 'pointer', fontSize: 12 }}
+                      >
+                        Clear file
+                      </a>
+                    </div>
+                  ) : null}
+                </div>
               ) : 'No folder selected'}
             </div>
           )}
@@ -688,6 +753,9 @@ function App() {
         )}
         {/* Drive toolbar was consolidated into the persistence toolbar; mount point removed. */}
       </div>
+
+    {/* Also render the DriveBar component so it can show folder/file details and additional actions */}
+    <DriveBar getDoc={() => code} setDoc={(t) => { setCode(t); processText(t); }} getDocName={() => null} open={gdriveOn} gdriveOn={gdriveOn} />
 
       {/* Mobile View Toggle */}
       <div className="mobile-view-toggle">
@@ -1157,12 +1225,15 @@ function App() {
                                 const content = await getFileContent(f.id)
                                 setCode(content)
                                 try { processText(content) } catch (err) { console.error('processText failed', err) }
-                                // Persist selected file metadata in drive state
+                                // Persist selected file metadata in drive state (merge with existing)
                                 try {
                                   const current = loadDriveState() || {}
-                                  const next = { ...current, fileId: f.id, fileName: f.name }
+                                  const next = { ...current, fileId: f.id, fileName: f.name, file: f }
+                                  try { console.log('App: before persist, localStorage=', localStorage.getItem('fountain:driveState')) } catch (e) {}
                                   persistDriveState(next)
+                                  try { console.log('App: after persist, localStorage=', localStorage.getItem('fountain:driveState')) } catch (e) {}
                                   setDriveState(next)
+                                  try { window.dispatchEvent(new CustomEvent('fountain:drive:fileSelected', { detail: f })) } catch (e) {}
                                 } catch (err) {
                                   console.error('Failed to persist selected file', err)
                                 }
