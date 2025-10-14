@@ -823,14 +823,6 @@ function App() {
               >
                 <i className="fas fa-folder-open"></i>
                 Load
-                    <br/>
-                    ÉLODIE<br/>
-                    Bonjour!<br/><br/>
-                    张伟<br/>
-                    你好。<br/><br/>
-                    @José<br/>
-                    (softly)<br/>
-                    Hola
               </button>
               
               <button 
@@ -1010,7 +1002,7 @@ function App() {
                 <h3>Film</h3>
                 <p>A short live-action sample set in a street café. Demonstrates panels, dialogue, and images.</p>
                 <button className="toolbar-btn" onClick={() => {
-                  fetch("/assets/scripts/film_the_coffee_deal.fountain")
+                  fetch("/demo-scripts/film_the_coffee_deal.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
                 }}>Load Film Demo</button>
@@ -1019,7 +1011,7 @@ function App() {
                 <h3>Animation</h3>
                 <p>A musical animation sample featuring a singing squirrel. Shows lyrics, musical cues, and character interaction.</p>
                 <button className="toolbar-btn" onClick={() => {
-                  fetch("/assets/scripts/animation_the_singing_squirrel.fountain")
+                  fetch("/demo-scripts/animation_the_singing_squirrel.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
                 }}>Load Animation Demo</button>
@@ -1028,7 +1020,7 @@ function App() {
                 <h3>Advertising</h3>
                 <p>A playful ad script for Happy Fun Ball. Demonstrates panels, mock disclaimers, and ad-style dialogue.</p>
                 <button className="toolbar-btn" onClick={() => {
-                  fetch("/assets/scripts/ad_happy_fun_ball.fountain")
+                  fetch("/demo-scripts/ad_happy_fun_ball.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
                 }}>Load Advertising Demo</button>
@@ -1037,7 +1029,7 @@ function App() {
                 <h3>Documentary</h3>
                 <p>A documentary sample with voice-over, captions, and subtitles. Shows non-fiction structure and panel usage.</p>
                 <button className="toolbar-btn" onClick={() => {
-                  fetch("/assets/scripts/documentary_voices_of_the_river.fountain")
+                  fetch("/demo-scripts/documentary_voices_of_the_river.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
                 }}>Load Documentary Demo</button>
