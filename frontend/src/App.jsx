@@ -14,6 +14,7 @@ function App() {
   const [showDesktopSuggestion, setShowDesktopSuggestion] = useState(false)
   const [code, setCode] = useState('')
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
   const [currentLine, setCurrentLine] = useState(0)
@@ -985,6 +986,31 @@ function App() {
             <i className="fas fa-pen" aria-hidden="true"></i>
             Help
           </button>
+          {/* Demo Button */}
+          <button
+            className="toolbar-btn demo-btn"
+            onClick={() => setIsDemoModalOpen(true)}
+            title="Show demo scripts"
+            aria-label="Open demo scripts modal"
+            style={{ backgroundColor: 'magenta', color: 'white', marginLeft: 8 }}
+          >
+            <i className="fas fa-download" aria-hidden="true"></i>
+            Demo
+          </button>
+      {/* Demo Scripts Modal */}
+      {isDemoModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsDemoModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Demo Scripts</h2>
+              <button className="modal-close" onClick={() => setIsDemoModalOpen(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <p>Demo scripts will appear here.</p>
+            </div>
+          </div>
+        </div>
+      )}
           {/* Move last-saved next to Characters button for better discoverability */}
           {lastSavedDate && (
             <div className="last-saved" style={{ marginLeft: 8 }}>
@@ -993,10 +1019,7 @@ function App() {
           )}
         </div>
         
-        {/* Drive toolbar was consolidated into the persistence toolbar; mount point removed. */}
       </div>
-
-  {/* DriveBar removed: single sticky persistence toolbar now handles Drive UI (user requested no duplicate menus) */}
 
       {/* Mobile View Toggle */}
       <div className="mobile-view-toggle">
