@@ -994,45 +994,75 @@ function App() {
         <div className="modal-overlay" onClick={() => setIsDemoModalOpen(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>Demo Scripts</h2>
+              <h2 style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '0.03em', color: '#fff', marginBottom: '0.5em' }}>Demo Scripts</h2>
               <button className="modal-close" onClick={() => setIsDemoModalOpen(false)}>×</button>
             </div>
             <div className="modal-body">
+              <style>{`
+                .modal-content, .modal-header, .modal-body, .demo-section h2, .demo-section p {
+                  color: #fff !important;
+                }
+                .demo-section h2 {
+                  font-size: 1.3rem;
+                  font-weight: 600;
+                  margin-bottom: 0.25em;
+                  margin-top: 1.2em;
+                  letter-spacing: 0.02em;
+                }
+                .demo-section p {
+                  padding: 0.5em 0 0.75em 0;
+                  line-height: 1.6;
+                  color: #b0b0b0 !important;
+                }
+                .demo-section .toolbar-btn {
+                  background-color: #e75480;
+                  color: #fff;
+                  border: none;
+                  font-weight: 600;
+                  box-shadow: 0 2px 8px rgba(231,84,128,0.08);
+                }
+                .demo-section .toolbar-btn:hover {
+                  background-color: #c63c6e;
+                }
+              `}</style>
               <div className="demo-section">
-                <h3>Film</h3>
+                <h2>🎬 Film</h2>
                 <p>A short live-action sample set in a street café. Demonstrates panels, dialogue, and images.</p>
                 <button className="toolbar-btn" onClick={() => {
                   fetch("/demo-scripts/film_the_coffee_deal.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
-                }}>Load Film Demo</button>
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Film Demo</button>
               </div>
+              <hr style={{borderColor: '#444', opacity: 0.5}} />
               <div className="demo-section">
-                <h3>Animation</h3>
+                <h2>🎬 Animation</h2>
                 <p>A musical animation sample featuring a singing squirrel. Shows lyrics, musical cues, and character interaction.</p>
                 <button className="toolbar-btn" onClick={() => {
                   fetch("/demo-scripts/animation_the_singing_squirrel.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
-                }}>Load Animation Demo</button>
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Animation Demo</button>
               </div>
+              <hr style={{borderColor: '#444', opacity: 0.5}} />
               <div className="demo-section">
-                <h3>Advertising</h3>
+                <h2>🎬 Advertising</h2>
                 <p>A playful ad script for Happy Fun Ball. Demonstrates panels, mock disclaimers, and ad-style dialogue.</p>
                 <button className="toolbar-btn" onClick={() => {
                   fetch("/demo-scripts/ad_happy_fun_ball.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
-                }}>Load Advertising Demo</button>
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Advertising Demo</button>
               </div>
+              <hr style={{borderColor: '#444', opacity: 0.5}} />
               <div className="demo-section">
-                <h3>Documentary</h3>
+                <h2>🎬 Documentary</h2>
                 <p>A documentary sample with voice-over, captions, and subtitles. Shows non-fiction structure and panel usage.</p>
                 <button className="toolbar-btn" onClick={() => {
                   fetch("/demo-scripts/documentary_voices_of_the_river.fountain")
                     .then(r => r.text())
                     .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
-                }}>Load Documentary Demo</button>
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Documentary Demo</button>
               </div>
             </div>
           </div>
