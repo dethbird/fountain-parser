@@ -992,7 +992,7 @@ function App() {
             onClick={() => setIsDemoModalOpen(true)}
             title="Show demo scripts"
             aria-label="Open demo scripts modal"
-            style={{ backgroundColor: 'magenta', color: 'white', marginLeft: 8 }}
+            style={{ backgroundColor: '#e75480', color: 'white', marginLeft: 0 }}
           >
             <i className="fas fa-download" aria-hidden="true"></i>
             Demo
