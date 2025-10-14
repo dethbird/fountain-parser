@@ -1,5 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /
     # If the requested resource is an existing file or directory, serve it as-is
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
@@ -9,6 +10,8 @@
     # rewrite it to the emitted assets folder where Vite writes built files.
     RewriteRule ^(previewWorker-[A-Za-z0-9._-]+\.js)$ assets/$1 [L]
 
+    # Allow direct access to .fountain scripts in /assets/scripts
+    RewriteRule ^assets/scripts/.*\.fountain$ - [L]
     # Allow direct access to common static folders without rewriting
     RewriteRule ^(assets/|css/|img/|js/|favicon\.ico) - [L]
 

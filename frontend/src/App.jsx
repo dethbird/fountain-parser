@@ -14,6 +14,7 @@ function App() {
   const [showDesktopSuggestion, setShowDesktopSuggestion] = useState(false)
   const [code, setCode] = useState('')
   const [isHelpModalOpen, setIsHelpModalOpen] = useState(false)
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false)
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false)
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'preview'
   const [currentLine, setCurrentLine] = useState(0)
@@ -822,14 +823,6 @@ function App() {
               >
                 <i className="fas fa-folder-open"></i>
                 Load
-                    <br/>
-                    ÉLODIE<br/>
-                    Bonjour!<br/><br/>
-                    张伟<br/>
-                    你好。<br/><br/>
-                    @José<br/>
-                    (softly)<br/>
-                    Hola
               </button>
               
               <button 
@@ -985,6 +978,96 @@ function App() {
             <i className="fas fa-pen" aria-hidden="true"></i>
             Help
           </button>
+          {/* Demo Button */}
+          <button
+            className="toolbar-btn demo-btn"
+            onClick={() => setIsDemoModalOpen(true)}
+            title="Show demo scripts"
+            aria-label="Open demo scripts modal"
+            style={{ backgroundColor: '#e75480', color: 'white', marginLeft: 0 }}
+          >
+            <i className="fas fa-download" aria-hidden="true"></i>
+            Demo
+          </button>
+      {/* Demo Scripts Modal */}
+      {isDemoModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsDemoModalOpen(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '0.03em', color: '#fff', marginBottom: '0.5em' }}>Demo Scripts</h2>
+              <button className="modal-close" onClick={() => setIsDemoModalOpen(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <style>{`
+                .modal-content, .modal-header, .modal-body, .demo-section h2, .demo-section p {
+                  color: #fff !important;
+                }
+                .demo-section h2 {
+                  font-size: 1.3rem;
+                  font-weight: 600;
+                  margin-bottom: 0.25em;
+                  margin-top: 1.2em;
+                  letter-spacing: 0.02em;
+                }
+                .demo-section p {
+                  padding: 0.5em 0 0.75em 0;
+                  line-height: 1.6;
+                  color: #b0b0b0 !important;
+                }
+                .demo-section .toolbar-btn {
+                  background-color: #e75480;
+                  color: #fff;
+                  border: none;
+                  font-weight: 600;
+                  box-shadow: 0 2px 8px rgba(231,84,128,0.08);
+                }
+                .demo-section .toolbar-btn:hover {
+                  background-color: #c63c6e;
+                }
+              `}</style>
+              <div className="demo-section">
+                <h2>🎬 Film</h2>
+                <p>A short live-action sample set in a street café. Demonstrates panels, dialogue, and images.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/demo-scripts/film_the_coffee_deal.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Film Demo</button>
+              </div>
+              <hr style={{borderColor: '#444', opacity: 0.5}} />
+              <div className="demo-section">
+                <h2>🎬 Animation</h2>
+                <p>A musical animation sample featuring a singing squirrel. Shows lyrics, musical cues, and character interaction.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/demo-scripts/animation_the_singing_squirrel.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Animation Demo</button>
+              </div>
+              <hr style={{borderColor: '#444', opacity: 0.5}} />
+              <div className="demo-section">
+                <h2>🎬 Advertising</h2>
+                <p>A playful ad script for Happy Fun Ball. Demonstrates panels, mock disclaimers, and ad-style dialogue.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/demo-scripts/ad_happy_fun_ball.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Advertising Demo</button>
+              </div>
+              <hr style={{borderColor: '#444', opacity: 0.5}} />
+              <div className="demo-section">
+                <h2>🎬 Documentary</h2>
+                <p>A documentary sample with voice-over, captions, and subtitles. Shows non-fiction structure and panel usage.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/demo-scripts/documentary_voices_of_the_river.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}><span style={{marginRight: '0.5em'}}><i className="fas fa-download" aria-hidden="true"></i></span>Load Documentary Demo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
           {/* Move last-saved next to Characters button for better discoverability */}
           {lastSavedDate && (
             <div className="last-saved" style={{ marginLeft: 8 }}>
@@ -993,10 +1076,7 @@ function App() {
           )}
         </div>
         
-        {/* Drive toolbar was consolidated into the persistence toolbar; mount point removed. */}
       </div>
-
-  {/* DriveBar removed: single sticky persistence toolbar now handles Drive UI (user requested no duplicate menus) */}
 
       {/* Mobile View Toggle */}
       <div className="mobile-view-toggle">
