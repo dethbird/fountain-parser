@@ -961,17 +961,6 @@ function App() {
 
           <div className="toolbar-divider"></div>
           
-          {/* Help Button (writing help) */}
-          <button 
-            className="toolbar-btn help-btn"
-            onClick={() => setIsHelpModalOpen(true)}
-            title="Writing help (Fountain syntax & tips)"
-            aria-label="Open writing help"
-          >
-            <i className="fas fa-pen" aria-hidden="true"></i>
-            Help
-          </button>
-
           {/* Character List Button */}
           <button 
             className={`toolbar-btn character-btn ${characters.length === 0 ? 'disabled' : ''}`}
@@ -984,6 +973,17 @@ function App() {
             {characters.length > 0 && (
               <span className="character-count-badge">{characters.length}</span>
             )}
+          </button>
+
+          {/* Help Button (writing help) */}
+          <button 
+            className="toolbar-btn help-btn"
+            onClick={() => setIsHelpModalOpen(true)}
+            title="Writing help (Fountain syntax & tips)"
+            aria-label="Open writing help"
+          >
+            <i className="fas fa-pen" aria-hidden="true"></i>
+            Help
           </button>
           {/* Move last-saved next to Characters button for better discoverability */}
           {lastSavedDate && (
