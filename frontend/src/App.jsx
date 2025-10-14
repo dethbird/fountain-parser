@@ -822,6 +822,14 @@ function App() {
               >
                 <i className="fas fa-folder-open"></i>
                 Load
+                    <br/>
+                    ÉLODIE<br/>
+                    Bonjour!<br/><br/>
+                    张伟<br/>
+                    你好。<br/><br/>
+                    @José<br/>
+                    (softly)<br/>
+                    Hola
               </button>
               
               <button 
@@ -1296,7 +1304,24 @@ function App() {
                     Notes: This is a sample script<br/>
                     Copyright: (c) 2025 John Dope
                   </code>
-                  <p>Title page elements appear at the top of your script. All are optional. Use "Author" for single writer, "Authors" for multiple. Contact can be multi-line with indentation. End title page with === (page break).</p>
+                  <p>
+                    Title page elements appear at the top of your script. All are optional.
+                    The parser recognizes a wide range of common title-page keys (case-insensitive). Examples include:
+                    <ul>
+                      <li><strong>title</strong>, <strong>credit</strong></li>
+                      <li><strong>author</strong>, <strong>authors</strong>, <strong>writer</strong>, <strong>writers</strong></li>
+                      <li><strong>written by</strong>, <strong>screenplay by</strong>, <strong>teleplay by</strong></li>
+                      <li><strong>story by</strong>, <strong>adaptation by</strong></li>
+                      <li><strong>source</strong>, <strong>based on</strong>, <strong>based on characters by</strong></li>
+                      <li><strong>notes</strong>, <strong>draft</strong>, <strong>draft date</strong>, <strong>draft #</strong></li>
+                      <li><strong>revision</strong>, <strong>revision date</strong>, <strong>revision color</strong></li>
+                      <li><strong>date</strong>, <strong>contact</strong>, <strong>copyright</strong></li>
+                      <li><strong>wga</strong>, <strong>wga registration</strong>, <strong>registration</strong>, <strong>registration #</strong></li>
+                      <li><strong>series</strong>, <strong>episode</strong>, <strong>episode title</strong>, <strong>showrunner</strong></li>
+                      <li><strong>production</strong>, <strong>production company</strong></li>
+                    </ul>
+                    The parser accepts alternate spacing (for example <code>written by:</code>) and is case-insensitive. Use "Author" for a single writer and "Authors" for multiple. Contact blocks may be multi-line (indent subsequent lines). End the title page with <code>===</code> (page break).
+                  </p>
                 </div>
               </div>
 
@@ -1326,7 +1351,12 @@ function App() {
                     (whispering)<br/>
                     This is a parenthetical.
                   </code>
-                  <p>Characters are ALL CAPS. Use @ for power user syntax or mixed-case names like "@John Doe". Names with @ in front will be counted as characters. Parentheticals go under character names.</p>
+                  <p>
+                    Characters are normally written in ALL CAPS (e.g., <code>BOB</code>, <code>DR. SMITH</code>), but the editor also supports a power-user <code>@</code> prefix for mixed-case or unusual names (for example <code>@John Doe</code>).
+                    Character matching is Unicode-aware: a character name must start with an uppercase Unicode letter and may contain Unicode letters, numbers, apostrophes (<code>'</code>), hyphens (<code>-</code>), spaces or tabs. The power-user <code>@</code> form (<code>@Name</code>) allows mixed case and additional punctuation where needed.
+                    Parentheticals (for example <code>(whispering)</code>) are recognized when placed immediately after a character name and are rendered as parentheticals; the lines that follow are treated as dialogue. For dual dialogue, append <code>^</code> to stacked character names—these must appear consecutively above the dialogue block.
+                    Edge cases: the lexer intentionally requires the name to begin with an uppercase Unicode letter to avoid accidental matches inside action text; use the <code>@</code> prefix for names that don't follow the all-caps convention or that start with non-letter characters. This supports non-ASCII names (for example: <strong>ÉLODIE</strong>, <strong>ŁUKASZ</strong>, <strong>张伟</strong>) and matches uppercase letters across many scripts.
+                  </p>
                 </div>
               </div>
 
@@ -1368,7 +1398,9 @@ function App() {
                     FADE TO BLACK.<br/>
                     &gt; CUT TO BLACK.
                   </code>
-                  <p>Transitions control scene changes. Use &gt; for power user syntax.</p>
+                  <p>
+                    Transitions control scene changes. The matcher supports a wider set of transition phrases (for example: <code>FADE IN:</code>, <code>FADE OUT.</code>, <code>CUT TO:</code>, <code>SMASH CUT TO:</code>, <code>MATCH CUT TO:</code>, <code>DISSOLVE TO:</code>, <code>WIPE TO:</code>, <code>BACK TO:</code>, and other common variants). Use <code>&gt;</code> for the power-user transition syntax.
+                  </p>
                 </div>
               </div>
 

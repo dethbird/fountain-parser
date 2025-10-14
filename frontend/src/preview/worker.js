@@ -1,4 +1,5 @@
 // Simple worker that processes text into preview blocks
+import { BLOCK_REGEX } from '../constants/fountainRegex.js'
 let currentText = ''
 
 function processText(text) {
@@ -39,9 +40,11 @@ function processText(text) {
       continue
     }
     
-    let type = 'action'
-    let className = 'action'
-    let speaker = null
+  let type = 'action'
+  let className = 'action'
+  let speaker = null
+  // initialize displayText early so title handling can assign to it
+  let displayText = line
     
     // Note handling
     if (state.note) {
@@ -143,18 +146,21 @@ function processText(text) {
       type = 'audio'
       className = 'audio'
     }
-    // Title page elements
-    else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
+    // Title page elements (use centralized BLOCK_REGEX)
+    else if (BLOCK_REGEX && BLOCK_REGEX.TITLE && BLOCK_REGEX.TITLE.test(trimmed)) {
       state.character_extended = false
-      const match = trimmed.match(/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i)
-      if (match) {
+      const match = trimmed.match(BLOCK_REGEX.TITLE)
+      if (match && match[1]) {
         const key = match[1].toLowerCase()
+        // 'title' still gets the title-page-title class; other keys are title_page
         if (key === 'title') {
           type = 'title'
           className = 'title-page-title'
+          displayText = trimmed.replace(match[0], '').trim()
         } else {
           type = 'title_page'
           className = 'title-page-element'
+          displayText = `<div><strong>${match[1]}:</strong> ${trimmed.slice(match[0].length).trim()}</div>`
         }
       }
     }
@@ -192,9 +198,8 @@ function processText(text) {
       className = 'action'
     }
     
-    let displayText = line
     
-    // Special processing for different types
+  // Special processing for different types
     if (type === 'title') {
       displayText = line.replace(/^title:\s*/i, '')
     } else if (type === 'image') {

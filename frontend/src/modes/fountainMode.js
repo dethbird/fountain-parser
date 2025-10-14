@@ -145,8 +145,9 @@ const fountainLanguage = StreamLanguage.define({
     
     // title
     if (stream.match(BLOCK_REGEX.TITLE)) {
-      stream.skipTo(':')
-      stream.next()
+      // BLOCK_REGEX.TITLE consumes the key, colon and trailing spaces.
+      // Don't call skipTo/next here — that was consuming the first
+      // character of the title value. Just return the token.
       return 'def'
     }
     

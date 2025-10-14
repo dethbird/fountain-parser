@@ -21,6 +21,8 @@ function estimateDurationFromText(text) {
   return Math.max(minSec, Math.min(maxSec, Math.round(seconds)))
 }
 
+import { BLOCK_REGEX } from '../constants/fountainRegex.js'
+
 export function parseBlocks(text) {
   const lines = (text || '').split('\n')
   const blocks = []
@@ -142,9 +144,9 @@ export function parseBlocks(text) {
       currentSpeaker = null
       type = 'audio'
       className = 'audio'
-    } else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
+    } else if (BLOCK_REGEX && BLOCK_REGEX.TITLE && BLOCK_REGEX.TITLE.test(trimmed)) {
       state.character_extended = false
-      const match = trimmed.match(/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i)
+      const match = trimmed.match(BLOCK_REGEX.TITLE)
       if (match) {
         const key = match[1].toLowerCase()
         if (key === 'title') {

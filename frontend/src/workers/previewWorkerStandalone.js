@@ -71,10 +71,15 @@ function parseBlocks(text) {
     else if (/^\d{1,2}:\d{2}$/.test(trimmed)) { state.character_extended = false; type = 'duration'; className = 'duration' }
     else if (/^\[i\]https?:\/\/.+/i.test(trimmed)) { state.character_extended = false; type = 'image'; className = 'image' }
     else if (/^\[a\]https?:\/\/.+/i.test(trimmed)) { state.character_extended = false; type = 'audio'; className = 'audio' }
-    else if (/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i.test(trimmed)) {
+    else if ( (function(){
+      // expanded TITLE regex for standalone worker (can't import shared constants)
+      const TITLE = new RegExp(String.raw`^(?:(title|credit|author|authors|writer|writers|written\s+by|screenplay\s+by|teleplay\s+by|story\s+by|adaptation\s+by|source|based\s+on(?:\s+characters\s+by)?|notes|draft(?:\s+date)?|revision(?:\s+date|(?:\s+)?color)?|draft\s*#|date|contact|copyright|wga(?:\s+registration)?|registration(?:\s*#)?|series|episode(?:\s+title)?|showrunner|production(?:\s+company)?)\s*):\s*`, 'i')
+      return TITLE.test(trimmed)
+    })() ) {
       state.character_extended = false
-      const match = trimmed.match(/^(title|credit|author[s]?|source|notes|draft date|date|contact|copyright):/i)
-      if (match) { const key = match[1].toLowerCase(); if (key === 'title') { type = 'title'; className = 'title-page-title' } else { type = 'title_page'; className = 'title-page-element' } }
+      const TITLE = new RegExp(String.raw`^(?:(title|credit|author|authors|writer|writers|written\s+by|screenplay\s+by|teleplay\s+by|story\s+by|adaptation\s+by|source|based\s+on(?:\s+characters\s+by)?|notes|draft(?:\s+date)?|revision(?:\s+date|(?:\s+)?color)?|draft\s*#|date|contact|copyright|wga(?:\s+registration)?|registration(?:\s*#)?|series|episode(?:\s+title)?|showrunner|production(?:\s+company)?)\s*):\s*`, 'i')
+      const match = trimmed.match(TITLE)
+      if (match && match[1]) { const key = match[1].toLowerCase(); if (key === 'title') { type = 'title'; className = 'title-page-title' } else { type = 'title_page'; className = 'title-page-element' } }
     } else if (/^#{1,4}\s/.test(trimmed)) { state.character_extended = false; const level = trimmed.match(/^(#{1,4})/)[1].length; type = 'section'; className = `section-${level}` }
     else if (/^={3,}$/.test(trimmed)) { state.character_extended = false; blocks.push({ id: `page-number-${i}`, text: `<div class="page-number">${currentPage}</div>`, index: i, type: 'page_number', className: 'page-number', speaker: null }); currentPage++; type = 'page_break'; className = 'page-break' }
     else if (/^>.+<$/.test(trimmed)) { state.character_extended = false; type = 'centered'; className = 'centered' }
