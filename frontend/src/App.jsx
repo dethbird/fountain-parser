@@ -1006,7 +1006,42 @@ function App() {
               <button className="modal-close" onClick={() => setIsDemoModalOpen(false)}>×</button>
             </div>
             <div className="modal-body">
-              <p>Demo scripts will appear here.</p>
+              <div className="demo-section">
+                <h3>Film</h3>
+                <p>A short live-action sample set in a street café. Demonstrates panels, dialogue, and images.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/assets/scripts/film_the_coffee_deal.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}>Load Film Demo</button>
+              </div>
+              <div className="demo-section">
+                <h3>Animation</h3>
+                <p>A musical animation sample featuring a singing squirrel. Shows lyrics, musical cues, and character interaction.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/assets/scripts/animation_the_singing_squirrel.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}>Load Animation Demo</button>
+              </div>
+              <div className="demo-section">
+                <h3>Advertising</h3>
+                <p>A playful ad script for Happy Fun Ball. Demonstrates panels, mock disclaimers, and ad-style dialogue.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/assets/scripts/ad_happy_fun_ball.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}>Load Advertising Demo</button>
+              </div>
+              <div className="demo-section">
+                <h3>Documentary</h3>
+                <p>A documentary sample with voice-over, captions, and subtitles. Shows non-fiction structure and panel usage.</p>
+                <button className="toolbar-btn" onClick={() => {
+                  fetch("/assets/scripts/documentary_voices_of_the_river.fountain")
+                    .then(r => r.text())
+                    .then(txt => { setCode(txt); processText(txt); setIsDemoModalOpen(false); });
+                }}>Load Documentary Demo</button>
+              </div>
             </div>
           </div>
         </div>
